@@ -169,7 +169,7 @@ public Respuesta obtenerProductoCodigo(String nombre) {
 	public Respuesta insertarProducto( Producto producto)  {
 		respuesta = new Respuesta("Producto Registrado Correctamente.",true,null);
 		
-		String query = "INSERT INTO Productos(Codigo, Nombre, Descripcion, Cantidad, Fecha_caducidad, P_publico, P_Mayoreo, P_Adquisicion,"
+		String query = "INSERT INTO productos(Codigo, Nombre, Descripcion, Cantidad, Fecha_caducidad, P_publico, P_Mayoreo, P_Adquisicion,"
 				+ "	Existencia, Categoria, Marca) values(?,?,?,?,?,?,?,?,?,?,?);";
 		
 		try {
@@ -193,7 +193,7 @@ public Respuesta obtenerProductoCodigo(String nombre) {
 
 			
 		} catch (Exception e) {
-			respuesta = new Respuesta("Error al Registrar Porducto. "+e.getStackTrace(), false, null);
+			respuesta = new Respuesta("Error al Registrar Porducto. "+e.getMessage(), false, null);
 			e.printStackTrace();
 			System.out.println(e.getMessage());
 		}

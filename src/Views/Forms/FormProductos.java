@@ -13,6 +13,8 @@ import javax.swing.SwingConstants;
 import java.awt.Font;
 import javax.swing.JTextField;
 import java.awt.ComponentOrientation;
+import java.awt.Cursor;
+
 import com.toedter.calendar.JDateChooser;
 
 import Controllers.ControllerProducto;
@@ -36,14 +38,15 @@ public class FormProductos extends JDialog {
 	private JTextField JTCodigo;
 	private JTextField JTCantidad;
 	private JTextField JTDescripcion;
-	private JTextField textField_4;
-	private JTextField textField_6;
-	private JTextField textField_7;
-	private JTextField textField_8;
+	private JTextField JTPPublico;
+	private JTextField JTPAdquisicion;
+	private JTextField JTPMayoreo;
+	private JTextField JTCategoria;
 	private JTextField JTNombre;
-	private JTextField textField_11;
+	private JTextField JTMarca;
 	private JDateChooser DCFechaCaducidad;
 	private JRadioButton RBFecha;
+	JSpinner SExistencia;
 	//Locales
 	private int tipoOperacion =0;
 	private Producto producto = null;
@@ -83,12 +86,14 @@ public class FormProductos extends JDialog {
 		TFId.setColumns(10);
 		
 		JLabel lblNewLabel = new JLabel("Id");
+		lblNewLabel.setFont(new Font("Segoe UI", Font.PLAIN, 11));
 		lblNewLabel.setHorizontalTextPosition(SwingConstants.CENTER);
 		lblNewLabel.setHorizontalAlignment(SwingConstants.RIGHT);
 		lblNewLabel.setBounds(10, 64, 107, 24);
 		contentPanel.add(lblNewLabel);
 		{
 			JLabel lblCdigo = new JLabel("Código");
+			lblCdigo.setFont(new Font("Segoe UI", Font.PLAIN, 11));
 			lblCdigo.setHorizontalAlignment(SwingConstants.RIGHT);
 			lblCdigo.setBounds(10, 132, 107, 24);
 			contentPanel.add(lblCdigo);
@@ -100,7 +105,8 @@ public class FormProductos extends JDialog {
 			contentPanel.add(JTCodigo);
 		}
 		{
-			JLabel lblNewLabel_1 = new JLabel("Cantidad(Descripción)");
+			JLabel lblNewLabel_1 = new JLabel("Cantidad(Decrp.)");
+			lblNewLabel_1.setFont(new Font("Segoe UI", Font.PLAIN, 11));
 			lblNewLabel_1.setHorizontalAlignment(SwingConstants.RIGHT);
 			lblNewLabel_1.setBounds(10, 200, 107, 24);
 			contentPanel.add(lblNewLabel_1);
@@ -113,6 +119,7 @@ public class FormProductos extends JDialog {
 		}
 		{
 			JLabel lblDescripcin = new JLabel("Descripción");
+			lblDescripcin.setFont(new Font("Segoe UI", Font.PLAIN, 11));
 			lblDescripcin.setHorizontalAlignment(SwingConstants.RIGHT);
 			lblDescripcin.setBounds(10, 167, 107, 24);
 			contentPanel.add(lblDescripcin);
@@ -125,66 +132,73 @@ public class FormProductos extends JDialog {
 		}
 		{
 			JLabel lblNewLabel_1 = new JLabel("Precio Público");
+			lblNewLabel_1.setFont(new Font("Segoe UI", Font.PLAIN, 11));
 			lblNewLabel_1.setHorizontalAlignment(SwingConstants.RIGHT);
 			lblNewLabel_1.setBounds(10, 266, 107, 24);
 			contentPanel.add(lblNewLabel_1);
 		}
 		{
-			textField_4 = new JTextField();
-			textField_4.setColumns(10);
-			textField_4.setBounds(127, 266, 260, 24);
-			contentPanel.add(textField_4);
+			JTPPublico = new JTextField();
+			JTPPublico.setColumns(10);
+			JTPPublico.setBounds(127, 266, 260, 24);
+			contentPanel.add(JTPPublico);
 		}
 		{
 			JLabel lblFechaCaducidad = new JLabel("Fecha Caducidad");
+			lblFechaCaducidad.setFont(new Font("Segoe UI", Font.PLAIN, 11));
 			lblFechaCaducidad.setHorizontalAlignment(SwingConstants.RIGHT);
 			lblFechaCaducidad.setBounds(10, 233, 107, 24);
 			contentPanel.add(lblFechaCaducidad);
 		}
 		{
 			JLabel lblNewLabel_1 = new JLabel("Precio Adquisición");
+			lblNewLabel_1.setFont(new Font("Segoe UI", Font.PLAIN, 11));
 			lblNewLabel_1.setHorizontalAlignment(SwingConstants.RIGHT);
 			lblNewLabel_1.setBounds(10, 334, 107, 24);
 			contentPanel.add(lblNewLabel_1);
 		}
 		{
-			textField_6 = new JTextField();
-			textField_6.setColumns(10);
-			textField_6.setBounds(127, 334, 260, 24);
-			contentPanel.add(textField_6);
+			JTPAdquisicion = new JTextField();
+			JTPAdquisicion.setColumns(10);
+			JTPAdquisicion.setBounds(127, 334, 260, 24);
+			contentPanel.add(JTPAdquisicion);
 		}
 		{
 			JLabel lblPrecioMayoreo = new JLabel("Precio Mayoreo");
+			lblPrecioMayoreo.setFont(new Font("Segoe UI", Font.PLAIN, 11));
 			lblPrecioMayoreo.setHorizontalAlignment(SwingConstants.RIGHT);
 			lblPrecioMayoreo.setBounds(10, 301, 107, 24);
 			contentPanel.add(lblPrecioMayoreo);
 		}
 		{
-			textField_7 = new JTextField();
-			textField_7.setColumns(10);
-			textField_7.setBounds(127, 301, 260, 24);
-			contentPanel.add(textField_7);
+			JTPMayoreo = new JTextField();
+			JTPMayoreo.setColumns(10);
+			JTPMayoreo.setBounds(127, 301, 260, 24);
+			contentPanel.add(JTPMayoreo);
 		}
 		{
 			JLabel lblNewLabel_1 = new JLabel("Categoria");
+			lblNewLabel_1.setFont(new Font("Segoe UI", Font.PLAIN, 11));
 			lblNewLabel_1.setHorizontalAlignment(SwingConstants.RIGHT);
 			lblNewLabel_1.setBounds(10, 402, 107, 24);
 			contentPanel.add(lblNewLabel_1);
 		}
 		{
-			textField_8 = new JTextField();
-			textField_8.setColumns(10);
-			textField_8.setBounds(127, 402, 260, 24);
-			contentPanel.add(textField_8);
+			JTCategoria = new JTextField();
+			JTCategoria.setColumns(10);
+			JTCategoria.setBounds(127, 402, 260, 24);
+			contentPanel.add(JTCategoria);
 		}
 		{
 			JLabel lblExistencia = new JLabel("Existencia");
+			lblExistencia.setFont(new Font("Segoe UI", Font.PLAIN, 11));
 			lblExistencia.setHorizontalAlignment(SwingConstants.RIGHT);
 			lblExistencia.setBounds(10, 369, 107, 24);
 			contentPanel.add(lblExistencia);
 		}
 		{
 			JLabel lblNewLabel_1 = new JLabel("Nombre");
+			lblNewLabel_1.setFont(new Font("Segoe UI", Font.PLAIN, 11));
 			lblNewLabel_1.setHorizontalAlignment(SwingConstants.RIGHT);
 			lblNewLabel_1.setBounds(10, 99, 107, 24);
 			contentPanel.add(lblNewLabel_1);
@@ -197,33 +211,36 @@ public class FormProductos extends JDialog {
 		}
 		{
 			JLabel lblMarca = new JLabel("Marca");
+			lblMarca.setFont(new Font("Segoe UI", Font.PLAIN, 11));
 			lblMarca.setHorizontalAlignment(SwingConstants.RIGHT);
 			lblMarca.setBounds(10, 437, 107, 24);
 			contentPanel.add(lblMarca);
 		}
 		{
-			textField_11 = new JTextField();
-			textField_11.setColumns(10);
-			textField_11.setBounds(127, 437, 260, 24);
-			contentPanel.add(textField_11);
+			JTMarca = new JTextField();
+			JTMarca.setColumns(10);
+			JTMarca.setBounds(127, 437, 260, 24);
+			contentPanel.add(JTMarca);
 		}
 		
 		DCFechaCaducidad = new JDateChooser();
 		DCFechaCaducidad.setBounds(127, 231, 260, 24);
 		contentPanel.add(DCFechaCaducidad);
 		
-		JSpinner spinner = new JSpinner();
-		spinner.setBounds(127, 367, 260, 24);
-		contentPanel.add(spinner);
+		SExistencia = new JSpinner();
+		SExistencia.setBounds(127, 367, 260, 24);
+		contentPanel.add(SExistencia);
 		
 		RBFecha = new JRadioButton("Perecedero");
+		RBFecha.setHorizontalAlignment(SwingConstants.RIGHT);
+		RBFecha.setFont(new Font("Segoe UI", Font.PLAIN, 11));
 		RBFecha.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				CambioEstadoFecha(e);
 			}
 		});
-		RBFecha.setBounds(306, 34, 81, 23);
+		RBFecha.setBounds(297, 34, 90, 23);
 		contentPanel.add(RBFecha);
 		{
 			JPanel buttonPane = new JPanel();
@@ -233,6 +250,7 @@ public class FormProductos extends JDialog {
 				JButton okButton = new JButton("OK");
 				okButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
+						grabarRegistro();
 					}
 				});
 				okButton.setActionCommand("OK");
@@ -241,6 +259,11 @@ public class FormProductos extends JDialog {
 			}
 			{
 				JButton cancelButton = new JButton("Cancel");
+				cancelButton.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						dispose();
+					}
+				});
 				cancelButton.setActionCommand("Cancel");
 				buttonPane.add(cancelButton);
 			}
@@ -254,8 +277,9 @@ public class FormProductos extends JDialog {
 	
 	public void CambioEstadoFecha(MouseEvent e) {
 		
-		if(RBFecha.isSelected()) 
+		if(RBFecha.isSelected()) { 
 			DCFechaCaducidad.setEnabled(false);
+			DCFechaCaducidad.setDate(null);}
 		else
 			DCFechaCaducidad.setEnabled(true);
 	}
@@ -271,20 +295,24 @@ public class FormProductos extends JDialog {
 		productoView.setDescripcion(JTDescripcion.getText());
 		productoView.setCantidad(JTCantidad.getText());
 		
-		if(RBFecha.isSelected())
+		if(!RBFecha.isSelected())
 			productoView.setFecha_caducidad( Herramientas.convertirFecha(DCFechaCaducidad));
 		else
 			productoView.setFecha_caducidad(null);
 		
-		productoView.setId_producto(TFId.getText());
-		productoView.setId_producto(TFId.getText());
-		productoView.setId_producto(TFId.getText());
-		productoView.setId_producto(TFId.getText());
-		productoView.setId_producto(TFId.getText());
-		productoView.setId_producto(TFId.getText());
+		productoView.setP_publico(JTPPublico.getText());
+		productoView.setP_Mayoreo(JTPMayoreo.getText());
+		productoView.setP_Adquisicion(JTPAdquisicion.getText());
+		productoView.setExistencia(""+SExistencia.getValue());
+		productoView.setCategoria(JTCategoria.getText());
+		productoView.setMarca(JTMarca.getText());
 		
-		respuesta = controllerProducto.proceso(Herramientas.tipoOperacion.insertar, productoView);
-	
+		Cursor cursor = Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR);
+        setCursor(cursor);		
+		respuesta = controllerProducto.proceso(tipoOperacion, productoView);
+		cursor = Cursor.getDefaultCursor();
+		setCursor(cursor);
+		
 		JOptionPane.showMessageDialog(this, respuesta.getMensaje());
 		
 	}

@@ -13,22 +13,15 @@ public class ProductoService {
 
 	private Respuesta respuesta;
 	
-	public void prueba() {
-		
-	}
-	
-	
 	public Respuesta insertar(ProductoView productoView) {
 		
 		respuesta = new Respuesta("",false,productoView);
 		
 		respuesta = validarProducto(Herramientas.tipoOperacion.insertar,productoView);
-		
 		if(!respuesta.getValor())
 			return respuesta;
 		
 		respuesta = TraducirDatos(productoView);
-		
 		if (!respuesta.getValor()) {
 			return respuesta;
 		}
@@ -42,6 +35,45 @@ public class ProductoService {
 		ProductosDAO productoDao = new ProductosDAO();
 		
 		respuesta = productoDao.insertarProducto(producto);
+		return respuesta;
+	}
+	
+	public Respuesta actualizar(ProductoView productoView) {
+
+		respuesta = new Respuesta("",false,productoView);
+
+		respuesta = validarProducto(Herramientas.tipoOperacion.actualizar, productoView);
+		if (!respuesta.getValor()) 
+			return respuesta;
+		
+		respuesta = TraducirDatos(productoView);
+		if (!respuesta.getValor()) 
+			return respuesta;
+		
+		respuesta = realizarActualizacion((Producto) respuesta.getRespuesta());
+		return respuesta;
+	}
+	
+	public Respuesta realizarActualizacion(Producto producto) {
+		respuesta = new Respuesta("",true,null);
+		ProductosDAO productoDao = new ProductosDAO();
+		
+		respuesta = productoDao.actualizarProducto(producto);
+		return respuesta;
+	}
+	
+	public Respuesta eliminar(String codigo) {
+		
+		respuesta = new Respuesta("",false,null);
+		Respuesta respuestaT = new Respuesta("",false,null);
+		
+		ProductosDAO productosDAO = new ProductosDAO();
+		respuesta = productosDAO.eliminarProducto(codigo);
+		
+		respuestaT = productosDAO.obtenerProductoCodigo(codigo);
+
+		if ( !(respuestaT.getRespuesta() == null) )
+			return new Respuesta("Problemas al intentar Eliminar el producto "+codigo,false,null);
 		
 		return respuesta;
 	}
