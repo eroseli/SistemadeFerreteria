@@ -32,10 +32,9 @@ public Respuesta obtenerProductoCodigo(String nombre) {
 		
 		Respuesta respuesta = new Respuesta("",true,null);
 		String query = "select * from productos where Codigo = '"+nombre+"'";
+		producto = null;
 		
 		try {
-			
-			productos.clear();
 			ConexionGlobal.establecerConexio();
             stm =  (PreparedStatement) ConexionGlobal.connection.prepareStatement(query);           
 			resultados = stm.executeQuery();
@@ -60,18 +59,17 @@ public Respuesta obtenerProductoCodigo(String nombre) {
 			
 			respuesta.setRespuesta(producto);
 			
-		} catch (Exception e) {
+		} catch (SQLException e) {
 			// TODO: handle exception
+			return new Respuesta("Error: "+e.getMessage(),false,null);
 		}
 		finally {
 			try {
 				ConexionGlobal.cerrarConexion();
 			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				System.out.println("Error: "+e.getMessage());
 			}
-		}
-		
+		}		
 		return  respuesta;
 	}
 	

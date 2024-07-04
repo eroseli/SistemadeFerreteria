@@ -37,9 +37,30 @@ public class ConexionGlobal {
 	            System.out.println("Conexion establecida correctamente desde Conexion Global");
 	            return connection;
 	        } catch (Exception e) {
-	            e.printStackTrace();
+	            System.out.println("Problemas al conectar "+e.getMessage());
+	            establecerConexionRemota();
 	        }
 	        return null;
+	}
+	
+	public static void reasignacionVariables() {
+		url = "jdbc:mysql://roundhouse.proxy.rlwy.net:39337/railway";
+		user = "root";
+		pass = "KdgIOswGEHKhrCYDuaSVPYyECFdxDZWD";
+	}
+	
+	public static Connection establecerConexionRemota() {
+		try {
+			reasignacionVariables();
+            Class.forName("com.mysql.jdbc.Driver");
+            connection = (Connection) DriverManager.getConnection(url,user,pass);
+            //con = (Connection) DriverManager.getConnection("jdbc:mysql://localhost/farmacia","root","root");
+            System.out.println("Conexion establecida correctamente desde Conexion Global");
+            return connection;
+        } catch (Exception e) {
+            System.out.println("Problemas al conectar "+e.getMessage());
+        }
+        return null;
 	}
 	
 	public static Connection cerrarConexion() throws SQLException{

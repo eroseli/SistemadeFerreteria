@@ -17,7 +17,6 @@ public class ProductoView {
 	private String Categoria;
 	private String Marca;
 	
-
 	public ProductoView() {}
 
 

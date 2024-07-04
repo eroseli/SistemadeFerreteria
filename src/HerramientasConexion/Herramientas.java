@@ -1,7 +1,11 @@
 package HerramientasConexion;
+import java.sql.Date;
+import java.sql.SQLData;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.Locale;
+
+import com.toedter.calendar.JDateChooser;
 
 public class Herramientas {
 
@@ -68,5 +72,37 @@ public class Herramientas {
             return 0.0f;  // Por defecto, retornar 0.0f si hay un error
         }
     }
+	
+	public static boolean validarFlotante(String numero) {
+		
+		try {
+			float flotante = Float.parseFloat(numero);
+		} catch (Exception e) {
+			return false;
+		}
+		return true;
+	}
+	
+	public static boolean validarEntero(String numero) {
+		
+		try {
+			int entero = Integer.parseInt(numero);
+		} catch (Exception e) {
+			return false;
+		}
+		return true;
+	}
+		
 
+	public static Date convertirFecha(JDateChooser jDateChooser) {
+		java.sql.Date sqlDate;
+		try {
+			java.util.Date utilDate = jDateChooser.getDate();
+			sqlDate = new java.sql.Date(utilDate.getTime());
+		} catch (Exception e) {
+			return null;
+		}
+		return sqlDate;
+	}
+	
 }

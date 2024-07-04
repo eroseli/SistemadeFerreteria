@@ -8,19 +8,25 @@ import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
 import java.awt.Font;
 import javax.swing.JTextField;
 import java.awt.ComponentOrientation;
 import com.toedter.calendar.JDateChooser;
 
+import Controllers.ControllerProducto;
 import DAO.ModelsDAO.Producto;
 import HerramientasConexion.Herramientas;
 import Models.ProductoView;
+import Models.Respuesta;
 
 import javax.swing.JSpinner;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import javax.swing.JRadioButton;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class FormProductos extends JDialog {
 
@@ -36,11 +42,13 @@ public class FormProductos extends JDialog {
 	private JTextField textField_8;
 	private JTextField JTNombre;
 	private JTextField textField_11;
-
-
+	private JDateChooser DCFechaCaducidad;
+	private JRadioButton RBFecha;
 	//Locales
 	private int tipoOperacion =0;
 	private Producto producto = null;
+	private ControllerProducto controllerProducto;
+	private Respuesta respuesta;
 	
 	public static void main(String[] args) {
 		try {
@@ -65,7 +73,7 @@ public class FormProductos extends JDialog {
 			JLabel L_Formulario = new JLabel("Formulario Productos");
 			L_Formulario.setFont(new Font("Segoe UI", Font.PLAIN, 20));
 			L_Formulario.setHorizontalAlignment(SwingConstants.CENTER);
-			L_Formulario.setBounds(0, 10, 434, 43);
+			L_Formulario.setBounds(10, 0, 434, 43);
 			contentPanel.add(L_Formulario);
 		}
 		
@@ -200,13 +208,23 @@ public class FormProductos extends JDialog {
 			contentPanel.add(textField_11);
 		}
 		
-		JDateChooser dateChooser = new JDateChooser();
-		dateChooser.setBounds(127, 231, 260, 24);
-		contentPanel.add(dateChooser);
+		DCFechaCaducidad = new JDateChooser();
+		DCFechaCaducidad.setBounds(127, 231, 260, 24);
+		contentPanel.add(DCFechaCaducidad);
 		
 		JSpinner spinner = new JSpinner();
 		spinner.setBounds(127, 367, 260, 24);
 		contentPanel.add(spinner);
+		
+		RBFecha = new JRadioButton("Perecedero");
+		RBFecha.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				CambioEstadoFecha(e);
+			}
+		});
+		RBFecha.setBounds(306, 34, 81, 23);
+		contentPanel.add(RBFecha);
 		{
 			JPanel buttonPane = new JPanel();
 			buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
@@ -231,15 +249,43 @@ public class FormProductos extends JDialog {
 		//locales
 		this.tipoOperacion = tipoOperacion;
 		this.producto = producto;
+		controllerProducto = new ControllerProducto();
+	}
+	
+	public void CambioEstadoFecha(MouseEvent e) {
 		
+		if(RBFecha.isSelected()) 
+			DCFechaCaducidad.setEnabled(false);
+		else
+			DCFechaCaducidad.setEnabled(true);
 	}
 	
 	public void grabarRegistro() {
 		
 		ProductoView productoView = new ProductoView();		
+		respuesta = new Respuesta("",true,null);
 		
+		productoView.setId_producto(TFId.getText());
+		productoView.setCodigo(JTCodigo.getText());
+		productoView.setNombre(JTNombre.getText());
+		productoView.setDescripcion(JTDescripcion.getText());
+		productoView.setCantidad(JTCantidad.getText());
 		
+		if(RBFecha.isSelected())
+			productoView.setFecha_caducidad( Herramientas.convertirFecha(DCFechaCaducidad));
+		else
+			productoView.setFecha_caducidad(null);
+		
+		productoView.setId_producto(TFId.getText());
+		productoView.setId_producto(TFId.getText());
+		productoView.setId_producto(TFId.getText());
+		productoView.setId_producto(TFId.getText());
+		productoView.setId_producto(TFId.getText());
+		productoView.setId_producto(TFId.getText());
+		
+		respuesta = controllerProducto.proceso(Herramientas.tipoOperacion.insertar, productoView);
+	
+		JOptionPane.showMessageDialog(this, respuesta.getMensaje());
 		
 	}
-	
 }
