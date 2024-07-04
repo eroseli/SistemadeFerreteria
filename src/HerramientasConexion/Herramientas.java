@@ -23,6 +23,14 @@ public class Herramientas {
 		public static final String Mixto = "M";
 	}
 	
+	public static final class tipoOperacion{
+		
+		public static final int insertar = 1;
+		public static final int actualizar = 2;
+		public static final int eliminar = 3;
+		public static final int seleccionar = 4;
+		
+	}
 	
 	public static String formatoDinero(Float cantidad) {
 		NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance();		
