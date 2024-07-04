@@ -3,25 +3,19 @@ package Views.Catalogos;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.util.ArrayList;
-import java.util.Iterator;
-
 import javax.swing.JButton;
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
-
-import Models.Producto;
+import DAO.ModelsDAO.Producto;
 import Models.ProductoVenta;
 import Models.Components.JTableEdidata;
 import Views.JF_Venta;
-
 import javax.swing.JTable;
 import java.awt.Color;
-import javax.swing.border.BevelBorder;
 import java.awt.Font;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;

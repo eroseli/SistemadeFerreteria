@@ -10,8 +10,8 @@ import java.util.List;
 import javax.swing.JOptionPane;
 
 import HerramientasConexion.ConexionGlobal;
-import Models.Producto;
 import Models.Respuesta;
+import DAO.ModelsDAO.Producto;
 
 public class ProductosDAO {
 	

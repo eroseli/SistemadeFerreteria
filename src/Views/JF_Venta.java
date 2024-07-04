@@ -1,11 +1,8 @@
 package Views;
 
 import java.awt.EventQueue;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -18,7 +15,7 @@ import javax.swing.table.DefaultTableModel;
 import HerramientasConexion.Herramientas;
 import Models.Carrito;
 import Models.Cliente;
-import Models.Producto;
+import DAO.ModelsDAO.Producto;
 import Models.ProductoVenta;
 import Models.Respuesta;
 import Models.Usuario;
@@ -26,15 +23,10 @@ import Views.Catalogos.JD_Productos;
 
 import javax.swing.JTable;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-
 import javax.swing.JTextField;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JMenuItem;
@@ -44,12 +36,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.ItemEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
 import javax.swing.JPopupMenu;
 import java.awt.Component;
 

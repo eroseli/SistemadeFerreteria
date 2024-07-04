@@ -8,7 +8,6 @@ import java.util.List;
 
 
 import HerramientasConexion.ConexionGlobal;
-import Models.Producto;
 import Models.Respuesta;
 import Models.Usuario;
 
@@ -20,6 +19,7 @@ public class UsuariosDAO {
 	Usuario usuario =null;
 	List<Usuario> usuarios = null;;
 	String query ="";
+	
 	
 	public UsuariosDAO() {
 		usuarios = new ArrayList<Usuario>();

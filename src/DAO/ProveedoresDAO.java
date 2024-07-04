@@ -9,7 +9,6 @@ import java.util.List;
 
 
 import HerramientasConexion.ConexionGlobal;
-import Models.Producto;
 import Models.Proveedor;
 import Models.Respuesta;
 
