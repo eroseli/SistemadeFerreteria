@@ -12,7 +12,6 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
 import java.awt.Font;
 import javax.swing.JTextField;
-import java.awt.ComponentOrientation;
 import java.awt.Cursor;
 
 import com.toedter.calendar.JDateChooser;
@@ -29,6 +28,7 @@ import java.awt.event.ActionEvent;
 import javax.swing.JRadioButton;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.Color;
 
 public class FormProductos extends JDialog {
 
@@ -46,7 +46,9 @@ public class FormProductos extends JDialog {
 	private JTextField JTMarca;
 	private JDateChooser DCFechaCaducidad;
 	private JRadioButton RBFecha;
-	JSpinner SExistencia;
+	private JSpinner SExistencia;
+	private JButton B_Eliminar; 
+	private JButton B_Grabar;
 	//Locales
 	private int tipoOperacion =0;
 	private Producto producto = null;
@@ -55,7 +57,7 @@ public class FormProductos extends JDialog {
 	
 	public static void main(String[] args) {
 		try {
-			FormProductos dialog = new FormProductos(Herramientas.tipoOperacion.insertar,null);
+			FormProductos dialog = new FormProductos(Herramientas.tipoOperacion.actualizar,null);
 			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 			dialog.setVisible(true);
 		} catch (Exception e) {
@@ -247,15 +249,21 @@ public class FormProductos extends JDialog {
 			buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
 			getContentPane().add(buttonPane, BorderLayout.SOUTH);
 			{
-				JButton okButton = new JButton("OK");
-				okButton.addActionListener(new ActionListener() {
+				B_Grabar = new JButton("Grabar");
+				B_Grabar.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						grabarRegistro();
 					}
 				});
-				okButton.setActionCommand("OK");
-				buttonPane.add(okButton);
-				getRootPane().setDefaultButton(okButton);
+				{
+					B_Eliminar = new JButton("Eliminar");
+					B_Eliminar.setForeground(new Color(255, 0, 0));
+					B_Eliminar.setActionCommand("OK");
+					buttonPane.add(B_Eliminar);
+				}
+				B_Grabar.setActionCommand("OK");
+				buttonPane.add(B_Grabar);
+				getRootPane().setDefaultButton(B_Grabar);
 			}
 			{
 				JButton cancelButton = new JButton("Cancel");
@@ -273,6 +281,20 @@ public class FormProductos extends JDialog {
 		this.tipoOperacion = tipoOperacion;
 		this.producto = producto;
 		controllerProducto = new ControllerProducto();
+		configuracionPantalla();
+	}
+	
+	public void configuracionPantalla() {
+		
+		if (tipoOperacion == Herramientas.tipoOperacion.insertar) {
+			B_Grabar.setText("Agregar");
+			B_Eliminar.setVisible(false);
+		}else if(tipoOperacion == Herramientas.tipoOperacion.actualizar) {
+			B_Grabar.setText("Actualizar");
+		}else if(tipoOperacion == Herramientas.tipoOperacion.eliminar) {
+			B_Grabar.setVisible(false);
+		}
+		
 	}
 	
 	public void CambioEstadoFecha(MouseEvent e) {

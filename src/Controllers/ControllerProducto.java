@@ -19,8 +19,11 @@ public class ControllerProducto {
 			respuesta = productoService.insertar((ProductoView) objeto);
 			break;
 		case Herramientas.tipoOperacion.actualizar:
+			respuesta = productoService.actualizar((ProductoView) objeto);
 			break;
 		case Herramientas.tipoOperacion.eliminar:
+			ProductoView productoView =  (ProductoView) objeto;
+			respuesta = productoService.eliminar(productoView.getCodigo());
 			break;
 		case Herramientas.tipoOperacion.seleccionar:
 			break;
