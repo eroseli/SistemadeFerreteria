@@ -6,9 +6,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-
+import DAO.ModelsDAO.Cliente;
 import HerramientasConexion.ConexionGlobal;
-import Models.Cliente;
 import Models.Proveedor;
 import Models.Respuesta;
 
@@ -30,7 +29,7 @@ public class ClientesDAO {
 		
 		respuesta = new Respuesta("",true,null);
 		cliente = new Cliente();
-		query = "select * from clientes;";
+		query = "select * from clientes WHERE Estatus = 'ACTIVO';";
 		clientes = new ArrayList<Cliente>();
 
 		try {
@@ -42,11 +41,10 @@ public class ClientesDAO {
 			while(resultados.next()) {
 				
 				cliente = new Cliente(
-						resultados.getInt("Id_Cliente"),
+						resultados.getString("Identificador"),
 						resultados.getString("Nombre"),
 						resultados.getString("Apaterno"),
 						resultados.getString("Amaterno"),
-						resultados.getString("Identificador"),
 						resultados.getDate("FechaNac"),
 						resultados.getString("Telefono"),
 						resultados.getString("Correo"),
@@ -78,7 +76,7 @@ public class ClientesDAO {
 		
 		
 		respuesta = new Respuesta("",true,null);
-		query  = "select * from clientes where nombre like '%"+descripcionNombre+"%'";
+		query  = "select * from clientes where nombre like '%"+descripcionNombre+"%' AND Estatus = 'ACTIVO'";
 		clientes = new ArrayList<Cliente>();
 		
 		try {
@@ -91,11 +89,10 @@ public class ClientesDAO {
 			while (resultados.next()) {
 				
 				cliente = new Cliente(
-						resultados.getInt("Id_Cliente"),
+						resultados.getString("Identificador"),
 						resultados.getString("Nombre"),
 						resultados.getString("Apaterno"),
 						resultados.getString("Amaterno"),
-						resultados.getString("Identificador"),
 						resultados.getDate("FechaNac"),
 						resultados.getString("Telefono"),
 						resultados.getString("Correo"),
@@ -128,21 +125,21 @@ public class ClientesDAO {
 		
 
 		respuesta = new Respuesta("Cliente Registrado Exitosamente",true,null);
-		query = "insert into Clientes (Nombre, Apaterno, Amaterno, Identificador, FechaNac, Telefono, Correo, Compras) "
-				+ " values(?,?,?,?,?,?,?,?);";
+		query = "insert into Clientes(Identificador, Nombre, Apaterno, Amaterno, FechaNac, Telefono, Correo, Compras, Estatus) "
+				+ " values(?,?,?,?,?,?,?,?,?);";
 		try {
 			
 			ConexionGlobal.establecerConexio();
 			stm = (PreparedStatement) ConexionGlobal.connection.prepareStatement(query);
-			stm.setString(1, clienteR.getNombre());
-			stm.setString(2, clienteR.getApaterno());
-			stm.setString(3, clienteR.getAmaterno());
-			stm.setString(4, clienteR.getIdentificador());
+			stm.setString(1, clienteR.getIdentificador());
+			stm.setString(2, clienteR.getNombre());
+			stm.setString(3, clienteR.getApaterno());
+			stm.setString(4, clienteR.getAmaterno());
 			stm.setDate(5, clienteR.getFechaNac());
 			stm.setString(6, clienteR.getTelefono());
 			stm.setString(7, clienteR.getCorreo());
 			stm.setInt(8, clienteR.getCompras());
-			
+			stm.setString(8, "ACTIVO");
 			stm.execute();
 			
 			
@@ -165,8 +162,8 @@ public class ClientesDAO {
 	public Respuesta actualizarCliente(Cliente clienteA) {
 		
 		respuesta = new Respuesta("Cliente Actualizado Correctamente",true,null);
-		query = "update clientes set  Nombre=?, Apaterno=?, Amaterno=?, Identificador=?, FechaNac=?, Telefono=?, Correo=?, Compras=?"
-				+" where Id_Cliente ="+clienteA.getId_Cliente();
+		query = "update Clientes set  Nombre=?, Apaterno=?, Amaterno=?, FechaNac=?, Telefono=?, Correo=?, Compras=?"
+				+" where Identificador ="+clienteA.getIdentificador();
 		
 		try {
 			ConexionGlobal.establecerConexio();
@@ -177,12 +174,10 @@ public class ClientesDAO {
 			stm.setString(1, clienteA.getNombre());
 			stm.setString(2, clienteA.getApaterno());
 			stm.setString(3, clienteA.getAmaterno());
-			stm.setString(4, clienteA.getIdentificador());
-			stm.setDate(5, clienteA.getFechaNac());
-			stm.setString(6, clienteA.getTelefono());
-			stm.setString(7, clienteA.getCorreo());
-			stm.setInt(8, clienteA.getCompras());
-			
+			stm.setDate(4, clienteA.getFechaNac());
+			stm.setString(5, clienteA.getTelefono());
+			stm.setString(6, clienteA.getCorreo());
+			stm.setInt(7, clienteA.getCompras());
 			stm.execute();
 			
 		} catch (SQLException e) {
@@ -203,7 +198,7 @@ public class ClientesDAO {
 	public Respuesta eliminarCiente(int idCliente) {
 		
 		respuesta = new Respuesta("Cliente Eliminado Correctamente.",true,null);
-		query = "delete from clientes where Id_Cliente = "+idCliente+" ;";
+		query = "update Clientes set Estatus = 'INACTIVO' where Identificador = "+idCliente+" ;";
 		
 		try {
 			ConexionGlobal.establecerConexio();
@@ -255,11 +250,10 @@ public class ClientesDAO {
 	    java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
 		
 		Cliente c = new Cliente(
-				12,
+				"00000",
 				"Damian",
 				"damina",
 				"damian",
-				"00000",
 				sqlDate,
 				"0",
 				"0",

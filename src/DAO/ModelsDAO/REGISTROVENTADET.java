@@ -11,7 +11,7 @@ public class REGISTROVENTADET {
 	private float Param_Precio;
 	private String Param_DescuentoM;
 	private int Param_DescuentoEsp;
-	private int Param_Id_Cliente;
+	private String Param_Id_Cliente;
 	private int Param_respuesta;
 	private String Param_mensaje;
 	
@@ -19,7 +19,7 @@ public class REGISTROVENTADET {
 	public  REGISTROVENTADET() {}
 	
 	public REGISTROVENTADET(int param_Id_Producto, int param_NumProductos, int param_Id_Venta, float param_Precio,
-			String param_DescuentoM, int param_DescuentoEsp, int param_Id_Cliente, int param_respuesta, String param_mensaje) {
+			String param_DescuentoM, int param_DescuentoEsp, String param_Id_Cliente, int param_respuesta, String param_mensaje) {
 		Param_Id_Producto = param_Id_Producto;
 		Param_NumProductos = param_NumProductos;
 		Param_Id_Venta = param_Id_Venta;
@@ -79,11 +79,11 @@ public class REGISTROVENTADET {
 		Param_DescuentoEsp = param_DescuentoEsp;
 	}
 
-	public int getParam_Id_Cliente() {
+	public String getParam_Id_Cliente() {
 		return Param_Id_Cliente;
 	}
 
-	public void setParam_Id_Cliente(int param_Id_Cliente) {
+	public void setParam_Id_Cliente(String param_Id_Cliente) {
 		Param_Id_Cliente = param_Id_Cliente;
 	}
 

@@ -3,7 +3,7 @@ package DAO.ModelsDAO;
 public class REGISTROVENTA {
 	
 	private int Param_Id_Usuario;
-    private int Param_Id_Cliente;
+    private String Param_Id_Cliente;
     private int Param_NumProductos;
     private float Param_Cantidad;  // Cantidad Total en efectivo
     private float Param_PagoTarjeta;
@@ -16,7 +16,7 @@ public class REGISTROVENTA {
     
     public REGISTROVENTA(){};
     
-	public REGISTROVENTA(int param_Id_Usuario, int param_Id_Cliente, int param_NumProductos,
+	public REGISTROVENTA(int param_Id_Usuario, String param_Id_Cliente, int param_NumProductos,
 			float param_Cantidad, float param_PagoTarjeta, float param_PagoEfectivo, int param_Descuento,
 			float param_PagoCliente, float param_SubTotal, int param_respuesta, String param_mensaje) {
 		Param_Id_Usuario = param_Id_Usuario;
@@ -40,11 +40,11 @@ public class REGISTROVENTA {
 		Param_Id_Usuario = param_Id_Usuario;
 	}
 
-	public int getParam_Id_Cliente() {
+	public String getParam_Id_Cliente() {
 		return Param_Id_Cliente;
 	}
 
-	public void setParam_Id_Cliente(int param_Id_Cliente) {
+	public void setParam_Id_Cliente(String param_Id_Cliente) {
 		Param_Id_Cliente = param_Id_Cliente;
 	}
 

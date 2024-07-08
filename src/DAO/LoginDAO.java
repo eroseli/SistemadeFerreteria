@@ -3,11 +3,9 @@ package DAO;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
-
-
+import DAO.ModelsDAO.Usuario;
 import HerramientasConexion.ConexionGlobal;
 import Models.Respuesta;
-import Models.Usuario;
 
 public class LoginDAO {
 	

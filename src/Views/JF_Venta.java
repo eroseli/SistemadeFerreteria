@@ -14,11 +14,11 @@ import javax.swing.table.DefaultTableModel;
 
 import HerramientasConexion.Herramientas;
 import Models.Carrito;
-import Models.Cliente;
+import DAO.ModelsDAO.Cliente;
 import DAO.ModelsDAO.Producto;
+import DAO.ModelsDAO.Usuario;
 import Models.ProductoVenta;
 import Models.Respuesta;
-import Models.Usuario;
 import Views.Catalogos.JD_Productos;
 
 import javax.swing.JTable;

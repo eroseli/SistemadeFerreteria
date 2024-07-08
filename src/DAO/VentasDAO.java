@@ -32,7 +32,7 @@ public class VentasDAO {
 			stm = (CallableStatement) ConexionGlobal.connection.prepareCall(query);
 			
 			stm.setInt(1, registroventa.getParam_Id_Usuario());
-			stm.setInt(2, registroventa.getParam_Id_Cliente());
+			stm.setString(2, registroventa.getParam_Id_Cliente());
 			stm.setInt(3, registroventa.getParam_NumProductos());
 			stm.setFloat(4, registroventa.getParam_Cantidad());
 			stm.setFloat(5, registroventa.getParam_PagoTarjeta());
@@ -94,7 +94,7 @@ public class VentasDAO {
 			stm.setFloat(4, registroventadet.getParam_Precio());
 			stm.setString(5, registroventadet.getParam_DescuentoM());
 			stm.setInt(6, registroventadet.getParam_DescuentoEsp());
-			stm.setInt(7, registroventadet.getParam_Id_Cliente());
+			stm.setString(7, registroventadet.getParam_Id_Cliente());
 			
 			stm.registerOutParameter(8, java.sql.Types.INTEGER);
 			stm.registerOutParameter(9, java.sql.Types.VARCHAR);
@@ -132,7 +132,7 @@ public class VentasDAO {
 		
 		VentasDAO dao = new VentasDAO();
 		Respuesta r = new Respuesta("Ok",true,null);
-		REGISTROVENTADET registroventadet = new REGISTROVENTADET(1,1,1,2,"No",0,1,0,"");
+		REGISTROVENTADET registroventadet = new REGISTROVENTADET(1,1,1,2,"No",0,"1",0,"");
 		
 		//r = (Respuesta) dao.REGISTROVENTADET(registroventadet);
 		
@@ -140,7 +140,7 @@ public class VentasDAO {
 		
 		
 		
-		DAO.ModelsDAO.REGISTROVENTA registroventa = new DAO.ModelsDAO.REGISTROVENTA(1, 1, 2, 50, 50, 100, 0, 100, 100, 0, null);
+		DAO.ModelsDAO.REGISTROVENTA registroventa = new DAO.ModelsDAO.REGISTROVENTA(1, "1", 2, 50, 50, 100, 0, 100, 100, 0, null);
 		
 		r = (Respuesta) dao.REGISTROVENTA(registroventa);
 		

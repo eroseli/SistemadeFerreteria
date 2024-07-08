@@ -3,8 +3,9 @@ package Controllers;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+
+import DAO.ModelsDAO.Usuario;
 import Models.Respuesta;
-import Models.Usuario;
 
 public class ControladorLogin {
 	

@@ -71,6 +71,7 @@ public class FormProductos extends JDialog {
 	public FormProductos(int tipoOperacion, Producto producto) {
 		setBounds(100, 100, 450, 600);
 		getContentPane().setLayout(new BorderLayout());
+		contentPanel.setBackground(new Color(255, 255, 255));
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
 		contentPanel.setLayout(null);
@@ -234,6 +235,7 @@ public class FormProductos extends JDialog {
 		contentPanel.add(SExistencia);
 		
 		RBFecha = new JRadioButton("Perecedero");
+		RBFecha.setBackground(new Color(255, 255, 255));
 		RBFecha.setHorizontalAlignment(SwingConstants.RIGHT);
 		RBFecha.setFont(new Font("Segoe UI", Font.PLAIN, 11));
 		RBFecha.addMouseListener(new MouseAdapter() {
@@ -246,6 +248,7 @@ public class FormProductos extends JDialog {
 		contentPanel.add(RBFecha);
 		{
 			JPanel buttonPane = new JPanel();
+			buttonPane.setBackground(new Color(255, 255, 255));
 			buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
 			getContentPane().add(buttonPane, BorderLayout.SOUTH);
 			{

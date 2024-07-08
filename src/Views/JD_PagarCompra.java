@@ -9,14 +9,14 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 import Controllers.ControllerVenta;
+import DAO.ModelsDAO.Cliente;
 import DAO.ModelsDAO.REGISTROVENTA;
 import DAO.ModelsDAO.REGISTROVENTADET;
+import DAO.ModelsDAO.Usuario;
 import HerramientasConexion.Herramientas;
 import HerramientasConexion.Herramientas.cadenas;
-import Models.Cliente;
 import Models.ProductoVenta;
 import Models.Respuesta;
-import Models.Usuario;
 import Models.Venta;
 
 import javax.swing.JTextField;
@@ -196,7 +196,7 @@ public class JD_PagarCompra extends JDialog {
 		Venta venta = new Venta();
 		
 		registroventa.setParam_Id_Usuario( usuario != null ? usuario.getId_Usuario(): 0  );
-		registroventa.setParam_Id_Cliente( cliente != null ? cliente.getId_Cliente(): 0 );
+		registroventa.setParam_Id_Cliente( cliente != null ? cliente.getIdentificador(): "" );
 		registroventa.setParam_NumProductos(obtenerNumProductos());
 		registroventa.setParam_Cantidad(jf_venta.calcularTotal());
 		registroventa.setParam_PagoTarjeta( Herramientas.eliminarFormatoDinero(TF_CantidadTarjeta.getText()));
@@ -216,7 +216,7 @@ public class JD_PagarCompra extends JDialog {
 			registroventadet.setParam_Precio( productoVenta.getDescuentoM().equals(cadenas.CadenaSi) ? productoVenta.getP_Mayoreo() : productoVenta.getP_publico() );
 			registroventadet.setParam_DescuentoM(productoVenta.getDescuentoM());
 			registroventadet.setParam_DescuentoEsp(productoVenta.getDescuentoE());
-			registroventadet.setParam_Id_Cliente(   cliente != null ? cliente.getId_Cliente(): 0);
+			registroventadet.setParam_Id_Cliente(   cliente != null ? cliente.getIdentificador(): "");
 			registroventadet.setParam_respuesta(0);
 			registroventadet.setParam_mensaje("");
 			

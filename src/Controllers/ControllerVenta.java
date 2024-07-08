@@ -58,10 +58,10 @@ public class ControllerVenta {
 	
 	public static void main(String[]args) {
 		
-		REGISTROVENTADET prod1 = new REGISTROVENTADET(1,2,0,100,"No",0,1,0,"");
-		REGISTROVENTADET prod2 = new REGISTROVENTADET(2,2,0,80,"No",0,1,0,"");
-		REGISTROVENTADET prod3 = new REGISTROVENTADET(3,2,0,50,"No",0,1,0,"");		
-		DAO.ModelsDAO.REGISTROVENTA registroventa = new DAO.ModelsDAO.REGISTROVENTA(1, 1, 3, 230, 0, 180, 0, 180, 180, 0, null);
+		REGISTROVENTADET prod1 = new REGISTROVENTADET(1,2,0,100,"No",0,"1",0,"");
+		REGISTROVENTADET prod2 = new REGISTROVENTADET(2,2,0,80,"No",0,"1",0,"");
+		REGISTROVENTADET prod3 = new REGISTROVENTADET(3,2,0,50,"No",0,"1",0,"");		
+		DAO.ModelsDAO.REGISTROVENTA registroventa = new DAO.ModelsDAO.REGISTROVENTA(1, "1", 3, 230, 0, 180, 0, 180, 180, 0, null);
 		ControllerVenta controllerVenta = new ControllerVenta();
 		
 		ArrayList<REGISTROVENTADET> r = new ArrayList<REGISTROVENTADET>();

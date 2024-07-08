@@ -3,9 +3,9 @@ package Controllers;
 import java.sql.ResultSet;
 
 import DAO.LoginDAO;
+import DAO.ModelsDAO.Usuario;
 import HerramientasConexion.ConexionGlobal;
 import Models.Respuesta;
-import Models.Usuario;
 
 public class ControllerLogin {
 	
