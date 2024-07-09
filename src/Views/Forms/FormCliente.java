@@ -9,6 +9,8 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import java.awt.Dimension;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
 import java.awt.Font;
 import javax.swing.SwingConstants;
 import javax.swing.JTextField;
@@ -16,7 +18,15 @@ import javax.swing.JPasswordField;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import com.toedter.calendar.JDateChooser;
+
+import Controllers.ControllerCliente;
+import DAO.ModelsDAO.Cliente;
+import HerramientasConexion.Herramientas;
+import Models.ClienteView;
+import Models.Respuesta;
+
 import javax.swing.JSpinner;
+import java.awt.Color;
 
 public class FormCliente extends JDialog {
 
@@ -24,17 +34,24 @@ public class FormCliente extends JDialog {
 	private final JPanel contentPanel = new JPanel();
 	private JTextField TFId;
 	private JTextField TFNombre;
-	private JPasswordField TFApaterno;
-	private JPasswordField TFAmaterno;
 	private JTextField TFTelefono;
 	private JTextField TFCorreo;
-
-	/**
-	 * Launch the application.
-	 */
+	private JDateChooser DCFechaNacimiento;
+	private JSpinner SCompras;
+	private JTextField TFApaterno;
+	private JTextField TFAmaterno;
+	private JButton BGrabar;
+	private JButton BEliminar;
+	private JButton BCancelar;
+	//Variables
+	private Respuesta respuesta;
+	private ControllerCliente controllerCliente;
+	private int tipoOperacion;
+	private Cliente cliente;
+	
 	public static void main(String[] args) {
 		try {
-			FormCliente dialog = new FormCliente();
+			FormCliente dialog = new FormCliente(Herramientas.tipoOperacion.actualizar, null);
 			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 			dialog.setVisible(true);
 		} catch (Exception e) {
@@ -45,7 +62,7 @@ public class FormCliente extends JDialog {
 	/**
 	 * Create the dialog.
 	 */
-	public FormCliente() {
+	public FormCliente(int tipoOperacion, Cliente cliente) {
 		setResizable(false);
 		setMaximumSize(new Dimension(450, 540));
 		setMinimumSize(new Dimension(450, 440));
@@ -89,21 +106,11 @@ public class FormCliente extends JDialog {
 			contentPanel.add(LApaterno);
 		}
 		{
-			TFApaterno = new JPasswordField();
-			TFApaterno.setBounds(146, 144, 260, 24);
-			contentPanel.add(TFApaterno);
-		}
-		{
 			JLabel LAmaterno = new JLabel("Apellido Materno");
 			LAmaterno.setHorizontalAlignment(SwingConstants.RIGHT);
 			LAmaterno.setFont(new Font("Segoe UI", Font.PLAIN, 11));
 			LAmaterno.setBounds(29, 177, 107, 24);
 			contentPanel.add(LAmaterno);
-		}
-		{
-			TFAmaterno = new JPasswordField();
-			TFAmaterno.setBounds(146, 179, 260, 24);
-			contentPanel.add(TFAmaterno);
 		}
 		{
 			JLabel LFecha = new JLabel("Fecha de Nac.");
@@ -153,40 +160,94 @@ public class FormCliente extends JDialog {
 			contentPanel.add(L_Formulario);
 		}
 		
-		JDateChooser dateChooser = new JDateChooser();
-		dateChooser.setName("DCFechaNac");
-		dateChooser.setBounds(146, 210, 260, 24);
-		contentPanel.add(dateChooser);
+		DCFechaNacimiento = new JDateChooser();
+		DCFechaNacimiento.setName("DCFechaNac");
+		DCFechaNacimiento.setBounds(146, 210, 260, 24);
+		contentPanel.add(DCFechaNacimiento);
 		
-		JSpinner SCompras = new JSpinner();
+		SCompras = new JSpinner();
 		SCompras.setBounds(146, 313, 260, 24);
 		contentPanel.add(SCompras);
+		
+		TFApaterno = new JTextField();
+		TFApaterno.setColumns(10);
+		TFApaterno.setBounds(146, 144, 260, 24);
+		contentPanel.add(TFApaterno);
+		
+		TFAmaterno = new JTextField();
+		TFAmaterno.setColumns(10);
+		TFAmaterno.setBounds(146, 177, 260, 24);
+		contentPanel.add(TFAmaterno);
 		{
 			JPanel buttonPane = new JPanel();
 			buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
 			getContentPane().add(buttonPane, BorderLayout.SOUTH);
 			{
-				JButton okButton = new JButton("OK");
-				okButton.addActionListener(new ActionListener() {
+				BGrabar = new JButton("Grabar");
+				BGrabar.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						guardarRegistro();
 					}
 				});
-				okButton.setActionCommand("OK");
-				buttonPane.add(okButton);
-				getRootPane().setDefaultButton(okButton);
+				
+				BEliminar = new JButton("Eliminar");
+				BEliminar.setForeground(new Color(255, 0, 0));
+				BEliminar.setFont(new Font("Segoe UI", Font.PLAIN, 11));
+				buttonPane.add(BEliminar);
+				BGrabar.setActionCommand("OK");
+				buttonPane.add(BGrabar);
+				getRootPane().setDefaultButton(BGrabar);
 			}
 			{
-				JButton cancelButton = new JButton("Cancel");
-				cancelButton.setActionCommand("Cancel");
-				buttonPane.add(cancelButton);
+				BCancelar = new JButton("Cancel");
+				BCancelar.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						dispose();
+					}
+				});
+				BCancelar.setActionCommand("Cancel");
+				buttonPane.add(BCancelar);
 			}
+		}
+		
+		this.tipoOperacion = tipoOperacion;
+		this.cliente = cliente;
+		inicializarPantalla();
+		configuracionPantalla();
+	}
+	
+	public void inicializarPantalla() {
+		controllerCliente = new ControllerCliente();
+	}
+	
+	public void configuracionPantalla() {
+		
+		if (tipoOperacion == Herramientas.tipoOperacion.insertar) {
+			BGrabar.setText("Agregar");
+			BEliminar.setVisible(false);
+		}else if(tipoOperacion == Herramientas.tipoOperacion.actualizar) {
+			BGrabar.setText("Actualizar");
+		}else if(tipoOperacion == Herramientas.tipoOperacion.eliminar) {
+			BGrabar.setVisible(false);
 		}
 	}
 	
 	public void guardarRegistro(){
 		
+		respuesta = new Respuesta("",true,null);
+		ClienteView clienteView = new ClienteView();
 		
+		clienteView.setId_Cliente(TFId.getText());
+		clienteView.setNombre(TFNombre.getText());
+		clienteView.setApaterno(TFApaterno.getText());
+		clienteView.setAmaterno(TFAmaterno.getText());
+		clienteView.setFechaNac( Herramientas.convertirFecha(DCFechaNacimiento));
+		clienteView.setTelefono(TFTelefono.getText());
+		clienteView.setCorreo(TFCorreo.getText());
+		clienteView.setCompras(""+SCompras.getValue());
 		
+		respuesta =controllerCliente.proceso(tipoOperacion, clienteView);
+		
+		JOptionPane.showMessageDialog(this, respuesta.getMensaje());
 	}
 }

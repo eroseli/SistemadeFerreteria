@@ -1,8 +1,10 @@
 package DAO;
 
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,6 +26,38 @@ public class ClientesDAO {
 		
 	}
 	
+	public Respuesta obtenerCantidadClientes() {
+
+		respuesta = new Respuesta("",true,null);
+		query = "select COUNT(Id_Cliente) Cantidad from clientes";
+		int cantidad = 0;
+		
+		try {
+			
+			ConexionGlobal.establecerConexio();
+			stm = (PreparedStatement) ConexionGlobal.connection.prepareStatement(query);
+			resultados  = stm.executeQuery();			
+			while(resultados.next()) {
+				cantidad= resultados.getInt("Cantidad");	
+			}
+			
+			respuesta.setRespuesta(cantidad);
+			
+		} catch (SQLException e) {
+			respuesta = new Respuesta("Error al intentar obtener Cantidad de Clientes"+e.getMessage(), false, null);
+			e.printStackTrace();
+		}
+		finally {
+			try {
+				ConexionGlobal.cerrarConexion();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+		return respuesta;
+	}
 	
 	public Respuesta obtenerClientes() {
 		
@@ -41,7 +75,7 @@ public class ClientesDAO {
 			while(resultados.next()) {
 				
 				cliente = new Cliente(
-						resultados.getString("Identificador"),
+						resultados.getString("Id_Cliente"),
 						resultados.getString("Nombre"),
 						resultados.getString("Apaterno"),
 						resultados.getString("Amaterno"),
@@ -56,7 +90,7 @@ public class ClientesDAO {
 			respuesta.setRespuesta(clientes);
 			
 		} catch (SQLException e) {
-			respuesta = new Respuesta("Error al intentar obtener los proveedores"+e.getMessage(), false, null);
+			respuesta = new Respuesta("Error al intentar obtener los Clientes"+e.getMessage(), false, null);
 			e.printStackTrace();
 		}
 		finally {
@@ -70,6 +104,49 @@ public class ClientesDAO {
 		
 		return respuesta;
 		
+	}
+	
+	public Respuesta obtenerCliente(String identificador) {
+		respuesta = new Respuesta("",true,null);
+		query  = "select * from clientes where Estatus = 'ACTIVO' and Id_Cliente = '"+identificador+"'";
+		clientes = new ArrayList<Cliente>();
+		try {
+			
+			clientes.clear();
+			ConexionGlobal.establecerConexio();
+			stm = (PreparedStatement) ConexionGlobal.connection.prepareStatement(query);
+			resultados = stm.executeQuery();
+			
+			while (resultados.next()) {
+				
+				cliente = new Cliente(
+						resultados.getString("Id_Cliente"),
+						resultados.getString("Nombre"),
+						resultados.getString("Apaterno"),
+						resultados.getString("Amaterno"),
+						resultados.getDate("FechaNac"),
+						resultados.getString("Telefono"),
+						resultados.getString("Correo"),
+						resultados.getInt("Compras")					
+				);
+				
+			}
+			
+			respuesta.setRespuesta(cliente);
+			
+		}  catch (SQLException e) {
+			respuesta = new Respuesta("Error al intentar obtener los Clientes", false, null);
+		}
+		finally {
+			try {
+				ConexionGlobal.cerrarConexion();
+			} catch (SQLException e) {
+				System.out.println("Error : "+e.getMessage());
+				respuesta = new Respuesta("Error : "+e.getMessage(),false,null);
+			}
+		}
+		
+		return respuesta;
 	}
 	
 	public Respuesta obtenerClienteDescripcion(String descripcionNombre) {
@@ -89,7 +166,7 @@ public class ClientesDAO {
 			while (resultados.next()) {
 				
 				cliente = new Cliente(
-						resultados.getString("Identificador"),
+						resultados.getString("Id_Cliente"),
 						resultados.getString("Nombre"),
 						resultados.getString("Apaterno"),
 						resultados.getString("Amaterno"),
@@ -125,8 +202,8 @@ public class ClientesDAO {
 		
 
 		respuesta = new Respuesta("Cliente Registrado Exitosamente",true,null);
-		query = "insert into Clientes(Identificador, Nombre, Apaterno, Amaterno, FechaNac, Telefono, Correo, Compras, Estatus) "
-				+ " values(?,?,?,?,?,?,?,?,?);";
+		query = "insert into clientes(Id_Cliente, Nombre, Apaterno, Amaterno, FechaNac, Telefono, Correo, Compras, Estatus,FechaRegistro) "
+				+ " values(?,?,?,?,?,?,?,?,?,?);";
 		try {
 			
 			ConexionGlobal.establecerConexio();
@@ -139,12 +216,13 @@ public class ClientesDAO {
 			stm.setString(6, clienteR.getTelefono());
 			stm.setString(7, clienteR.getCorreo());
 			stm.setInt(8, clienteR.getCompras());
-			stm.setString(8, "ACTIVO");
+			stm.setString(9, "ACTIVO");
+			stm.setDate(10, Date.valueOf(LocalDate.now()));
 			stm.execute();
 			
 			
 		} catch (SQLException e) {
-			respuesta = new Respuesta("Error al insertar un Cliente", false, null);
+			respuesta = new Respuesta("Error al insertar un Cliente"+e.getMessage(), false, null);
 		}
 		finally {
 			try {
@@ -162,8 +240,8 @@ public class ClientesDAO {
 	public Respuesta actualizarCliente(Cliente clienteA) {
 		
 		respuesta = new Respuesta("Cliente Actualizado Correctamente",true,null);
-		query = "update Clientes set  Nombre=?, Apaterno=?, Amaterno=?, FechaNac=?, Telefono=?, Correo=?, Compras=?"
-				+" where Identificador ="+clienteA.getIdentificador();
+		query = "update clientes set  Nombre=?, Apaterno=?, Amaterno=?, FechaNac=?, Telefono=?, Correo=?, Compras=?"
+				+" where Id_Cliente ="+clienteA.getIdentificador();
 		
 		try {
 			ConexionGlobal.establecerConexio();
@@ -195,10 +273,10 @@ public class ClientesDAO {
 		return respuesta;
 	}
 	
-	public Respuesta eliminarCiente(int idCliente) {
+	public Respuesta eliminarCiente(int Id_Cliente) {
 		
 		respuesta = new Respuesta("Cliente Eliminado Correctamente.",true,null);
-		query = "update Clientes set Estatus = 'INACTIVO' where Identificador = "+idCliente+" ;";
+		query = "update clientes set Estatus = 'INACTIVO' where Id_Cliente = "+Id_Cliente+" ;";
 		
 		try {
 			ConexionGlobal.establecerConexio();
@@ -206,7 +284,7 @@ public class ClientesDAO {
 			stm.execute();
 			
 		} catch (Exception e) {
-			respuesta = new Respuesta("Error al Eliminar Cliente "+idCliente, false, null);
+			respuesta = new Respuesta("Error al Eliminar Cliente "+Id_Cliente, false, null);
 		}
 		finally {
 			try {

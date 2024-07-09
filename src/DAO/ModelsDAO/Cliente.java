@@ -4,10 +4,10 @@ import java.sql.Date;
 
 public class Cliente {
 
+	private String Identificador;
 	private String Nombre;
 	private String Apaterno;
 	private String Amaterno;
-	private String Identificador;
 	private Date FechaNac;
 	private String Telefono;
 	private String Correo;
