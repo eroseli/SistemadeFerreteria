@@ -1,4 +1,5 @@
 package HerramientasConexion;
+import java.awt.Cursor;
 import java.sql.Date;
 import java.sql.SQLData;
 import java.text.NumberFormat;
@@ -34,6 +35,12 @@ public class Herramientas {
 		public static final int eliminar = 3;
 		public static final int seleccionar = 4;
 		
+	}
+	
+	public static final class tipoButton{
+		public static final int grabar = 1;
+		public static final int cancelar = 2;
+		public static final int eliminar = 3;
 	}
 	
 	public static String formatoDinero(Float cantidad) {
@@ -104,5 +111,4 @@ public class Herramientas {
 		}
 		return sqlDate;
 	}
-	
 }

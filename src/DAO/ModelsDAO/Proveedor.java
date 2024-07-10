@@ -1,4 +1,4 @@
-package Models;
+package DAO.ModelsDAO;
 
 import java.sql.Date;
 

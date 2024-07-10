@@ -6,10 +6,9 @@ import java.sql.SQLException;
 import java.sql.Types;
 import java.util.List;
 
-
+import DAO.ModelsDAO.Proveedor;
 import DAO.ModelsDAO.REGISTROVENTADET;
 import HerramientasConexion.ConexionGlobal;
-import Models.Proveedor;
 import Models.Respuesta;
 import Models.Venta;
 

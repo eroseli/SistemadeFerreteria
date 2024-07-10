@@ -21,6 +21,7 @@ import DAO.ModelsDAO.Producto;
 import HerramientasConexion.Herramientas;
 import Models.ProductoView;
 import Models.Respuesta;
+import Utileria.ComponentesDesing;
 
 import javax.swing.JSpinner;
 import java.awt.event.ActionListener;
@@ -28,6 +29,9 @@ import java.awt.event.ActionEvent;
 import javax.swing.JRadioButton;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.sql.Date;
+import java.text.Format;
+import java.time.LocalDate;
 import java.awt.Color;
 
 public class FormProductos extends JDialog {
@@ -35,15 +39,15 @@ public class FormProductos extends JDialog {
 	private static final long serialVersionUID = 1L;
 	private final JPanel contentPanel = new JPanel();
 	private JTextField TFId;
-	private JTextField JTCodigo;
-	private JTextField JTCantidad;
-	private JTextField JTDescripcion;
-	private JTextField JTPPublico;
-	private JTextField JTPAdquisicion;
-	private JTextField JTPMayoreo;
-	private JTextField JTCategoria;
-	private JTextField JTNombre;
-	private JTextField JTMarca;
+	private JTextField TFCodigo;
+	private JTextField TFCantidad;
+	private JTextField TFDescripcion;
+	private JTextField TFPPublico;
+	private JTextField TFPAdquisicion;
+	private JTextField TFPMayoreo;
+	private JTextField TFCategoria;
+	private JTextField TFNombre;
+	private JTextField TFMarca;
 	private JDateChooser DCFechaCaducidad;
 	private JRadioButton RBFecha;
 	private JSpinner SExistencia;
@@ -57,7 +61,23 @@ public class FormProductos extends JDialog {
 	
 	public static void main(String[] args) {
 		try {
-			FormProductos dialog = new FormProductos(Herramientas.tipoOperacion.actualizar,null);
+			
+			Producto producto = new Producto();
+			
+			producto.setId_producto(1);
+			producto.setCodigo("123qwe");
+			producto.setNombre("Miguel");
+			producto.setDescripcion("Nueva Descripción");
+			producto.setCantidad("Cantidad de prueba");
+			producto.setFecha_caducidad(Date.valueOf(LocalDate.now()));
+			producto.setP_publico(100f);
+			producto.setP_Mayoreo(80f);
+			producto.setP_Adquisicion(60f);
+			producto.setExistencia(10);
+			producto.setCategoria("Nueva Categoría");
+			producto.setMarca("Marca Nueva");
+			
+			FormProductos dialog = new FormProductos(Herramientas.tipoOperacion.actualizar,producto);
 			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 			dialog.setVisible(true);
 		} catch (Exception e) {
@@ -102,10 +122,10 @@ public class FormProductos extends JDialog {
 			contentPanel.add(lblCdigo);
 		}
 		{
-			JTCodigo = new JTextField();
-			JTCodigo.setColumns(10);
-			JTCodigo.setBounds(127, 132, 260, 24);
-			contentPanel.add(JTCodigo);
+			TFCodigo = new JTextField();
+			TFCodigo.setColumns(10);
+			TFCodigo.setBounds(127, 132, 260, 24);
+			contentPanel.add(TFCodigo);
 		}
 		{
 			JLabel lblNewLabel_1 = new JLabel("Cantidad(Decrp.)");
@@ -115,10 +135,10 @@ public class FormProductos extends JDialog {
 			contentPanel.add(lblNewLabel_1);
 		}
 		{
-			JTCantidad = new JTextField();
-			JTCantidad.setColumns(10);
-			JTCantidad.setBounds(127, 200, 260, 24);
-			contentPanel.add(JTCantidad);
+			TFCantidad = new JTextField();
+			TFCantidad.setColumns(10);
+			TFCantidad.setBounds(127, 200, 260, 24);
+			contentPanel.add(TFCantidad);
 		}
 		{
 			JLabel lblDescripcin = new JLabel("Descripción");
@@ -128,10 +148,10 @@ public class FormProductos extends JDialog {
 			contentPanel.add(lblDescripcin);
 		}
 		{
-			JTDescripcion = new JTextField();
-			JTDescripcion.setColumns(10);
-			JTDescripcion.setBounds(127, 167, 260, 24);
-			contentPanel.add(JTDescripcion);
+			TFDescripcion = new JTextField();
+			TFDescripcion.setColumns(10);
+			TFDescripcion.setBounds(127, 167, 260, 24);
+			contentPanel.add(TFDescripcion);
 		}
 		{
 			JLabel lblNewLabel_1 = new JLabel("Precio Público");
@@ -141,10 +161,10 @@ public class FormProductos extends JDialog {
 			contentPanel.add(lblNewLabel_1);
 		}
 		{
-			JTPPublico = new JTextField();
-			JTPPublico.setColumns(10);
-			JTPPublico.setBounds(127, 266, 260, 24);
-			contentPanel.add(JTPPublico);
+			TFPPublico = new JTextField();
+			TFPPublico.setColumns(10);
+			TFPPublico.setBounds(127, 266, 260, 24);
+			contentPanel.add(TFPPublico);
 		}
 		{
 			JLabel lblFechaCaducidad = new JLabel("Fecha Caducidad");
@@ -161,10 +181,10 @@ public class FormProductos extends JDialog {
 			contentPanel.add(lblNewLabel_1);
 		}
 		{
-			JTPAdquisicion = new JTextField();
-			JTPAdquisicion.setColumns(10);
-			JTPAdquisicion.setBounds(127, 334, 260, 24);
-			contentPanel.add(JTPAdquisicion);
+			TFPAdquisicion = new JTextField();
+			TFPAdquisicion.setColumns(10);
+			TFPAdquisicion.setBounds(127, 334, 260, 24);
+			contentPanel.add(TFPAdquisicion);
 		}
 		{
 			JLabel lblPrecioMayoreo = new JLabel("Precio Mayoreo");
@@ -174,10 +194,10 @@ public class FormProductos extends JDialog {
 			contentPanel.add(lblPrecioMayoreo);
 		}
 		{
-			JTPMayoreo = new JTextField();
-			JTPMayoreo.setColumns(10);
-			JTPMayoreo.setBounds(127, 301, 260, 24);
-			contentPanel.add(JTPMayoreo);
+			TFPMayoreo = new JTextField();
+			TFPMayoreo.setColumns(10);
+			TFPMayoreo.setBounds(127, 301, 260, 24);
+			contentPanel.add(TFPMayoreo);
 		}
 		{
 			JLabel lblNewLabel_1 = new JLabel("Categoria");
@@ -187,10 +207,10 @@ public class FormProductos extends JDialog {
 			contentPanel.add(lblNewLabel_1);
 		}
 		{
-			JTCategoria = new JTextField();
-			JTCategoria.setColumns(10);
-			JTCategoria.setBounds(127, 402, 260, 24);
-			contentPanel.add(JTCategoria);
+			TFCategoria = new JTextField();
+			TFCategoria.setColumns(10);
+			TFCategoria.setBounds(127, 402, 260, 24);
+			contentPanel.add(TFCategoria);
 		}
 		{
 			JLabel lblExistencia = new JLabel("Existencia");
@@ -207,10 +227,10 @@ public class FormProductos extends JDialog {
 			contentPanel.add(lblNewLabel_1);
 		}
 		{
-			JTNombre = new JTextField();
-			JTNombre.setColumns(10);
-			JTNombre.setBounds(127, 99, 260, 24);
-			contentPanel.add(JTNombre);
+			TFNombre = new JTextField();
+			TFNombre.setColumns(10);
+			TFNombre.setBounds(127, 99, 260, 24);
+			contentPanel.add(TFNombre);
 		}
 		{
 			JLabel lblMarca = new JLabel("Marca");
@@ -220,10 +240,10 @@ public class FormProductos extends JDialog {
 			contentPanel.add(lblMarca);
 		}
 		{
-			JTMarca = new JTextField();
-			JTMarca.setColumns(10);
-			JTMarca.setBounds(127, 437, 260, 24);
-			contentPanel.add(JTMarca);
+			TFMarca = new JTextField();
+			TFMarca.setColumns(10);
+			TFMarca.setBounds(127, 437, 260, 24);
+			contentPanel.add(TFMarca);
 		}
 		
 		DCFechaCaducidad = new JDateChooser();
@@ -260,6 +280,10 @@ public class FormProductos extends JDialog {
 				});
 				{
 					B_Eliminar = new JButton("Eliminar");
+					B_Eliminar.addActionListener(new ActionListener() {
+						public void actionPerformed(ActionEvent e) {
+						}
+					});
 					B_Eliminar.setForeground(new Color(255, 0, 0));
 					B_Eliminar.setActionCommand("OK");
 					buttonPane.add(B_Eliminar);
@@ -285,9 +309,30 @@ public class FormProductos extends JDialog {
 		this.producto = producto;
 		controllerProducto = new ControllerProducto();
 		configuracionPantalla();
+		inicializarPantalla();
+	}
+	
+	public void inicializarPantalla() {
+		
+		if(producto != null && tipoOperacion!=Herramientas.tipoOperacion.insertar) {
+			TFId.setText(producto.getId_producto()+"");
+			TFNombre.setText(producto.getNombre());
+			TFCodigo.setText(producto.getCodigo());
+			TFDescripcion.setText(producto.getDescripcion());
+			TFCantidad.setText(producto.getCantidad());
+			DCFechaCaducidad.setDate(new java.util.Date(producto.getFecha_caducidad().getTime()));
+			TFPPublico.setText(producto.getP_publico()+"");
+			TFPMayoreo.setText(producto.getP_Mayoreo()+"");
+			TFPAdquisicion.setText(producto.getP_Adquisicion()+"");
+			SExistencia.setValue((Object) producto.getExistencia());
+			TFCategoria.setText(producto.getCategoria());
+			TFMarca.setText(producto.getMarca());
+		}
 	}
 	
 	public void configuracionPantalla() {
+		
+		ComponentesDesing.textFieldDeshabilitar(TFId);
 		
 		if (tipoOperacion == Herramientas.tipoOperacion.insertar) {
 			B_Grabar.setText("Agregar");
@@ -296,6 +341,18 @@ public class FormProductos extends JDialog {
 			B_Grabar.setText("Actualizar");
 		}else if(tipoOperacion == Herramientas.tipoOperacion.eliminar) {
 			B_Grabar.setVisible(false);
+			ComponentesDesing.textFieldDeshabilitar(TFNombre);
+			ComponentesDesing.textFieldDeshabilitar(TFCodigo);
+			ComponentesDesing.textFieldDeshabilitar(TFDescripcion);
+			ComponentesDesing.textFieldDeshabilitar(TFCantidad);
+			ComponentesDesing.JDatachoser(DCFechaCaducidad);
+			ComponentesDesing.textFieldDeshabilitar(TFPPublico);
+			ComponentesDesing.textFieldDeshabilitar(TFPMayoreo);
+			ComponentesDesing.textFieldDeshabilitar(TFPAdquisicion);
+			ComponentesDesing.JSnipperDesHabilitar(SExistencia);
+			ComponentesDesing.textFieldDeshabilitar(TFCategoria);
+			ComponentesDesing.textFieldDeshabilitar(TFMarca);
+			ComponentesDesing.JRadioButtonDeshabilitar(RBFecha);
 		}
 		
 	}
@@ -303,7 +360,7 @@ public class FormProductos extends JDialog {
 	public void CambioEstadoFecha(MouseEvent e) {
 		
 		if(RBFecha.isSelected()) { 
-			DCFechaCaducidad.setEnabled(false);
+			ComponentesDesing.JDatachoser(DCFechaCaducidad);
 			DCFechaCaducidad.setDate(null);}
 		else
 			DCFechaCaducidad.setEnabled(true);
@@ -315,22 +372,22 @@ public class FormProductos extends JDialog {
 		respuesta = new Respuesta("",true,null);
 		
 		productoView.setId_producto(TFId.getText());
-		productoView.setCodigo(JTCodigo.getText());
-		productoView.setNombre(JTNombre.getText());
-		productoView.setDescripcion(JTDescripcion.getText());
-		productoView.setCantidad(JTCantidad.getText());
+		productoView.setCodigo(TFCodigo.getText());
+		productoView.setNombre(TFNombre.getText());
+		productoView.setDescripcion(TFDescripcion.getText());
+		productoView.setCantidad(TFCantidad.getText());
 		
 		if(!RBFecha.isSelected())
 			productoView.setFecha_caducidad( Herramientas.convertirFecha(DCFechaCaducidad));
 		else
 			productoView.setFecha_caducidad(null);
 		
-		productoView.setP_publico(JTPPublico.getText());
-		productoView.setP_Mayoreo(JTPMayoreo.getText());
-		productoView.setP_Adquisicion(JTPAdquisicion.getText());
+		productoView.setP_publico(TFPPublico.getText());
+		productoView.setP_Mayoreo(TFPMayoreo.getText());
+		productoView.setP_Adquisicion(TFPAdquisicion.getText());
 		productoView.setExistencia(""+SExistencia.getValue());
-		productoView.setCategoria(JTCategoria.getText());
-		productoView.setMarca(JTMarca.getText());
+		productoView.setCategoria(TFCategoria.getText());
+		productoView.setMarca(TFMarca.getText());
 		
 		Cursor cursor = Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR);
         setCursor(cursor);		

@@ -3,9 +3,11 @@ package Views.Forms;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
+import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import java.awt.Dimension;
 import javax.swing.JLabel;
@@ -13,20 +15,27 @@ import javax.swing.JOptionPane;
 
 import java.awt.Font;
 import javax.swing.SwingConstants;
+import javax.swing.UIManager;
 import javax.swing.JTextField;
 import javax.swing.JPasswordField;
 import java.awt.event.ActionListener;
+import java.sql.Date;
+import java.time.LocalDate;
 import java.awt.event.ActionEvent;
 import com.toedter.calendar.JDateChooser;
 
 import Controllers.ControllerCliente;
+import Controllers.ControllerUsuario;
 import DAO.ModelsDAO.Cliente;
 import HerramientasConexion.Herramientas;
 import Models.ClienteView;
 import Models.Respuesta;
+import Models.UsuarioView;
+import Utileria.ComponentesDesing;
 
 import javax.swing.JSpinner;
 import java.awt.Color;
+import java.awt.Cursor;
 
 public class FormCliente extends JDialog {
 
@@ -51,23 +60,32 @@ public class FormCliente extends JDialog {
 	
 	public static void main(String[] args) {
 		try {
-			FormCliente dialog = new FormCliente(Herramientas.tipoOperacion.actualizar, null);
+			
+			Cliente prueba = new Cliente();
+			prueba.setIdentificador("SaCC18");
+			prueba.setNombre("Damian");
+			prueba.setApaterno("Arellano");
+			prueba.setAmaterno("Diaz");
+			prueba.setFechaNac(Date.valueOf(LocalDate.now()));
+			prueba.setTelefono("9876543211");
+			prueba.setCorreo("dema@gmail.com");
+			prueba.setCompras(1);
+			
+			FormCliente dialog = new FormCliente(Herramientas.tipoOperacion.eliminar, prueba);
 			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 			dialog.setVisible(true);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-
-	/**
-	 * Create the dialog.
-	 */
+	
 	public FormCliente(int tipoOperacion, Cliente cliente) {
 		setResizable(false);
 		setMaximumSize(new Dimension(450, 540));
 		setMinimumSize(new Dimension(450, 440));
 		setBounds(100, 100, 450, 300);
 		getContentPane().setLayout(new BorderLayout());
+		contentPanel.setBackground(new Color(255, 255, 255));
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
 		contentPanel.setLayout(null);
@@ -191,6 +209,11 @@ public class FormCliente extends JDialog {
 				});
 				
 				BEliminar = new JButton("Eliminar");
+				BEliminar.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						eliminarRegistro();
+					}
+				});
 				BEliminar.setForeground(new Color(255, 0, 0));
 				BEliminar.setFont(new Font("Segoe UI", Font.PLAIN, 11));
 				buttonPane.add(BEliminar);
@@ -218,18 +241,58 @@ public class FormCliente extends JDialog {
 	
 	public void inicializarPantalla() {
 		controllerCliente = new ControllerCliente();
+		
+		if(cliente != null && tipoOperacion!= Herramientas.tipoOperacion.insertar) {
+			TFId.setText(cliente.getIdentificador());
+			TFNombre.setText(cliente.getNombre());
+			TFApaterno.setText(cliente.getApaterno());
+			TFAmaterno.setText(cliente.getAmaterno());
+			DCFechaNacimiento.setDate(new java.util.Date(cliente.getFechaNac().getTime()));
+			TFTelefono.setText(cliente.getTelefono());
+			TFCorreo.setText(cliente.getCorreo());
+			SCompras.setValue( (Object) cliente.getCompras());
+		}
+		
 	}
 	
 	public void configuracionPantalla() {
 		
+		ComponentesDesing.textFieldDeshabilitar(TFId);
+		    
 		if (tipoOperacion == Herramientas.tipoOperacion.insertar) {
 			BGrabar.setText("Agregar");
 			BEliminar.setVisible(false);
+			
 		}else if(tipoOperacion == Herramientas.tipoOperacion.actualizar) {
 			BGrabar.setText("Actualizar");
 		}else if(tipoOperacion == Herramientas.tipoOperacion.eliminar) {
 			BGrabar.setVisible(false);
+			ComponentesDesing.textFieldDeshabilitar(TFNombre);
+			ComponentesDesing.textFieldDeshabilitar(TFApaterno);
+			ComponentesDesing.textFieldDeshabilitar(TFAmaterno);
+			ComponentesDesing.textFieldDeshabilitar(TFTelefono);
+			ComponentesDesing.textFieldDeshabilitar(TFCorreo);
+			ComponentesDesing.JSnipperDesHabilitar(SCompras);
+			ComponentesDesing.JDatachoser(DCFechaNacimiento);
 		}
+	}
+	
+	public void eliminarRegistro() {
+		ControllerCliente controllerCliente = new ControllerCliente();
+		ClienteView clienteView = new ClienteView();
+		respuesta = new Respuesta("",true,null);
+		
+		if ( (JOptionPane.showConfirmDialog(this, "¿Deseas Eliminar al Usuario "+TFNombre.getText()+" ?"))  >= 1 )
+			return;
+		clienteView.setId_Cliente(TFId.getText());
+		
+		Cursor cursor = Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR);
+        setCursor(cursor);		
+        respuesta = controllerCliente.proceso(Herramientas.tipoOperacion.eliminar, clienteView);
+		cursor = Cursor.getDefaultCursor();
+		setCursor(cursor);
+		
+		JOptionPane.showMessageDialog(this, respuesta.getMensaje());
 	}
 	
 	public void guardarRegistro(){
@@ -246,7 +309,11 @@ public class FormCliente extends JDialog {
 		clienteView.setCorreo(TFCorreo.getText());
 		clienteView.setCompras(""+SCompras.getValue());
 		
-		respuesta =controllerCliente.proceso(tipoOperacion, clienteView);
+		Cursor cursor = Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR);
+        setCursor(cursor);		
+        respuesta =controllerCliente.proceso(tipoOperacion, clienteView);
+		cursor = Cursor.getDefaultCursor();
+		setCursor(cursor);
 		
 		JOptionPane.showMessageDialog(this, respuesta.getMensaje());
 	}

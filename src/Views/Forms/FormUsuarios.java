@@ -6,22 +6,28 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+
+import com.jgoodies.looks.windows.WindowsLookAndFeel;
+
 import java.awt.Dimension;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
 import java.awt.Font;
 import javax.swing.SwingConstants;
+import javax.swing.UIManager;
 import javax.swing.JTextField;
 import Controllers.ControllerUsuario;
 import DAO.ModelsDAO.Usuario;
 import HerramientasConexion.Herramientas;
 import Models.Respuesta;
 import Models.UsuarioView;
+import Utileria.ComponentesDesing;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.JPasswordField;
+import java.awt.Color;
 
 public class FormUsuarios extends JDialog {
 
@@ -38,6 +44,7 @@ public class FormUsuarios extends JDialog {
 	private JTextField TFTelefono;
 	private JButton B_Grabar; 
 	private JButton BEliminar ;
+	private JButton BCancelar ;
 	
 	private Respuesta respuesta;
 	private int tipoOperacion;
@@ -47,7 +54,20 @@ public class FormUsuarios extends JDialog {
 	
 	public static void main(String[] args) {
 		try {
-			FormUsuarios dialog = new FormUsuarios(Herramientas.tipoOperacion.actualizar,null);
+			
+			Usuario usuarioPrueba = new Usuario();
+			usuarioPrueba.setId_Usuario(0);
+			usuarioPrueba.setUsuario("SaCC18");
+			usuarioPrueba.setPassword("1234qwer");
+			usuarioPrueba.setNombre("Eros");
+			usuarioPrueba.setApaterno("Roque");
+			usuarioPrueba.setAmaterno("Santiago");
+			usuarioPrueba.setCorreo("eroseliroque@gmail.com");
+			usuarioPrueba.setDireccion("1 privada de Jose Mariano Esperanza");
+			usuarioPrueba.setPuesto("Administrador");
+			usuarioPrueba.setTelefono("9514134591");
+			
+			FormUsuarios dialog = new FormUsuarios(Herramientas.tipoOperacion.actualizar,usuarioPrueba);
 			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 			dialog.setVisible(true);
 		} catch (Exception e) {
@@ -64,6 +84,7 @@ public class FormUsuarios extends JDialog {
 		setMaximumSize(new Dimension(450, 600));
 		setBounds(100, 100, 450, 300);
 		getContentPane().setLayout(new BorderLayout());
+		contentPanel.setBackground(new Color(255, 255, 255));
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
 		contentPanel.setLayout(null);
@@ -193,6 +214,7 @@ public class FormUsuarios extends JDialog {
 		contentPanel.add(PFValidarPassword);
 		{
 			JPanel buttonPane = new JPanel();
+			buttonPane.setBackground(new Color(255, 255, 255));
 			buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
 			getContentPane().add(buttonPane, BorderLayout.SOUTH);
 			{
@@ -217,24 +239,47 @@ public class FormUsuarios extends JDialog {
 				getRootPane().setDefaultButton(B_Grabar);
 			}
 			{
-				JButton cancelButton = new JButton("Cancel");
-				cancelButton.addActionListener(new ActionListener() {
+				BCancelar = new JButton("Cancel");
+				BCancelar.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						dispose();
 					}
 				});
-				cancelButton.setFont(new Font("Segoe UI", Font.PLAIN, 11));
-				cancelButton.setActionCommand("Cancel");
-				buttonPane.add(cancelButton);
+				BCancelar.setFont(new Font("Segoe UI", Font.PLAIN, 11));
+				BCancelar.setActionCommand("Cancel");
+				buttonPane.add(BCancelar);
 			}
 		}
 		
 		this.usuario = usuario;
 		this.tipoOperacion = tipoOperacion;
 		inicializarPantalla();
+		configurarPantalla();
+		ComponentesDesing.JButtonDesing(B_Grabar,Herramientas.tipoButton.grabar);
+		ComponentesDesing.JButtonDesing(BEliminar,Herramientas.tipoButton.eliminar);
+		ComponentesDesing.JButtonDesing(BCancelar,Herramientas.tipoButton.cancelar);
+	}
+	
+	public void configurarPantalla() {
+		
+		if (usuario != null && tipoOperacion != Herramientas.tipoOperacion.insertar) {
+			TFId.setText(usuario.getId_Usuario()+"");
+			TFUsuario.setText(usuario.getUsuario());
+			PFPassword.setText(usuario.getPassword());
+			PFValidarPassword.setText(usuario.getPassword());
+			TFNombre.setText(usuario.getNombre());
+			TFAPaterno.setText(usuario.getApaterno());
+			TFAMaterno.setText(usuario.getAmaterno());
+			TFCorreoElectronico.setText(usuario.getCorreo());
+			TFDireccion.setText(usuario.getDireccion());
+			TFPuesto.setText(usuario.getPuesto());
+			TFTelefono.setText(usuario.getTelefono());
+		}
 	}
 	
 	public void inicializarPantalla() {
+		
+		ComponentesDesing.textFieldDeshabilitar(TFId);
 		
 		switch (tipoOperacion) {
 			case Herramientas.tipoOperacion.insertar:
@@ -246,17 +291,16 @@ public class FormUsuarios extends JDialog {
 				break;
 			case Herramientas.tipoOperacion.eliminar:
 				B_Grabar.setVisible(false);
-				//TFId.setEditable(false);
-				TFUsuario.setEditable(false);
-				PFPassword.setEditable(false);
-				PFValidarPassword.setEditable(false);
-				TFNombre.setEditable(false);
-				TFAPaterno.setEditable(false);
-				TFAMaterno.setEditable(false);
-				TFCorreoElectronico.setEditable(false);
-				TFDireccion.setEditable(false);
-				TFPuesto.setEditable(false);
-				TFTelefono.setEditable(false);
+				ComponentesDesing.textFieldDeshabilitar(TFUsuario);
+				ComponentesDesing.textFieldDeshabilitar(TFNombre);
+				ComponentesDesing.textFieldDeshabilitar(TFAPaterno);
+				ComponentesDesing.textFieldDeshabilitar(TFAMaterno);
+				ComponentesDesing.textFieldDeshabilitar(TFCorreoElectronico);
+				ComponentesDesing.textFieldDeshabilitar(TFDireccion);
+				ComponentesDesing.textFieldDeshabilitar(TFPuesto);
+				ComponentesDesing.textFieldDeshabilitar(TFTelefono);
+				ComponentesDesing.JPasswordFieldDeshabilitar(PFPassword);
+				ComponentesDesing.JPasswordFieldDeshabilitar(PFValidarPassword);
 				break;
 		}
 		

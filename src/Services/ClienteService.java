@@ -1,6 +1,7 @@
 package Services;
 
 import DAO.ClientesDAO;
+import DAO.ProductosDAO;
 import DAO.ModelsDAO.Cliente;
 import HerramientasConexion.Herramientas;
 import Models.ClienteView;
@@ -61,6 +62,15 @@ public class ClienteService {
 	public Respuesta eliminar(String idCliente) {
 		
 		respuesta = new Respuesta("",true,null);
+		Respuesta respuestaT = new Respuesta("",false,null);
+		
+		ClientesDAO clientesDAO = new ClientesDAO();
+		respuesta = clientesDAO.eliminarCliente(idCliente);
+		
+		respuestaT = clientesDAO.obtenerCliente(idCliente);
+
+		if ( !(respuestaT.getRespuesta() == null) )
+			return new Respuesta("Problemas al intentar Eliminar al Cliente "+idCliente,false,null);
 		
 		return respuesta;
 	}
@@ -86,7 +96,7 @@ public class ClienteService {
 				cliente.setIdentificador(respuesta.getRespuesta().toString());
 			}	
 			else
-				cliente.setIdentificador(clienteView.getIdentificador());
+				cliente.setIdentificador(clienteView.getId_Cliente());
 			
 			respuesta.setRespuesta(cliente);
 		} catch (NumberFormatException e) {
@@ -129,9 +139,9 @@ public class ClienteService {
 		try {
 			
 			//Para actualizar
-			if( Herramientas.tipoOperacion.actualizar == tipoOperacion && clienteView.getIdentificador().equals("") && clienteView.getIdentificador().isEmpty())
+			if( Herramientas.tipoOperacion.actualizar == tipoOperacion && (clienteView.getId_Cliente().equals("") || clienteView.getId_Cliente().isEmpty()))
 				return new Respuesta("No se ha seleccionado un Cliente",false,null);	
-			respuestaT =  clienteDao.obtenerCliente( clienteView.getIdentificador());		
+			respuestaT =  clienteDao.obtenerCliente( clienteView.getId_Cliente());		
 			
 			if(!respuestaT.getValor())
 				return respuestaT;

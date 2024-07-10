@@ -9,8 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import DAO.ModelsDAO.Cliente;
+import DAO.ModelsDAO.Proveedor;
 import HerramientasConexion.ConexionGlobal;
-import Models.Proveedor;
 import Models.Respuesta;
 
 public class ClientesDAO {
@@ -241,7 +241,7 @@ public class ClientesDAO {
 		
 		respuesta = new Respuesta("Cliente Actualizado Correctamente",true,null);
 		query = "update clientes set  Nombre=?, Apaterno=?, Amaterno=?, FechaNac=?, Telefono=?, Correo=?, Compras=?"
-				+" where Id_Cliente ="+clienteA.getIdentificador();
+				+" where Id_Cliente = '"+clienteA.getIdentificador()+"'";
 		
 		try {
 			ConexionGlobal.establecerConexio();
@@ -273,10 +273,10 @@ public class ClientesDAO {
 		return respuesta;
 	}
 	
-	public Respuesta eliminarCiente(int Id_Cliente) {
+	public Respuesta eliminarCliente(String Id_Cliente) {
 		
 		respuesta = new Respuesta("Cliente Eliminado Correctamente.",true,null);
-		query = "update clientes set Estatus = 'INACTIVO' where Id_Cliente = "+Id_Cliente+" ;";
+		query = "update clientes set Estatus = 'INACTIVO' where Id_Cliente = '"+Id_Cliente+"';";
 		
 		try {
 			ConexionGlobal.establecerConexio();
@@ -339,7 +339,7 @@ public class ClientesDAO {
 				);
 		//r = dao.insertarCliente(c);
 		//r = dao.actualizarCliente(c);
-		r = dao.eliminarCiente(12);
+		r = dao.eliminarCliente("");
 		System.out.println(r.getMensaje());
 		
 		
