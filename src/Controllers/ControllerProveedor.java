@@ -22,8 +22,7 @@ public class ControllerProveedor {
 			respuesta = proveedorService.actualizar((ProveedorView) objeto);
 			break;
 		case Herramientas.tipoOperacion.eliminar:
-			ProveedorView proveedorView =  ((ProveedorView) objeto);
-			respuesta = proveedorService.eliminar(proveedorView.getId_Proveedor());
+			respuesta = proveedorService.eliminar(((ProveedorView) objeto));
 			break;
 		case Herramientas.tipoOperacion.seleccionar:
 			break;

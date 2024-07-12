@@ -4,39 +4,43 @@ import java.sql.Date;
 
 public class Proveedor {
 
-	private int Id_Proveedor;
+	private String Id_Proveedor;
 	private String Nombre;
 	private String Apaterno;
 	private String Amaterno;
-	private String Num_Telefono;
+	private String Telefono;
 	private String Correo;
 	private String Empresa;
 	private String Direccion;
 	private Date FechaRegistro;
+	private String TipoProducto;
+	private String NotasAdicionales;
 	
 	public Proveedor() {
 		
 	}
 
-	public Proveedor(int id_Proveedor, String nombre, String apaterno, String amaterno, String num_Telefono,
-			String correo, String empresa, String direccion, Date fechaRegistro) {
+	public Proveedor(String id_Proveedor, String nombre, String apaterno, String amaterno, String num_Telefono,
+			String correo, String empresa, String direccion, Date fechaRegistro,String TipoProducto, String NotasAdicionales) {
 		super();
 		Id_Proveedor = id_Proveedor;
 		Nombre = nombre;
 		Apaterno = apaterno;
 		Amaterno = amaterno;
-		Num_Telefono = num_Telefono;
+		Telefono = num_Telefono;
 		Correo = correo;
 		Empresa = empresa;
 		Direccion = direccion;
 		FechaRegistro = fechaRegistro;
+		this.TipoProducto = TipoProducto;
+		this.NotasAdicionales = NotasAdicionales;
 	}
 
-	public int getId_Proveedor() {
+	public String getId_Proveedor() {
 		return Id_Proveedor;
 	}
 
-	public void setId_Proveedor(int id_Proveedor) {
+	public void setId_Proveedor(String id_Proveedor) {
 		Id_Proveedor = id_Proveedor;
 	}
 
@@ -64,12 +68,12 @@ public class Proveedor {
 		Amaterno = amaterno;
 	}
 
-	public String getNum_Telefono() {
-		return Num_Telefono;
+	public String getTelefono() {
+		return Telefono;
 	}
 
-	public void setNum_Telefono(String num_Telefono) {
-		Num_Telefono = num_Telefono;
+	public void setTelefono(String num_Telefono) {
+		Telefono = num_Telefono;
 	}
 
 	public String getCorreo() {
@@ -102,6 +106,22 @@ public class Proveedor {
 
 	public void setFechaRegistro(Date fechaRegistro) {
 		FechaRegistro = fechaRegistro;
+	}
+
+	public String getTipoProducto() {
+		return TipoProducto;
+	}
+
+	public void setTipoProducto(String tipoProducto) {
+		TipoProducto = tipoProducto;
+	}
+
+	public String getNotasAdicionales() {
+		return NotasAdicionales;
+	}
+
+	public void setNotasAdicionales(String notasAdicionales) {
+		NotasAdicionales = notasAdicionales;
 	}
 	
 	

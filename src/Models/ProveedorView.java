@@ -8,10 +8,12 @@ public class ProveedorView {
 	private String Nombre;
 	private String Apaterno;
 	private String Amaterno;
-	private String Num_Telefono;
+	private String Telefono;
 	private String Correo;
 	private String Empresa;
 	private String Direccion;
+	private String TipoProducto;
+	private String NotasAdicionales;
 	private Date FechaRegistro;
 	
 	public ProveedorView() {
@@ -50,12 +52,12 @@ public class ProveedorView {
 		Amaterno = amaterno;
 	}
 
-	public String getNum_Telefono() {
-		return Num_Telefono;
+	public String getNumTelefono() {
+		return Telefono;
 	}
 
-	public void setNum_Telefono(String num_Telefono) {
-		Num_Telefono = num_Telefono;
+	public void setTelefono(String num_Telefono) {
+		Telefono = num_Telefono;
 	}
 
 	public String getCorreo() {
@@ -88,6 +90,22 @@ public class ProveedorView {
 
 	public void setFechaRegistro(Date fechaRegistro) {
 		FechaRegistro = fechaRegistro;
+	}
+
+	public String getTipoProducto() {
+		return TipoProducto;
+	}
+
+	public void setTipoProducto(String tipoProducto) {
+		TipoProducto = tipoProducto;
+	}
+
+	public String getNotasAdicionales() {
+		return NotasAdicionales;
+	}
+
+	public void setNotasAdicionales(String notasAdicionales) {
+		NotasAdicionales = notasAdicionales;
 	}
 	
 	

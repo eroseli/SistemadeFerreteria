@@ -44,9 +44,9 @@ public class ConexionGlobal {
 	}
 	
 	public static void reasignacionVariables() {
-		url = "jdbc:mysql://monorail.proxy.rlwy.net:29266/railway";
+		url = "jdbc:mysql://viaduct.proxy.rlwy.net:52440/railway";
 		user = "root";
-		pass = "RFjowuxQFIMfJBTRkeabHkZPvdOfOoFb";
+		pass = "YaGWTBPishvfDOuZaJjnTxbsZHeAMXuG";
 	}
 	
 	public static Connection establecerConexionRemota() {

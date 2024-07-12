@@ -19,7 +19,7 @@ public class Herramientas {
 		
 		public static final String CadenaSi = "Si";
 		public static final String CadenaNo = "No";
-
+		public static final String CadenaVacia = "";
 	}
 	
 	public static final class tipoPago{
