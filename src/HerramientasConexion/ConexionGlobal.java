@@ -44,9 +44,9 @@ public class ConexionGlobal {
 	}
 	
 	public static void reasignacionVariables() {
-		url = "jdbc:mysql://viaduct.proxy.rlwy.net:52440/railway";
+		url = "jdbc:mysql://roundhouse.proxy.rlwy.net:19734/railway";
 		user = "root";
-		pass = "YaGWTBPishvfDOuZaJjnTxbsZHeAMXuG";
+		pass = "GjfJEqojOUWYerxIpQBMRjHkynrmAfix";
 	}
 	
 	public static Connection establecerConexionRemota() {

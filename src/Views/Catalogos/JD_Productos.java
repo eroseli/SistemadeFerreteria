@@ -190,8 +190,8 @@ public class JD_Productos extends JDialog {
 	public void obtenerProductos() {
 		
 		String[] columnNames = {"ID", "Codigo", "Nombre", "Descripcion",
-								"cantidad", "Fecha", "Precio adq", "precio",
-								"precio", "Categoria", "otra categoria", "gerge",};
+								"Cantidad", "Fecha Cad.", "P. Público", "P. Mayoreo",
+								"P. Adquisición", "Existencia", "Categoría", "Marca",};
 
 		productos = (ArrayList<Producto>) productosDAO.obtenerProductos().getRespuesta();
 		Object[][] datos = new Object[productos.size()][12];

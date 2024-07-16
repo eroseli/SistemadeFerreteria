@@ -17,6 +17,7 @@ import java.awt.Button;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.Panel;
+import java.awt.SystemColor;
 
 public class MenuPrincipal_Form extends JFrame {
 
@@ -62,6 +63,7 @@ public class MenuPrincipal_Form extends JFrame {
 		panel.setLayout(null);
 		
 		JLabel lblNewLabel = new JLabel("Bienvenido Usuario");
+		
 		lblNewLabel.setForeground(new Color(254, 255, 255));
 		lblNewLabel.setFont(new Font("Arial", Font.BOLD, 20));
 		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
@@ -75,9 +77,8 @@ public class MenuPrincipal_Form extends JFrame {
 		
 		JPanel JP_Principal = new JPanel();
 		JP_Principal.setBackground(new Color(66, 66, 66));
-		JP_Principal.setBounds(374, 6, 900, 666);
+		JP_Principal.setBounds(372, 6, 892, 666);
 		contentPane.add(JP_Principal);
-		
 		
 		button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -88,15 +89,18 @@ public class MenuPrincipal_Form extends JFrame {
 				
 			}
 		});
-		
-		
+
 		//Contruccion de la pantalla
 		JP_Entrada jp_Entrada = new JP_Entrada();
-		jp_Entrada.setLocation(0,0);	
+		jp_Entrada.setBackground(SystemColor.inactiveCaptionBorder);
+		jp_Entrada.setSize(872, 650);
+		jp_Entrada.setLocation(10,5);	
 		jp_Entrada.setPreferredSize(new Dimension(500,500));
 		
 		JP_Principal.removeAll();	
-		JP_Principal.add(jp_Entrada,BorderLayout.CENTER);	
+		JP_Principal.setLayout(null);
+		JP_Principal.add(jp_Entrada);	
+		jp_Entrada.setLayout(null);
 		JP_Principal.revalidate();	
 		JP_Principal.repaint();	
 				
