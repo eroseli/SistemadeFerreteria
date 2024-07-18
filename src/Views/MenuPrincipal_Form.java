@@ -23,7 +23,7 @@ public class MenuPrincipal_Form extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
-
+	JPanel JP_Principal;
 	/**
 	 * Launch the application.
 	 */
@@ -44,9 +44,6 @@ public class MenuPrincipal_Form extends JFrame {
 	 * Create the frame.
 	 */
 	public MenuPrincipal_Form() {
-		
-		
-		
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 1280, 720);
@@ -75,7 +72,7 @@ public class MenuPrincipal_Form extends JFrame {
 		button.setBounds(125, 91, 117, 29);
 		panel.add(button);
 		
-		JPanel JP_Principal = new JPanel();
+		JP_Principal = new JPanel();
 		JP_Principal.setBackground(new Color(66, 66, 66));
 		JP_Principal.setBounds(372, 6, 892, 666);
 		contentPane.add(JP_Principal);
@@ -86,26 +83,21 @@ public class MenuPrincipal_Form extends JFrame {
 				JP_Productos jp_productos = new JP_Productos();
 				Presentar(JP_Principal,jp_productos);
 				
-				
 			}
 		});
 
-		//Contruccion de la pantalla
-		JP_Entrada jp_Entrada = new JP_Entrada();
-		jp_Entrada.setBackground(SystemColor.inactiveCaptionBorder);
-		jp_Entrada.setSize(872, 650);
-		jp_Entrada.setLocation(10,5);	
-		jp_Entrada.setPreferredSize(new Dimension(500,500));
+		mostrarPanel();
+	}
+	
+	public void mostrarPanel() {
+		JP_Productos jp_productos = new JP_Productos();
+		jp_productos.setLocation(0,0);
+		jp_productos.setPreferredSize(new Dimension(880,642));
 		
-		JP_Principal.removeAll();	
-		JP_Principal.setLayout(null);
-		JP_Principal.add(jp_Entrada);	
-		jp_Entrada.setLayout(null);
-		JP_Principal.revalidate();	
-		JP_Principal.repaint();	
-				
-
-		
+		JP_Principal.removeAll();
+		JP_Principal.add(jp_productos);
+		JP_Principal.validate();
+		JP_Principal.repaint();
 	}
 	
 	public void Presentar(JPanel J_Panel_Principal, JPanel panel) {

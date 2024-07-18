@@ -1,6 +1,7 @@
 package Controllers;
 
 import HerramientasConexion.Herramientas;
+import Models.ProductoBusquedaView;
 import Models.ProductoView;
 import Models.Respuesta;
 import Services.ProductoService;
@@ -26,11 +27,10 @@ public class ControllerProducto {
 			respuesta = productoService.eliminar(productoView.getCodigo());
 			break;
 		case Herramientas.tipoOperacion.seleccionar:
+			ProductoBusquedaView busquedaView = (ProductoBusquedaView) objeto;
+			respuesta = productoService.seleccionar(busquedaView);
 			break;
-
 		}
-		
-		
 		return respuesta;
 	}
 	

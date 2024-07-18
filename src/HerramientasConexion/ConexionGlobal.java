@@ -4,6 +4,8 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+import com.mysql.cj.jdbc.MysqlDataSource;
+
 
 public class ConexionGlobal {
 
@@ -31,6 +33,7 @@ public class ConexionGlobal {
 	
 	public static Connection establecerConexio() {
 		 try {
+			 System.out.println("Obtener conexion");
 	            Class.forName("com.mysql.jdbc.Driver");
 	            connection = (Connection) DriverManager.getConnection(url,user,pass);
 	            //con = (Connection) DriverManager.getConnection("jdbc:mysql://localhost/farmacia","root","root");
@@ -44,9 +47,9 @@ public class ConexionGlobal {
 	}
 	
 	public static void reasignacionVariables() {
-		url = "jdbc:mysql://roundhouse.proxy.rlwy.net:19734/railway";
-		user = "root";
-		pass = "GjfJEqojOUWYerxIpQBMRjHkynrmAfix";
+		url = "jdbc:mysql://bduudo5eopk04nqchg7f-mysql.services.clever-cloud.com:3306/bduudo5eopk04nqchg7f";
+		user = "ukupg1zmjfsdff9o";
+		pass = "IbyJPkPmhQnKu0BQfd7u";
 	}
 	
 	public static Connection establecerConexionRemota() {

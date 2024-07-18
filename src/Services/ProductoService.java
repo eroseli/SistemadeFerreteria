@@ -6,6 +6,7 @@ import DAO.ProductosDAO;
 import DAO.ModelsDAO.Producto;
 import HerramientasConexion.Herramientas;
 import HerramientasConexion.Herramientas.tipoOperacion;
+import Models.ProductoBusquedaView;
 import Models.ProductoView;
 import Models.Respuesta;
 
@@ -75,6 +76,17 @@ public class ProductoService {
 		if ( !(respuestaT.getRespuesta() == null) )
 			return new Respuesta("Problemas al intentar Eliminar el producto "+codigo,false,null);
 		
+		return respuesta;
+	}
+	
+	public Respuesta seleccionar(ProductoBusquedaView productoBusquedaView) {
+		respuesta = new Respuesta("",true,null);
+		ProductosDAO productosDAO = new ProductosDAO();
+		try {
+			respuesta =  productosDAO.obtenerProductoBusqueda(productoBusquedaView);
+		} catch (Exception e) {
+			return new Respuesta("Problemas al intentar obtener los Productos "+e.getMessage(),false,null);
+		}
 		return respuesta;
 	}
 	

@@ -1,8 +1,10 @@
 package DAO;
 
+import java.sql.CallableStatement;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -10,6 +12,7 @@ import java.util.List;
 import javax.swing.JOptionPane;
 
 import HerramientasConexion.ConexionGlobal;
+import Models.ProductoBusquedaView;
 import Models.Respuesta;
 import DAO.ModelsDAO.Producto;
 
@@ -72,7 +75,82 @@ public Respuesta obtenerProductoCodigo(String nombre) {
 		}		
 		return  respuesta;
 	}
-	
+
+	public Respuesta obtenerProductoBusqueda(ProductoBusquedaView productoBusquedaView) {
+		Respuesta respuesta = new Respuesta("",true,null);
+		String query = "{call PROCEDIMIENTOPRODUCTOSFILTRO(?,?,?,?)}";
+		ResultSet rs = null;
+		
+		try {
+			productos.clear();
+			
+			ConexionGlobal.establecerConexio();
+			stm = (CallableStatement) ConexionGlobal.connection.prepareCall(query);
+			
+			stm.setString(1, productoBusquedaView.getBusqueda());
+			stm.setDate(2, productoBusquedaView.getFechaInicio());
+			stm.setDate(3, productoBusquedaView.getFechaFinal());
+			stm.setString(4, productoBusquedaView.getFiltroBusqueda());
+			
+			boolean tieneResultados = stm.execute();
+            
+            // Si tiene resultados, procesar el ResultSet
+            if (tieneResultados) {
+                rs = stm.getResultSet();
+                
+                ResultSetMetaData metaData = rs.getMetaData();
+                int numColumns = metaData.getColumnCount();
+                
+                while (rs.next()) {
+                	System.out.println(1);
+                    producto = new Producto(
+    						rs.getInt("Id_producto"),
+                    		rs.getString("Codigo"),
+                    		rs.getString("Nombre"),
+                    		rs.getString("Descripcion"),
+    						rs.getString("Cantidad"),
+                    		rs.getDate("Fecha_caducidad"),
+                    		rs.getFloat("P_publico"),
+                    		rs.getFloat("P_Mayoreo"),
+                    		rs.getFloat("P_Adquisicion"),
+                    		rs.getInt("Existencia"),
+                    		rs.getString("Categoria"),
+                    		rs.getString("Marca")
+                    		);
+                    
+                    productos.add(producto);
+                    
+                    
+                    for (int i = 1; i <= numColumns; i++) {
+                        String columnName = metaData.getColumnName(i);
+                        Object value = rs.getObject(columnName);
+                        System.out.println(columnName + ": " + value);
+                    }
+                    System.out.println("----------------------------------");
+                    
+                }
+                
+                rs.close(); // Cerrar el ResultSet después de usarlo
+            }
+			
+            respuesta.setRespuesta(productos);
+			
+		} catch (SQLException e) {
+			respuesta = new Respuesta("Error al intentar correr procedimiento"+e.getMessage(), false, null);
+			e.printStackTrace();
+		}
+		finally {						
+			try {
+				ConexionGlobal.cerrarConexion();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}			
+		}
+		
+		return respuesta;
+	}
+
 	public Respuesta obtenerProductoCoincidencia(String nombre) {
 		
 		Respuesta respuesta = new Respuesta("",true,null);
@@ -120,6 +198,71 @@ public Respuesta obtenerProductoCodigo(String nombre) {
 		
 		return  respuesta;
 	}
+	
+	public Respuesta obtenerProductoFiltro(String filtro, String nombre) {
+		
+		respuesta = new Respuesta("",true,null);
+		productos = new ArrayList<Producto>();
+		String query = "select * from productos ";
+		String where = "";
+		
+		switch (filtro) {
+			case "Fecha de Registro":
+				query = query +  (!nombre.equals("") && !nombre.isEmpty()?" where nombre like '%"+nombre+"%' ":"") + " order by Fecha_caducidad desc";
+				break;
+			case "Stock Positivo":
+				query = query +"where "+(!nombre.equals("") && !nombre.isEmpty()?"nombre like '%"+nombre+"%' and":"")+ " Existencia >0";
+				break;
+			case "Faltantes":
+				query = query +(!nombre.equals("") && !nombre.isEmpty()?" where nombre like '%"+nombre+"%' and":"")+ " Existencia =0";
+				break;
+			case "A - Z":
+				query = query +(!nombre.equals("") && !nombre.isEmpty()?" where nombre like '%"+nombre+"%' ":"")+" order by Nombre asc";
+				break;
+			case "Z - A":
+				query = query +(!nombre.equals("") && !nombre.isEmpty()?" where nombre like '%"+nombre+"%' ":"")+ " order by Nombre desc";
+				break;
+		}
+			
+		try {
+			
+			productos.clear();
+			ConexionGlobal.establecerConexio();
+            stm =  (PreparedStatement) ConexionGlobal.connection.prepareStatement(query);           
+			resultados = stm.executeQuery();
+			
+			while (resultados.next()) {
+				producto = new Producto(
+						resultados.getInt("Id_producto"),
+                		resultados.getString("Codigo"),
+                		resultados.getString("Nombre"),
+                		resultados.getString("Descripcion"),
+						resultados.getString("Cantidad"),
+                		resultados.getDate("Fecha_caducidad"),
+                		resultados.getFloat("P_publico"),
+                		resultados.getFloat("P_Mayoreo"),
+                		resultados.getFloat("P_Adquisicion"),
+                		resultados.getInt("Existencia"),
+                		resultados.getString("Categoria"),
+                		resultados.getString("Marca")
+                		);
+				
+				productos.add(producto);
+			}
+			
+			respuesta.setRespuesta(productos);
+			ConexionGlobal.cerrarConexion();
+			
+		} catch (Exception e) {
+			respuesta = new Respuesta("Error al obtener los datos", false, null);
+		}
+		finally {
+			
+		}
+		
+		return respuesta;
+	}
+	
 
 	public Respuesta obtenerProductos()   {
 		
@@ -170,7 +313,7 @@ public Respuesta obtenerProductoCodigo(String nombre) {
 		respuesta = new Respuesta("Producto Registrado Correctamente.",true,null);
 		
 		String query = "INSERT INTO productos(Codigo, Nombre, Descripcion, Cantidad, Fecha_caducidad, P_publico, P_Mayoreo, P_Adquisicion,"
-				+ "	Existencia, Categoria, Marca) values(?,?,?,?,?,?,?,?,?,?,?);";
+				+ "	Existencia, Categoria, Marca,Estatus) values(?,?,?,?,?,?,?,?,?,?,?,?);";
 		
 		try {
 			
@@ -188,7 +331,7 @@ public Respuesta obtenerProductoCodigo(String nombre) {
             stm.setInt(9,producto.getExistencia());
             stm.setString(10,producto.getCategoria());
             stm.setString(11,producto.getMarca());
-            
+            stm.setString(12,"ACTIVO");
             stm.execute();
 
 			
