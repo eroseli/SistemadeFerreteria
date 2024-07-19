@@ -12,12 +12,15 @@ import java.util.Iterator;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
 
 import DAO.ModelsDAO.Producto;
 import HerramientasConexion.Herramientas;
 import Models.ProductoBusquedaView;
 import Models.Respuesta;
-import Models.Components.JTableEdidata;
+import Models.Components.CustomHeaderRenderer;
+import Models.Components.JTableEdited;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -58,7 +61,11 @@ public class JP_Productos extends JPanel {
             {1, "ABC123", "Producto A", "Descripción del producto A",
                     10, "2024-12-31", 100.0, 80.0, 50.0, 20, "Electrónica", "Marca A"},
             {2, "XYZ456", "Producto B", "Descripción del producto B",
-                    5, "2023-10-15", 120.0, 100.0, 70.0, 15, "Ropa", "Marca B"}
+                    5, "2023-10-15", 120.0, 100.0, 70.0, 15, "Ropa", "Marca B"},
+            {3, "XYZ456", "Producto C", "Descripción del producto B",
+                        5, "2023-10-15", 120.0, 100.0, 70.0, 15, "Ropa", "Marca B"},
+            {4, "XYZ456", "Producto D", "Descripción del producto B",
+                            5, "2023-10-15", 120.0, 100.0, 70.0, 15, "Ropa", "Marca B"}
     };
     private JTextField TBuscar;
 	
@@ -69,25 +76,27 @@ public class JP_Productos extends JPanel {
 		setMaximumSize(new Dimension(892, 666));
 		setLayout(null);
 	    
-		JT_Productos = new JTableEdidata();
-		JT_Productos.setBounds(10, 63, 880, 504);
-		JT_Productos.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-		JT_Productos.setDefaultEditor(Object.class, null);
-		JT_Productos.setAutoCreateRowSorter(true);
-		JT_Productos.isCellEditable(0,0);
-		
-		dtm = new DefaultTableModel(datos, columnNames);
-
-		JT_Productos = new JTable(dtm);
+		JT_Productos = new JTableEdited();
 		JT_Productos.setFont(new Font("Arial", Font.PLAIN, 12));
-		JT_Productos.setBackground(new Color(229, 247, 246));
-		JT_Productos.setAutoCreateRowSorter(true);
+		//JT_Productos.setBackground(new Color(229, 247, 246));
+		//JT_Productos.setBounds(10, 63, 880, 504);
+		JT_Productos.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+		JT_Productos.setDefaultEditor(Object.class, null);		
+		dtm = new DefaultTableModel(datos, columnNames);
+		JT_Productos.setModel(dtm);
 
-        JScrollPane scrollPane = new JScrollPane(JT_Productos);
+		CustomHeaderRenderer render = new CustomHeaderRenderer();
+		JT_Productos.setDefaultRenderer(Object.class, render);
+		
+        JScrollPane scrollPane = new JScrollPane(JT_Productos);//,JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+        scrollPane.setBackground(new Color(255, 255, 255));
         scrollPane.setBounds(10, 44, 850, 595);
+        
         this.add(scrollPane, BorderLayout.CENTER);
+        ajustarTabla(JT_Productos);
         
         JButton BBuscar = new JButton("Buscar");
+        BBuscar.setToolTipText("Buscar productos con aplicación de filtros");
         BBuscar.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
         		
@@ -104,17 +113,19 @@ public class JP_Productos extends JPanel {
         add(BBuscar);
         
         DCInicial = new JDateChooser();
+        DCInicial.setToolTipText("Fecha de Inicio");
         DCInicial.setMaximumSize(new Dimension(140, 28));
         DCInicial.setMinimumSize(new Dimension(140, 28));
         DCInicial.setFont(new Font("Segoe UI", Font.PLAIN, 11));
-        DCInicial.setBounds(471, 13, 140, 20);
+        DCInicial.setBounds(321, 13, 140, 20);
         add(DCInicial);
         
         DCFinal = new JDateChooser();
+        DCFinal.setToolTipText("Fecha Final");
         DCFinal.setMinimumSize(new Dimension(140, 28));
         DCFinal.setMaximumSize(new Dimension(140, 28));
         DCFinal.setFont(new Font("Segoe UI", Font.PLAIN, 11));
-        DCFinal.setBounds(321, 13, 140, 20);
+        DCFinal.setBounds(471, 13, 140, 20);
         add(DCFinal);
         
         TBuscar = new JTextField();
@@ -124,7 +135,7 @@ public class JP_Productos extends JPanel {
         
         CBBuscar = new JComboBox();
         CBBuscar.setModel(new DefaultComboBoxModel(new String[] {"Buscar", "Fecha de Registro", "Stock Positivo", "Faltantes", "A - Z", "Z - A"}));
-        CBBuscar.setBounds(171, 11, 140, 22);
+        CBBuscar.setBounds(171, 13, 140, 22);
         add(CBBuscar);
         
         JButton BReporte = new JButton("Reporte");
@@ -140,6 +151,22 @@ public class JP_Productos extends JPanel {
 		setCursor(cursor);
 		
 	}
+	
+	private void ajustarTabla(JTable tabla)
+	{
+		TableColumn columna;
+	    
+	    for (int i=0; i<tabla.getColumnCount(); i++) {
+	    	columna=tabla.getColumnModel().getColumn(i);
+		    columna.setPreferredWidth(120);
+		    columna.setMaxWidth(200);
+		    columna.setMinWidth(120);
+	    }
+	    JT_Productos.setRowHeight(22);
+	    
+	    
+	    
+	}	
 	
 	private void limpiarTablaProductos() {		
 		try {
@@ -176,7 +203,7 @@ public class JP_Productos extends JPanel {
 			productoBusquedaView.setFiltroBusqueda((String)CBBuscar.getSelectedItem());
 			productoBusquedaView.setFechaInicio( DCInicial.getDate()!= null?  Herramientas.convertirFecha(DCInicial):null);
 			productoBusquedaView.setFechaFinal(DCFinal.getDate() != null? Herramientas.convertirFecha(DCFinal):null);
-			respuesta = controllerProducto.proceso(Herramientas.tipoOperacion.seleccionar, null);
+			respuesta = controllerProducto.proceso(Herramientas.tipoOperacion.seleccionar, productoBusquedaView);
 
 			if(!respuesta.getValor()) {
 				JOptionPane.showMessageDialog(this, "Problemas al obtener la lista de productos"+respuesta.getMensaje());
@@ -220,6 +247,6 @@ public class JP_Productos extends JPanel {
 		}		
 		dtm = new DefaultTableModel(datos,columnNames);
 		JT_Productos.setModel(dtm);
-		
+		ajustarTabla(JT_Productos);
 	}
 }

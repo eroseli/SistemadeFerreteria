@@ -93,16 +93,15 @@ public Respuesta obtenerProductoCodigo(String nombre) {
 			stm.setString(4, productoBusquedaView.getFiltroBusqueda());
 			
 			boolean tieneResultados = stm.execute();
-            
+            System.out.println(query);
             // Si tiene resultados, procesar el ResultSet
             if (tieneResultados) {
                 rs = stm.getResultSet();
                 
                 ResultSetMetaData metaData = rs.getMetaData();
                 int numColumns = metaData.getColumnCount();
-                
+                System.out.println(rs.getStatement().toString());
                 while (rs.next()) {
-                	System.out.println(1);
                     producto = new Producto(
     						rs.getInt("Id_producto"),
                     		rs.getString("Codigo"),
@@ -121,12 +120,12 @@ public Respuesta obtenerProductoCodigo(String nombre) {
                     productos.add(producto);
                     
                     
-                    for (int i = 1; i <= numColumns; i++) {
-                        String columnName = metaData.getColumnName(i);
-                        Object value = rs.getObject(columnName);
-                        System.out.println(columnName + ": " + value);
-                    }
-                    System.out.println("----------------------------------");
+//                    for (int i = 1; i <= numColumns; i++) {
+//                        String columnName = metaData.getColumnName(i);
+//                        Object value = rs.getObject(columnName);
+//                        System.out.println(columnName + ": " + value);
+//                    }
+//                    System.out.println("----------------------------------");
                     
                 }
                 

@@ -12,7 +12,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import DAO.ModelsDAO.Producto;
 import Models.ProductoVenta;
-import Models.Components.JTableEdidata;
+import Models.Components.JTableEdited;
 import Views.JF_Venta;
 import javax.swing.JTable;
 import java.awt.Color;
@@ -66,7 +66,7 @@ public class JD_Productos extends JDialog {
 			JScrollPane scrollPane = new JScrollPane();
 			scrollPane.setBounds(6, 6, 791, 430);
 			contentPanel.add(scrollPane);
-			TablaProductos = new JTableEdidata();
+			TablaProductos = new JTableEdited();
 			TablaProductos.setFont(new Font("Arial", Font.PLAIN, 12));
 			scrollPane.setViewportView(TablaProductos);
 			TablaProductos.setBackground(new Color(229, 247, 246));
