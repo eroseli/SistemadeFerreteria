@@ -77,7 +77,7 @@ public class FormProductos extends JDialog {
 			producto.setCategoria("Nueva Categoría");
 			producto.setMarca("Marca Nueva");
 			
-			FormProductos dialog = new FormProductos(Herramientas.tipoOperacion.actualizar,producto);
+			FormProductos dialog = new FormProductos(Herramientas.tipoOperacion.insertar,producto);
 			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 			dialog.setVisible(true);
 		} catch (Exception e) {

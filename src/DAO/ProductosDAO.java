@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -55,7 +56,8 @@ public Respuesta obtenerProductoCodigo(String nombre) {
                 		resultados.getFloat("P_Adquisicion"),
                 		resultados.getInt("Existencia"),
                 		resultados.getString("Categoria"),
-                		resultados.getString("Marca")
+                		resultados.getString("Marca"),
+                		resultados.getDate("FechaRegistro")
                 		);
 				
 			}
@@ -78,7 +80,7 @@ public Respuesta obtenerProductoCodigo(String nombre) {
 
 	public Respuesta obtenerProductoBusqueda(ProductoBusquedaView productoBusquedaView) {
 		Respuesta respuesta = new Respuesta("",true,null);
-		String query = "{call PROCEDIMIENTOPRODUCTOSFILTRO(?,?,?,?)}";
+		String query = "{call PROCEDIMIENTOPRODUCTOSFILTRO(?,?,?,?,?)}";
 		ResultSet rs = null;
 		
 		try {
@@ -91,6 +93,7 @@ public Respuesta obtenerProductoCodigo(String nombre) {
 			stm.setDate(2, productoBusquedaView.getFechaInicio());
 			stm.setDate(3, productoBusquedaView.getFechaFinal());
 			stm.setString(4, productoBusquedaView.getFiltroBusqueda());
+			stm.setString(5, productoBusquedaView.getFecha());
 			
 			boolean tieneResultados = stm.execute();
             System.out.println(query);
@@ -114,7 +117,8 @@ public Respuesta obtenerProductoCodigo(String nombre) {
                     		rs.getFloat("P_Adquisicion"),
                     		rs.getInt("Existencia"),
                     		rs.getString("Categoria"),
-                    		rs.getString("Marca")
+                    		rs.getString("Marca"),
+                    		rs.getDate("FechaRegistro")
                     		);
                     
                     productos.add(producto);
@@ -175,7 +179,8 @@ public Respuesta obtenerProductoCodigo(String nombre) {
                 		resultados.getFloat("P_Adquisicion"),
                 		resultados.getInt("Existencia"),
                 		resultados.getString("Categoria"),
-                		resultados.getString("Marca")
+                		resultados.getString("Marca"),
+                		resultados.getDate("FechaRegistro")
                 		);
 				
 				productos.add(producto);
@@ -243,7 +248,8 @@ public Respuesta obtenerProductoCodigo(String nombre) {
                 		resultados.getFloat("P_Adquisicion"),
                 		resultados.getInt("Existencia"),
                 		resultados.getString("Categoria"),
-                		resultados.getString("Marca")
+                		resultados.getString("Marca"),
+                		resultados.getDate("FechaRegistro")
                 		);
 				
 				productos.add(producto);
@@ -289,7 +295,8 @@ public Respuesta obtenerProductoCodigo(String nombre) {
                 		resultados.getFloat("P_Adquisicion"),
                 		resultados.getInt("Existencia"),
                 		resultados.getString("Categoria"),
-                		resultados.getString("Marca")
+                		resultados.getString("Marca"),
+                		resultados.getDate("FechaRegistro")
                 		);
 				
 				productos.add(producto);
@@ -312,7 +319,7 @@ public Respuesta obtenerProductoCodigo(String nombre) {
 		respuesta = new Respuesta("Producto Registrado Correctamente.",true,null);
 		
 		String query = "INSERT INTO productos(Codigo, Nombre, Descripcion, Cantidad, Fecha_caducidad, P_publico, P_Mayoreo, P_Adquisicion,"
-				+ "	Existencia, Categoria, Marca,Estatus) values(?,?,?,?,?,?,?,?,?,?,?,?);";
+				+ "	Existencia, Categoria, Marca,Estatus,FechaRegistro) values(?,?,?,?,?,?,?,?,?,?,?,?,?);";
 		
 		try {
 			
@@ -331,6 +338,7 @@ public Respuesta obtenerProductoCodigo(String nombre) {
             stm.setString(10,producto.getCategoria());
             stm.setString(11,producto.getMarca());
             stm.setString(12,"ACTIVO");
+            stm.setDate(13, Date.valueOf(LocalDate.now()));
             stm.execute();
 
 			
@@ -374,9 +382,7 @@ public Respuesta obtenerProductoCodigo(String nombre) {
 			stm.setInt(9,producto.getExistencia() );
 			stm.setString(10,producto.getCategoria() );
 			stm.setString(11,producto.getMarca() );
-			stm.setString(12,producto.getCodigo() );
-			
-			
+			stm.setString(12,producto.getCodigo() );		
 			stm.execute();
 			
 		} catch (SQLException e) {

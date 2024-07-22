@@ -16,6 +16,7 @@ public class Producto {
 	private int Existencia;
 	private String Categoria;
 	private String Marca;
+	private Date FechaRegistro;
 	
 	public Producto() {
 	}
@@ -37,6 +38,24 @@ public class Producto {
 		Marca = marca;
 	}
 
+	public Producto(int id_producto, String codigo, String nombre, String descripcion, String cantidad,
+			Date fecha_caducidad, Float p_publico, Float p_Mayoreo, Float p_Adquisicion, int existencia,
+			String categoria, String marca, Date FechaRegistro) {
+		Id_producto = id_producto;
+		Codigo = codigo;
+		Nombre = nombre;
+		Descripcion = descripcion;
+		Cantidad = cantidad;
+		Fecha_caducidad = fecha_caducidad;
+		P_publico = p_publico;
+		P_Mayoreo = p_Mayoreo;
+		P_Adquisicion = p_Adquisicion;
+		Existencia = existencia;
+		Categoria = categoria;
+		Marca = marca;
+		this.FechaRegistro = FechaRegistro;
+	}
+	
 	public int getId_producto() {
 		return Id_producto;
 	}
@@ -132,9 +151,12 @@ public class Producto {
 	public void setMarca(String marca) {
 		Marca = marca;
 	}
-	
-	
-	
-	
 
+	public Date getFechaRegistro() {
+		return FechaRegistro;
+	}
+
+	public void setFechaRegistro(Date fechaRegistro) {
+		FechaRegistro = fechaRegistro;
+	}
 }

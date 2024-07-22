@@ -8,15 +8,17 @@ public class ProductoBusquedaView {
 	private Date fechaInicio;
 	private Date fechaFinal;
 	private String filtroBusqueda;
+	private String fecha;
 
 	public ProductoBusquedaView() {
 	}
 	
-	public ProductoBusquedaView(String busqueda, Date fechaInicial, Date fechaFinal, String filtroBusqueda) {
+	public ProductoBusquedaView(String busqueda, Date fechaInicial, Date fechaFinal, String filtroBusqueda, String fecha) {
 		this.busqueda = busqueda;
 		this.fechaInicio = fechaInicial;
 		this.fechaFinal = fechaFinal;
 		this.filtroBusqueda = filtroBusqueda;
+		this.fecha = fecha;
 	}
 	
 	public String getBusqueda() {
@@ -43,7 +45,13 @@ public class ProductoBusquedaView {
 	public void setFiltroBusqueda(String filtroBusqueda) {
 		this.filtroBusqueda = filtroBusqueda;
 	}
-	
-	
-	
+
+	public String getFecha() {
+		return fecha;
+	}
+
+	public void setFecha(String fecha) {
+		this.fecha = fecha;
+	}
+
 }

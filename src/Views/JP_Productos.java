@@ -12,6 +12,7 @@ import java.util.Iterator;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
@@ -37,6 +38,7 @@ import javax.swing.JComboBox;
 import javax.swing.DefaultComboBoxModel;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import javax.swing.JRadioButton;
 
 public class JP_Productos extends JPanel {
 
@@ -44,6 +46,7 @@ public class JP_Productos extends JPanel {
 	private JTable JT_Productos;
 	private JComboBox CBBuscar;
 	JDateChooser DCInicial,DCFinal;
+	private JRadioButton RBFecha;
 	
 	//Variables
 	private DAO.ProductosDAO productosDAO = new DAO.ProductosDAO();
@@ -54,18 +57,18 @@ public class JP_Productos extends JPanel {
 	
 	String[] columnNames = {"ID", "Codigo", "Nombre", "Descripcion",
 			"Cantidad", "Fecha Cad.", "P. Público", "P. Mayoreo",
-			"P. Adquisición", "Existencia", "Categoría", "Marca",};
+			"P. Adquisición", "Existencia", "Categoría", "Marca","Fecha de Registro",};
 	
 	// Ejemplo de datos (puedes llenar con datos reales de tu aplicación)
     Object[][] datos = {
             {1, "ABC123", "Producto A", "Descripción del producto A",
-                    10, "2024-12-31", 100.0, 80.0, 50.0, 20, "Electrónica", "Marca A"},
+                    10, "2024-12-31", 100.0, 80.0, 50.0, 20, "Electrónica", "Marca A",""},
             {2, "XYZ456", "Producto B", "Descripción del producto B",
-                    5, "2023-10-15", 120.0, 100.0, 70.0, 15, "Ropa", "Marca B"},
+                    5, "2023-10-15", 120.0, 100.0, 70.0, 15, "Ropa", "Marca B",""},
             {3, "XYZ456", "Producto C", "Descripción del producto B",
-                        5, "2023-10-15", 120.0, 100.0, 70.0, 15, "Ropa", "Marca B"},
+                        5, "2023-10-15", 120.0, 100.0, 70.0, 15, "Ropa", "Marca B",""},
             {4, "XYZ456", "Producto D", "Descripción del producto B",
-                            5, "2023-10-15", 120.0, 100.0, 70.0, 15, "Ropa", "Marca B"}
+                            5, "2023-10-15", 120.0, 100.0, 70.0, 15, "Ropa", "Marca B",""}
     };
     private JTextField TBuscar;
 	
@@ -77,7 +80,8 @@ public class JP_Productos extends JPanel {
 		setLayout(null);
 	    
 		JT_Productos = new JTableEdited();
-		JT_Productos.setFont(new Font("Arial", Font.PLAIN, 12));
+		JT_Productos.setSelectionBackground(new Color(255, 0, 0));
+		JT_Productos.setFont(new Font("Segoe UI", Font.PLAIN, 12));
 		//JT_Productos.setBackground(new Color(229, 247, 246));
 		//JT_Productos.setBounds(10, 63, 880, 504);
 		JT_Productos.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
@@ -86,6 +90,8 @@ public class JP_Productos extends JPanel {
 		JT_Productos.setModel(dtm);
 
 		CustomHeaderRenderer render = new CustomHeaderRenderer();
+		JTableHeader header = JT_Productos.getTableHeader();
+		header.setDefaultRenderer(new CustomHeaderRenderer());
 		JT_Productos.setDefaultRenderer(Object.class, render);
 		
         JScrollPane scrollPane = new JScrollPane(JT_Productos);//,JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
@@ -109,7 +115,7 @@ public class JP_Productos extends JPanel {
         	}
         });
         BBuscar.setFont(new Font("Segoe UI", Font.PLAIN, 11));
-        BBuscar.setBounds(771, 13, 89, 20);
+        BBuscar.setBounds(787, 13, 73, 20);
         add(BBuscar);
         
         DCInicial = new JDateChooser();
@@ -117,7 +123,7 @@ public class JP_Productos extends JPanel {
         DCInicial.setMaximumSize(new Dimension(140, 28));
         DCInicial.setMinimumSize(new Dimension(140, 28));
         DCInicial.setFont(new Font("Segoe UI", Font.PLAIN, 11));
-        DCInicial.setBounds(321, 13, 140, 20);
+        DCInicial.setBounds(365, 13, 120, 20);
         add(DCInicial);
         
         DCFinal = new JDateChooser();
@@ -125,22 +131,23 @@ public class JP_Productos extends JPanel {
         DCFinal.setMinimumSize(new Dimension(140, 28));
         DCFinal.setMaximumSize(new Dimension(140, 28));
         DCFinal.setFont(new Font("Segoe UI", Font.PLAIN, 11));
-        DCFinal.setBounds(471, 13, 140, 20);
+        DCFinal.setBounds(491, 13, 120, 20);
         add(DCFinal);
         
         TBuscar = new JTextField();
-        TBuscar.setBounds(621, 13, 140, 20);
+        TBuscar.setBounds(621, 13, 156, 20);
         add(TBuscar);
         TBuscar.setColumns(10);
         
         CBBuscar = new JComboBox();
+        CBBuscar.setFont(new Font("Segoe UI", Font.PLAIN, 12));
         CBBuscar.setModel(new DefaultComboBoxModel(new String[] {"Buscar", "Fecha de Registro", "Stock Positivo", "Faltantes", "A - Z", "Z - A"}));
-        CBBuscar.setBounds(171, 13, 140, 22);
+        CBBuscar.setBounds(90, 13, 140, 22);
         add(CBBuscar);
         
         JButton BReporte = new JButton("Reporte");
         BReporte.setFont(new Font("Segoe UI", Font.PLAIN, 11));
-        BReporte.setBounds(72, 11, 89, 23);
+        BReporte.setBounds(10, 13, 73, 23);
         add(BReporte);
         
 		
@@ -149,6 +156,12 @@ public class JP_Productos extends JPanel {
         iniciarPantalla();
 		cursor = Cursor.getDefaultCursor();
 		setCursor(cursor);
+		
+		RBFecha = new JRadioButton("Fecha Registro");
+		RBFecha.setBackground(new Color(255, 255, 255));
+		RBFecha.setFont(new Font("Segoe UI", Font.PLAIN, 11));
+		RBFecha.setBounds(258, 13, 101, 23);
+		add(RBFecha);
 		
 	}
 	
@@ -181,7 +194,7 @@ public class JP_Productos extends JPanel {
 	public void iniciarPantalla() {
 		
 		Respuesta respuesta = new Respuesta("",true,null);
-		ProductoBusquedaView productoBusquedaView = new ProductoBusquedaView(null,null,null,null);	
+		ProductoBusquedaView productoBusquedaView = new ProductoBusquedaView(null,null,null,null,null);	
 		productos = (ArrayList<Producto>) productosDAO.obtenerProductoFiltro((String) CBBuscar.getSelectedItem(), TBuscar.getText() ).getRespuesta();
 		respuesta = controllerProducto.proceso(Herramientas.tipoOperacion.seleccionar, productoBusquedaView);
 		
@@ -203,6 +216,7 @@ public class JP_Productos extends JPanel {
 			productoBusquedaView.setFiltroBusqueda((String)CBBuscar.getSelectedItem());
 			productoBusquedaView.setFechaInicio( DCInicial.getDate()!= null?  Herramientas.convertirFecha(DCInicial):null);
 			productoBusquedaView.setFechaFinal(DCFinal.getDate() != null? Herramientas.convertirFecha(DCFinal):null);
+			productoBusquedaView.setFecha( RBFecha.isSelected()? "Fecha_caducidad":"FechaRegistro" );
 			respuesta = controllerProducto.proceso(Herramientas.tipoOperacion.seleccionar, productoBusquedaView);
 
 			if(!respuesta.getValor()) {
@@ -220,7 +234,7 @@ public class JP_Productos extends JPanel {
 	
 	public void pintarTabla(ArrayList<Producto> productos) {
 		
-		Object[][] datos = new Object[productos != null?productos.size():0][12];
+		Object[][] datos = new Object[productos != null?productos.size():0][13];
 		int i=0;
 		
 		try {
@@ -239,6 +253,7 @@ public class JP_Productos extends JPanel {
 				datos[i][9] = producto.getExistencia();
 				datos[i][10] = producto.getCategoria();
 				datos[i][11] = producto.getMarca();
+				datos[i][12] = producto.getFechaRegistro();
 				i++;
 			}
 		
