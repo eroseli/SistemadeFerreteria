@@ -140,7 +140,7 @@ public class ProductoService {
 				break;
 				
 			case Herramientas.tipoOperacion.actualizar:
-				if(respuestaT.getRespuesta() != null )
+				if(respuestaT.getRespuesta() == null )
 					return new Respuesta("No Existe un Producto con Código :"+productoView.getCodigo(),false,null);
 				break;
 			}

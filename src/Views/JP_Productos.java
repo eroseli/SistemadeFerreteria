@@ -3,6 +3,7 @@ package Views;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JLabel;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 
 import java.awt.Font;
@@ -22,6 +23,7 @@ import Models.ProductoBusquedaView;
 import Models.Respuesta;
 import Models.Components.CustomHeaderRenderer;
 import Models.Components.JTableEdited;
+import Views.Forms.FormProductos;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -39,6 +41,10 @@ import javax.swing.DefaultComboBoxModel;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.JRadioButton;
+import javax.swing.JPopupMenu;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.sql.Date;
 
 public class JP_Productos extends JPanel {
 
@@ -71,6 +77,7 @@ public class JP_Productos extends JPanel {
                             5, "2023-10-15", 120.0, 100.0, 70.0, 15, "Ropa", "Marca B",""}
     };
     private JTextField TBuscar;
+    private JPopupMenu PMProductos;
 	
 	public JP_Productos() {
 		setBackground(new Color(255, 0, 128));
@@ -89,10 +96,10 @@ public class JP_Productos extends JPanel {
 		dtm = new DefaultTableModel(datos, columnNames);
 		JT_Productos.setModel(dtm);
 
-		CustomHeaderRenderer render = new CustomHeaderRenderer();
+		//CustomHeaderRenderer render = new CustomHeaderRenderer(1);
 		JTableHeader header = JT_Productos.getTableHeader();
-		header.setDefaultRenderer(new CustomHeaderRenderer());
-		JT_Productos.setDefaultRenderer(Object.class, render);
+		header.setDefaultRenderer(new CustomHeaderRenderer(1));
+		JT_Productos.setDefaultRenderer(Object.class, new CustomHeaderRenderer(1));
 		
         JScrollPane scrollPane = new JScrollPane(JT_Productos);//,JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
         scrollPane.setBackground(new Color(255, 255, 255));
@@ -100,6 +107,27 @@ public class JP_Productos extends JPanel {
         
         this.add(scrollPane, BorderLayout.CENTER);
         ajustarTabla(JT_Productos);
+        
+        PMProductos = new JPopupMenu();        
+        PMProductos.setFont(new Font("Arial", Font.PLAIN, 11));
+		JMenuItem editarItem = new JMenuItem("Editar");
+		editarItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				actualizarProducto();
+			}
+		});
+		
+		editarItem.setBackground(new Color(255, 255, 255));
+		JMenuItem eliminarItem = new JMenuItem("Eliminar");
+		eliminarItem.setBackground(new Color(255, 255, 255));
+		JMenuItem agregarItem = new JMenuItem("Agregar");
+		agregarItem.setBackground(new Color(255, 255, 255));
+		PMProductos.add(editarItem);
+		PMProductos.add(eliminarItem);
+		PMProductos.add(agregarItem);
+		PMProductos.setBackground(new Color(255, 255, 255));
+		PMProductos.setBounds(0, 0, 101, 16);
+        addPopup(JT_Productos, PMProductos);
         
         JButton BBuscar = new JButton("Buscar");
         BBuscar.setToolTipText("Buscar productos con aplicación de filtros");
@@ -141,7 +169,7 @@ public class JP_Productos extends JPanel {
         
         CBBuscar = new JComboBox();
         CBBuscar.setFont(new Font("Segoe UI", Font.PLAIN, 12));
-        CBBuscar.setModel(new DefaultComboBoxModel(new String[] {"Buscar", "Fecha de Registro", "Stock Positivo", "Faltantes", "A - Z", "Z - A"}));
+        CBBuscar.setModel(new DefaultComboBoxModel(new String[] {"Buscar", "Fecha de Registro", "Stock Positivo", "Por Terminar", "Faltantes", "Precio de Compra", "A - Z", "Z - A"}));
         CBBuscar.setBounds(90, 13, 140, 22);
         add(CBBuscar);
         
@@ -163,6 +191,39 @@ public class JP_Productos extends JPanel {
 		RBFecha.setBounds(258, 13, 101, 23);
 		add(RBFecha);
 		
+	}
+	
+	private void actualizarProducto() {
+		
+		Producto producto = new Producto();
+		
+		try {
+			
+			int seleccion = JT_Productos.getSelectedRow();			
+			System.out.println(seleccion);
+			producto.setId_producto( (int) JT_Productos.getValueAt(seleccion, 0 ) );
+			producto.setCodigo((String) JT_Productos.getValueAt(seleccion, 1) );
+			producto.setNombre((String) JT_Productos.getValueAt(seleccion, 2) );
+			producto.setDescripcion((String) JT_Productos.getValueAt(seleccion, 3));
+			producto.setCantidad((String) JT_Productos.getValueAt(seleccion, 4));
+			Date fehcaCaducidad = (Date) JT_Productos.getValueAt(seleccion, 5);
+			producto.setFecha_caducidad(fehcaCaducidad);
+			
+			producto.setP_publico((Float) JT_Productos.getValueAt(seleccion, 6));
+			producto.setP_Mayoreo((Float) JT_Productos.getValueAt(seleccion, 7));
+			producto.setP_Adquisicion((Float) JT_Productos.getValueAt(seleccion, 8));
+			
+			producto.setExistencia((int) JT_Productos.getValueAt(seleccion, 9));
+			producto.setCategoria((String) JT_Productos.getValueAt(seleccion, 10));
+			producto.setMarca((String) JT_Productos.getValueAt(seleccion, 11));
+			Date fechaRegistro = (Date) JT_Productos.getValueAt(seleccion,12);
+			producto.setFechaRegistro(fechaRegistro);
+			
+			FormProductos formProductos = new FormProductos( Herramientas.tipoOperacion.actualizar , producto);
+			formProductos.setVisible(true);		
+			
+		}catch (Exception e) {
+		}
 	}
 	
 	private void ajustarTabla(JTable tabla)
@@ -263,5 +324,22 @@ public class JP_Productos extends JPanel {
 		dtm = new DefaultTableModel(datos,columnNames);
 		JT_Productos.setModel(dtm);
 		ajustarTabla(JT_Productos);
+	}
+	private static void addPopup(Component component, final JPopupMenu popup) {
+		component.addMouseListener(new MouseAdapter() {
+			public void mousePressed(MouseEvent e) {
+				if (e.isPopupTrigger()) {
+					showMenu(e);
+				}
+			}
+			public void mouseReleased(MouseEvent e) {
+				if (e.isPopupTrigger()) {
+					showMenu(e);
+				}
+			}
+			private void showMenu(MouseEvent e) {
+				popup.show(e.getComponent(), e.getX(), e.getY());
+			}
+		});
 	}
 }

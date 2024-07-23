@@ -9,6 +9,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 
 import javax.swing.JLabel;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
 import java.awt.Font;
@@ -18,12 +19,17 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.Panel;
 import java.awt.SystemColor;
+import javax.swing.JPopupMenu;
+import java.awt.Component;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class MenuPrincipal_Form extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 	JPanel JP_Principal;
+	private JPopupMenu PMProductos;
 	/**
 	 * Launch the application.
 	 */
@@ -68,8 +74,9 @@ public class MenuPrincipal_Form extends JFrame {
 		panel.add(lblNewLabel);
 		
 		Button button = new Button("Productos");
+		button.setBackground(new Color(128, 128, 128));
 		
-		button.setBounds(125, 91, 117, 29);
+		button.setBounds(32, 91, 210, 29);
 		panel.add(button);
 		
 		JP_Principal = new JPanel();
@@ -96,6 +103,7 @@ public class MenuPrincipal_Form extends JFrame {
 		
 		JP_Principal.removeAll();
 		JP_Principal.add(jp_productos);
+		
 		JP_Principal.validate();
 		JP_Principal.repaint();
 	}
@@ -111,5 +119,22 @@ public class MenuPrincipal_Form extends JFrame {
 		J_Panel_Principal.repaint();
 
 		
+	}
+	private static void addPopup(Component component, final JPopupMenu popup) {
+		component.addMouseListener(new MouseAdapter() {
+			public void mousePressed(MouseEvent e) {
+				if (e.isPopupTrigger()) {
+					showMenu(e);
+				}
+			}
+			public void mouseReleased(MouseEvent e) {
+				if (e.isPopupTrigger()) {
+					showMenu(e);
+				}
+			}
+			private void showMenu(MouseEvent e) {
+				popup.show(e.getComponent(), e.getX(), e.getY());
+			}
+		});
 	}
 }
