@@ -179,11 +179,11 @@ public class JP_Productos extends JPanel {
         add(BReporte);
         
 		
-		cursor = Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR);
-        setCursor(cursor);		
-        iniciarPantalla();
-		cursor = Cursor.getDefaultCursor();
-		setCursor(cursor);
+//		cursor = Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR);
+//        setCursor(cursor);		
+//        iniciarPantalla();
+//		cursor = Cursor.getDefaultCursor();
+//		setCursor(cursor);
 		
 		RBFecha = new JRadioButton("Fecha Registro");
 		RBFecha.setBackground(new Color(255, 255, 255));

@@ -6,13 +6,20 @@ import javax.swing.JScrollPane;
 import java.awt.Component;
 import java.awt.Color;
 import javax.swing.JTextField;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
+
+import Models.Components.CustomHeaderRenderer;
+
 import javax.swing.JButton;
 import java.awt.Font;
+import javax.swing.JTable;
 
 public class JP_Usuarios extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 	private JTextField textField;
+	private DefaultTableModel dtm;
 
 	String[] columnNames = {"ID", "Codigo", "Nombre", "Descripcion",
 			"Cantidad", "Fecha Cad.", "P. Público", "P. Mayoreo",
@@ -29,6 +36,7 @@ public class JP_Usuarios extends JPanel {
             {4, "XYZ456", "Producto D", "Descripción del producto B",
                             5, "2023-10-15", 120.0, 100.0, 70.0, 15, "Ropa", "Marca B",""}
     };
+    private JTable TUsuarios;
     
 	public JP_Usuarios() {
 		setMinimumSize(new Dimension(892, 666));
@@ -39,6 +47,16 @@ public class JP_Usuarios extends JPanel {
 		scrollPane.setBackground(Color.WHITE);
 		scrollPane.setBounds(12, 42, 850, 595);
 		add(scrollPane);
+		
+		TUsuarios = new JTable();
+		dtm = new DefaultTableModel(datos, columnNames);
+		TUsuarios.setModel(dtm);
+		scrollPane.setViewportView(TUsuarios);
+		
+		JTableHeader header = TUsuarios.getTableHeader();
+		header.setDefaultRenderer(new CustomHeaderRenderer(1));
+		TUsuarios.setDefaultRenderer(Object.class, new CustomHeaderRenderer(1));
+		
 		
 		textField = new JTextField();
 		textField.setColumns(10);

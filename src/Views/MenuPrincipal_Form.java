@@ -23,6 +23,10 @@ import javax.swing.JPopupMenu;
 import java.awt.Component;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.ComponentOrientation;
+
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
 
 public class MenuPrincipal_Form extends JFrame {
 
@@ -60,6 +64,7 @@ public class MenuPrincipal_Form extends JFrame {
 		contentPane.setLayout(null);
 		
 		JPanel panel = new JPanel();
+		panel.setBorder(new EmptyBorder(0, 0, 0, 0));
 		panel.setBounds(6, 6, 356, 666);
 		panel.setBackground(new Color(66, 66, 66));
 		contentPane.add(panel);
@@ -73,18 +78,40 @@ public class MenuPrincipal_Form extends JFrame {
 		lblNewLabel.setBounds(6, 21, 344, 64);
 		panel.add(lblNewLabel);
 		
-		Button button = new Button("Productos");
-		button.setBackground(new Color(128, 128, 128));
+		JButton BProductos = new JButton("Productos");
+		BProductos.setForeground(new Color(255, 255, 255));
+		BProductos.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+		BProductos.setBackground(new Color(66, 77, 81));
+		BProductos.setBounds(32, 152, 210, 23);
+		BProductos.setFocusPainted(false); // Evita que se pinte el borde al obtener el foco
+		BProductos.setBorder(BorderFactory.createEmptyBorder(5, 15, 5, 15)); // Crea un borde vacío
+
 		
-		button.setBounds(32, 91, 210, 29);
-		panel.add(button);
+		BProductos.setBounds(32, 91, 210, 29);
+		panel.add(BProductos);
+		
+		JButton JBUsuarios = new JButton("Usuarios");
+		JBUsuarios.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				JP_Usuarios jp_Usuarios = new JP_Usuarios();
+				Presentar(JP_Principal,jp_Usuarios);
+			}
+		});
+		JBUsuarios.setForeground(new Color(255, 255, 255));
+		JBUsuarios.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+		JBUsuarios.setBackground(new Color(66, 77, 81));
+		JBUsuarios.setBounds(32, 152, 210, 23);
+		JBUsuarios.setFocusPainted(false); // Evita que se pinte el borde al obtener el foco
+		JBUsuarios.setBorder(BorderFactory.createEmptyBorder(5, 15, 5, 15)); // Crea un borde vacío
+
+		panel.add(JBUsuarios);
 		
 		JP_Principal = new JPanel();
 		JP_Principal.setBackground(new Color(66, 66, 66));
 		JP_Principal.setBounds(372, 6, 892, 666);
 		contentPane.add(JP_Principal);
 		
-		button.addActionListener(new ActionListener() {
+		BProductos.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
 				JP_Productos jp_productos = new JP_Productos();
