@@ -1,5 +1,7 @@
 package DAO.ModelsDAO;
 
+import java.sql.Date;
+
 public class Usuario {
 
 	private int Id_Usuario;
@@ -12,12 +14,13 @@ public class Usuario {
 	private String direccion;
 	private String puesto;
 	private String telefono;
+	private Date fechaRegistro;
 	
 	public Usuario() {
 	}
 
 	public Usuario(int id_Usuario, String usuario, String password, String nombre, String apaterno, String amaterno,
-			String correo, String direccion, String puesto, String telefono) {
+			String correo, String direccion, String puesto, String telefono,Date fechaRegistro) {
 		Id_Usuario = id_Usuario;
 		this.usuario = usuario;
 		this.password = password;
@@ -28,6 +31,7 @@ public class Usuario {
 		this.direccion = direccion;
 		this.puesto = puesto;
 		this.telefono = telefono;
+		this.fechaRegistro = fechaRegistro;
 	}
 
 	public int getId_Usuario() {
@@ -109,12 +113,13 @@ public class Usuario {
 	public void setTelefono(String telefono) {
 		this.telefono = telefono;
 	}
-	
-	
 
-	
-	
-	
-	
+	public Date getFechaRegistro() {
+		return fechaRegistro;
+	}
+
+	public void setFechaRegistro(Date fechaRegistro) {
+		this.fechaRegistro = fechaRegistro;
+	}
 	
 }

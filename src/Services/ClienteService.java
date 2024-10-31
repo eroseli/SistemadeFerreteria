@@ -4,6 +4,7 @@ import DAO.ClientesDAO;
 import DAO.ProductosDAO;
 import DAO.ModelsDAO.Cliente;
 import HerramientasConexion.Herramientas;
+import HerramientasConexion.Herramientas.cadenas;
 import Models.ClienteView;
 import Models.Respuesta;
 
@@ -67,12 +68,23 @@ public class ClienteService {
 		ClientesDAO clientesDAO = new ClientesDAO();
 		respuesta = clientesDAO.eliminarCliente(idCliente);
 		
-		respuestaT = clientesDAO.obtenerCliente(idCliente);
+		respuestaT = clientesDAO.obtenerCliente(idCliente, "");
 
 		if ( !(respuestaT.getRespuesta() == null) )
 			return new Respuesta("Problemas al intentar Eliminar al Cliente "+idCliente,false,null);
 		
 		return respuesta;
+	}
+	
+	public Respuesta seleccionar(String nombre) {
+		
+		respuesta = new Respuesta("",true,null);
+		ClientesDAO dao = new ClientesDAO();
+		
+		if (  nombre== null || nombre.isEmpty() || nombre.equals("")) {
+			return dao.obtenerClientes();
+		}
+		return dao.obtenerClienteDescripcion(nombre);
 	}
 	
 	public Respuesta TraducirRespuesta(ClienteView clienteView, int tipoOperacion) {
@@ -141,7 +153,9 @@ public class ClienteService {
 			//Para actualizar
 			if( Herramientas.tipoOperacion.actualizar == tipoOperacion && (clienteView.getId_Cliente().equals("") || clienteView.getId_Cliente().isEmpty()))
 				return new Respuesta("No se ha seleccionado un Cliente",false,null);	
-			respuestaT =  clienteDao.obtenerCliente( clienteView.getId_Cliente());		
+			else if (Herramientas.tipoOperacion.insertar == tipoOperacion)
+				clienteView.setId_Cliente("0");
+			respuestaT =  clienteDao.obtenerCliente( clienteView.getId_Cliente(), clienteView.getTelefono());		
 			
 			if(!respuestaT.getValor())
 				return respuestaT;
@@ -150,7 +164,7 @@ public class ClienteService {
 			switch (tipoOperacion) {
 			case Herramientas.tipoOperacion.insertar:
 				if(respuestaT.getRespuesta() != null)
-					return new Respuesta("Ya Existe un Cliente con el Nombre "+clienteView.getNombre(),false,null);
+					return new Respuesta("Ya Existe un Cliente con el Nombre "+clienteView.getNombre() +" o el número de teléfono "+clienteView.getTelefono(),false,null);
 					
 				break;
 

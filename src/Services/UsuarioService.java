@@ -81,6 +81,18 @@ public class UsuarioService {
 		return respuesta;
 	}
 	
+	public Respuesta selecciona(String nombre) {
+		
+		respuesta = new Respuesta("",true,null);
+		UsuariosDAO dao = new UsuariosDAO();
+		
+		if (nombre.isEmpty() || nombre.equals("")) {
+			return dao.obtenerUsuarios();
+		}
+		return dao.obtenerUsuarioDescripcion(nombre);
+		
+	}
+	
 	public Respuesta TraducirDatos(UsuarioView usuarioView) {
 		
 		respuesta = new Respuesta("",true,null);

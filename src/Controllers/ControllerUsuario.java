@@ -27,6 +27,8 @@ public class ControllerUsuario {
 			respuesta = usuarioService.eliminar(usuarioView.getId_Usuario());
 			break;
 		case Herramientas.tipoOperacion.seleccionar:
+			String nombre = (String) objeto;
+			respuesta = usuarioService.selecciona(nombre);
 			break;
 
 		}

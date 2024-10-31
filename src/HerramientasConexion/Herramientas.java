@@ -44,7 +44,7 @@ public class Herramientas {
 	}
 	
 	public static String formatoDinero(Float cantidad) {
-		NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance();		
+		NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance(new Locale("es","MX"));		
 		return currencyFormatter.format(cantidad);
 	}
 	

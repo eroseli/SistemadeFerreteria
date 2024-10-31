@@ -33,6 +33,8 @@ import java.text.NumberFormat;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import javax.swing.event.CaretListener;
+import javax.swing.event.CaretEvent;
 
 public class JD_PagarCompra extends JDialog {
 
@@ -42,6 +44,7 @@ public class JD_PagarCompra extends JDialog {
 	private JTextField TF_CantidadEfectivo;
 	private JTextField TF_Cambio;
 	private JTextField TF_CantidadTarjeta;
+	private JButton B_Pagar;
 	
 	private float cantidad;
 	private JF_Venta jf_venta;
@@ -51,6 +54,12 @@ public class JD_PagarCompra extends JDialog {
 	private float globalPagoEfectivo =0f;
 	private float globalPagoTarjeta= 0f;
 	private String tipoPago;
+	private JLabel LTarjeta;
+	private JLabel LEfectivo;
+	private JButton BCancelar ;
+	
+	
+	float totalVenta =0f;
 	
 	public JD_PagarCompra(JF_Venta jf_venta, ArrayList<ProductoVenta> productosVenta, Cliente cliente, Usuario usuario,String tipoPago) {
 		setBounds(100, 100, 450, 450);
@@ -73,16 +82,21 @@ public class JD_PagarCompra extends JDialog {
 			L_Total.setBounds(84, 54, 61, 16);
 			panel.add(L_Total);
 			{
-				JLabel L_Cantidad = new JLabel(" Cantidad Efectivo");
-				L_Cantidad.setBounds(84, 115, 126, 16);
-				panel.add(L_Cantidad);
+				LEfectivo = new JLabel(" Cantidad Efectivo");
+				LEfectivo.setBounds(84, 115, 126, 16);
+				panel.add(LEfectivo);
 			}
 			{
 				TF_CantidadEfectivo = new JTextField();
+				TF_CantidadEfectivo.addCaretListener(new CaretListener() {
+					public void caretUpdate(CaretEvent e) {
+						obtenerValore();
+					}
+				});
 				TF_CantidadEfectivo.addKeyListener(new KeyAdapter() {
 					@Override
 					public void keyTyped(KeyEvent arg0) {
-						generarCambio(arg0);
+						generarCambio(arg0, Herramientas.tipoPago.Efectivo);
 					}
 				});
 				TF_CantidadEfectivo.setColumns(10);
@@ -110,14 +124,25 @@ public class JD_PagarCompra extends JDialog {
 			}
 			{
 				TF_CantidadTarjeta = new JTextField();
+				TF_CantidadTarjeta.addCaretListener(new CaretListener() {
+					public void caretUpdate(CaretEvent e) {
+						obtenerValore();
+					}
+				});
+				TF_CantidadTarjeta.addKeyListener(new KeyAdapter() {
+					@Override
+					public void keyTyped(KeyEvent e) {
+						generarCambio(e, Herramientas.tipoPago.Tarjeta);
+					}
+				});
 				TF_CantidadTarjeta.setColumns(10);
 				TF_CantidadTarjeta.setBounds(84, 209, 258, 26);
 				panel.add(TF_CantidadTarjeta);
 			}
 			{
-				JLabel L_Cantidad = new JLabel("Cantidad Tarjeta");
-				L_Cantidad.setBounds(84, 181, 126, 16);
-				panel.add(L_Cantidad);
+				LTarjeta = new JLabel("Cantidad Tarjeta");
+				LTarjeta.setBounds(84, 181, 126, 16);
+				panel.add(LTarjeta);
 			}
 		}
 		{
@@ -125,7 +150,7 @@ public class JD_PagarCompra extends JDialog {
 			buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
 			getContentPane().add(buttonPane, BorderLayout.SOUTH);
 			{
-				JButton B_Pagar = new JButton("Pagar");
+				B_Pagar = new JButton("Pagar");
 				B_Pagar.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent arg0) {
 						realizarCompra();
@@ -136,9 +161,14 @@ public class JD_PagarCompra extends JDialog {
 				getRootPane().setDefaultButton(B_Pagar);
 			}
 			{
-				JButton cancelButton = new JButton("Cancel");
-				cancelButton.setActionCommand("Cancel");
-				buttonPane.add(cancelButton);
+				BCancelar = new JButton("Cancel");
+				BCancelar.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						cerrarPantalla();
+					}
+				});
+				BCancelar.setActionCommand("Cancel");
+				buttonPane.add(BCancelar);
 			}
 		}
 		
@@ -149,27 +179,95 @@ public class JD_PagarCompra extends JDialog {
 		this.usuario = usuario;
 		this.productosVenta = productosVenta;
 		this.tipoPago = tipoPago;
+
+		// obtener el total de la venta
+		totalVenta = jf_venta.calcularTotal();
+		System.out.println("Total de la venta : "+totalVenta);
 		cargarPantalla();
 		
 	}
 	
-	public void generarCambio(KeyEvent arg0){
-		System.out.println("caracter : "+arg0.getKeyChar());
-		String numero = "";
+	public void cerrarPantalla() {		
+		if(BCancelar.getText().equals("Cerrar")) {
+			jf_venta.limpiarPantalla();
+			jf_venta.limpiarCarrito();
+		}		
+		dispose();		
+	}
+	
+	public void obtenerValore() {
+				
+		String efectivo = (TF_CantidadEfectivo.getText().equals("") || TF_CantidadEfectivo.getText().isEmpty() )? "0":TF_CantidadEfectivo.getText();
+		String tarjeta = (TF_CantidadTarjeta.getText().equals("") || TF_CantidadTarjeta.getText().isEmpty() )? "0":TF_CantidadTarjeta.getText();
+		Float cambio = 0f;
 		
-		if (!Character.isDigit(arg0.getKeyChar()) && arg0.getKeyChar() != '.') {
-            String nuevoTexto = TF_CantidadEfectivo.getText().substring(0, TF_CantidadEfectivo.getText().length() - 1);
-            TF_CantidadEfectivo.setText(nuevoTexto);
+		try {			
+			cambio =  Float.parseFloat(efectivo) + Float.parseFloat(tarjeta) - totalVenta;		
+			
+			if (cambio>=0 && tipoPago.equals(Herramientas.tipoPago.Efectivo) ) {
+				TF_Cambio.setText(Herramientas.formatoDinero( cambio));
+				B_Pagar.setEnabled(true);
+			}else if( cambio == 0 && (tipoPago.equals(Herramientas.tipoPago.Tarjeta) || tipoPago.equals(Herramientas.tipoPago.Mixto))  ){
+				TF_Cambio.setText(Herramientas.formatoDinero(cambio));
+				B_Pagar.setEnabled(true);
+			}else {
+				TF_Cambio.setText("");
+				B_Pagar.setEnabled(false);
+			}
+			
+		} catch (NumberFormatException e) {
+			System.out.println("Error causado : "+e.getMessage());
 		}
 		
-		if (Float.parseFloat(TF_CantidadEfectivo.getText()) >= Float.parseFloat(TF_CantidadVenta.getText()) ) {
+	}
+	
+	public void generarCambio(KeyEvent arg0, String origen){
+		System.out.println("caracter : "+arg0.getKeyChar());
+		String numero = "";				
+		float cambio = -1f;
+				
+		try {			
 			
+			if (!Character.isDigit(arg0.getKeyChar()) && arg0.getKeyChar() != '.' && arg0.getKeyChar() != KeyEvent.VK_BACK_SPACE) {	            
+	            arg0.consume();
+	            return;
+			}
+			
+			if( origen.equals(Herramientas.tipoPago.Efectivo) && arg0.getKeyChar()=='.' && TF_CantidadEfectivo.getText().contains(String.valueOf('.'))) {
+				arg0.consume();
+				return;
+			}
+			
+			if( origen.equals(Herramientas.tipoPago.Tarjeta) && arg0.getKeyChar()=='.' && TF_CantidadTarjeta.getText().contains(String.valueOf('.'))) {
+				arg0.consume();
+				return;
+			}
+			
+		} catch (Exception e) {
+			arg0.consume();
+			System.out.println("Error causado >"+e.getMessage());
+			return;
 		}
 		
 	}
 	
 	public void cargarPantalla() {
-		TF_CantidadVenta.setText(""+ Herramientas.formatoDinero( jf_venta.calcularTotal()) );	
+		TF_CantidadVenta.setText(""+ Herramientas.formatoDinero( totalVenta) );
+		TF_CantidadVenta.setEditable(false);
+		B_Pagar.setEnabled(false);
+		
+		System.out.println("Tipo del pago"+tipoPago);
+		switch (tipoPago) {
+			case Herramientas.tipoPago.Efectivo: 
+				TF_CantidadTarjeta.setVisible(false);
+				LTarjeta.setVisible(false);			
+				break;				
+			case Herramientas.tipoPago.Tarjeta: 
+				TF_CantidadEfectivo.setVisible(false);
+				LEfectivo.setVisible(false);
+				break;				
+		}
+		
 	}
 	
 	public int obtenerNumProductos() {
@@ -198,12 +296,16 @@ public class JD_PagarCompra extends JDialog {
 		registroventa.setParam_Id_Usuario( usuario != null ? usuario.getId_Usuario(): 0  );
 		registroventa.setParam_Id_Cliente( cliente != null ? cliente.getIdentificador(): "" );
 		registroventa.setParam_NumProductos(obtenerNumProductos());
-		registroventa.setParam_Cantidad(jf_venta.calcularTotal());
-		registroventa.setParam_PagoTarjeta( Herramientas.eliminarFormatoDinero(TF_CantidadTarjeta.getText()));
-		registroventa.setParam_PagoEfectivo( Herramientas.eliminarFormatoDinero(TF_CantidadEfectivo.getText()) );
+		registroventa.setParam_Cantidad(totalVenta);
+		registroventa.setParam_PagoTarjeta(  
+				Herramientas.eliminarFormatoDinero( TF_CantidadTarjeta.getText().isEmpty() || TF_CantidadTarjeta.getText().equals("")?"0.0":TF_CantidadTarjeta.getText() ) );
+		registroventa.setParam_PagoEfectivo( 
+				Herramientas.eliminarFormatoDinero( TF_CantidadEfectivo.getText().isEmpty() || TF_CantidadEfectivo.getText().equals("")?"0.0":TF_CantidadEfectivo.getText()  ) );
 		registroventa.setParam_Descuento(0);
-		registroventa.setParam_PagoCliente(Herramientas.eliminarFormatoDinero(TF_CantidadEfectivo.getText()) + Herramientas.eliminarFormatoDinero(TF_CantidadTarjeta.getText()));
-		registroventa.setParam_SubTotal(jf_venta.calcularTotal());
+		registroventa.setParam_PagoCliente(
+				Herramientas.eliminarFormatoDinero( TF_CantidadTarjeta.getText().isEmpty() || TF_CantidadTarjeta.getText().equals("")?"0.0":TF_CantidadTarjeta.getText() ) +
+				Herramientas.eliminarFormatoDinero( TF_CantidadEfectivo.getText().isEmpty() || TF_CantidadEfectivo.getText().equals("")?"0.0":TF_CantidadEfectivo.getText()  ) );
+		registroventa.setParam_SubTotal(totalVenta);
 		registroventa.setParam_respuesta(0);
 		registroventa.setParam_mensaje("");
 		
@@ -229,6 +331,12 @@ public class JD_PagarCompra extends JDialog {
 		respuesta = controllerVenta.procesarListaVenta(venta);
 		
 		JOptionPane.showMessageDialog(this, respuesta.getMensaje());
+		
+		if (respuesta.getValor())
+		{
+			B_Pagar.setEnabled(false);
+			BCancelar.setText("Cerrar");
+		}
 		
 	}
 	

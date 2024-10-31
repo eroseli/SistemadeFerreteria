@@ -82,7 +82,8 @@ public class ClientesDAO {
 						resultados.getDate("FechaNac"),
 						resultados.getString("Telefono"),
 						resultados.getString("Correo"),
-						resultados.getInt("Compras")
+						resultados.getInt("Compras"),
+						resultados.getDate("FechaRegistro")
 						);
 				clientes.add(cliente);
 			}
@@ -106,9 +107,9 @@ public class ClientesDAO {
 		
 	}
 	
-	public Respuesta obtenerCliente(String identificador) {
+	public Respuesta obtenerCliente(String identificador, String telefono) {
 		respuesta = new Respuesta("",true,null);
-		query  = "select * from clientes where Estatus = 'ACTIVO' and Id_Cliente = '"+identificador+"'";
+		query  = "select * from clientes where Estatus = 'ACTIVO' and ( Id_Cliente = '"+identificador+"' or telefono = '"+telefono+"' )";
 		clientes = new ArrayList<Cliente>();
 		try {
 			
@@ -127,7 +128,8 @@ public class ClientesDAO {
 						resultados.getDate("FechaNac"),
 						resultados.getString("Telefono"),
 						resultados.getString("Correo"),
-						resultados.getInt("Compras")					
+						resultados.getInt("Compras"),
+						resultados.getDate("FechaRegistro")				
 				);
 				
 			}
@@ -135,7 +137,7 @@ public class ClientesDAO {
 			respuesta.setRespuesta(cliente);
 			
 		}  catch (SQLException e) {
-			respuesta = new Respuesta("Error al intentar obtener los Clientes", false, null);
+			respuesta = new Respuesta("Error al intentar obtener los Clientes"+e.getMessage(), false, null);
 		}
 		finally {
 			try {
@@ -173,7 +175,8 @@ public class ClientesDAO {
 						resultados.getDate("FechaNac"),
 						resultados.getString("Telefono"),
 						resultados.getString("Correo"),
-						resultados.getInt("Compras")					
+						resultados.getInt("Compras"),
+						resultados.getDate("FechaRegistro")					
 				);
 				
 				clientes.add(cliente);
@@ -335,7 +338,8 @@ public class ClientesDAO {
 				sqlDate,
 				"0",
 				"0",
-				0
+				0,
+				null
 				);
 		//r = dao.insertarCliente(c);
 		//r = dao.actualizarCliente(c);

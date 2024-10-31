@@ -103,7 +103,7 @@ public class JP_Productos extends JPanel {
 		
         JScrollPane scrollPane = new JScrollPane(JT_Productos);//,JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
         scrollPane.setBackground(new Color(255, 255, 255));
-        scrollPane.setBounds(10, 44, 850, 595);
+        scrollPane.setBounds(10, 44, 850, 483);
         
         this.add(scrollPane, BorderLayout.CENTER);
         ajustarTabla(JT_Productos);
@@ -325,6 +325,7 @@ public class JP_Productos extends JPanel {
 		JT_Productos.setModel(dtm);
 		ajustarTabla(JT_Productos);
 	}
+	
 	private static void addPopup(Component component, final JPopupMenu popup) {
 		component.addMouseListener(new MouseAdapter() {
 			public void mousePressed(MouseEvent e) {

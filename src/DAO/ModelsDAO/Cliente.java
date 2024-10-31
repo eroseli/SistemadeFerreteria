@@ -12,13 +12,14 @@ public class Cliente {
 	private String Telefono;
 	private String Correo;
 	private int Compras;
+	private Date fechaRegistro;
 	
 	public Cliente() {
 		
 	}
 	
 	public Cliente(String identificador, String nombre, String apaterno, String amaterno, Date fechaNac,
-			String telefono, String correo, int compras) {
+			String telefono, String correo, int compras,Date fechaRegistro) {
 		Identificador = identificador;
 		Nombre = nombre;
 		Apaterno = apaterno;
@@ -27,6 +28,7 @@ public class Cliente {
 		Telefono = telefono;
 		Correo = correo;
 		Compras = compras;
+		this.fechaRegistro = fechaRegistro;
 	}
 
 	public String getNombre() {
@@ -92,9 +94,12 @@ public class Cliente {
 	public void setCompras(int compras) {
 		Compras = compras;
 	}
-	
-	
-	
-	
-	
+
+	public Date getFechaRegistro() {
+		return fechaRegistro;
+	}
+
+	public void setFechaRegistro(Date fechaRegistro) {
+		this.fechaRegistro = fechaRegistro;
+	}
 }

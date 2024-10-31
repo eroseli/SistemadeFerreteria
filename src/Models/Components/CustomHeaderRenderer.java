@@ -73,7 +73,16 @@ public class CustomHeaderRenderer extends DefaultTableCellRenderer {
 				
 				break;
 
-			default:
+			case 2:
+				// Alternar colores de fondo basados en el índice de la fila para las filas de datos
+			    if (row % 2 == 0) {
+			    	setBackground(ROW_COLOR1); // Color para filas pares
+			        setForeground(new Color(86, 89, 90));
+			    } else {
+			        setBackground(ROW_COLOR2); // Color para filas impares
+			        setForeground(new Color(86, 89, 90));
+			    }
+				
 				break;
 			}
 	        

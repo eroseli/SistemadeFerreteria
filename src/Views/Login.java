@@ -18,6 +18,9 @@ import Controllers.ControllerLogin;
 import Models.Respuesta;
 import javax.swing.SwingConstants;
 import java.awt.Font;
+import javax.swing.JPasswordField;
+import java.awt.SystemColor;
+import javax.swing.UIManager;
 
 public class Login extends JFrame {
 
@@ -27,7 +30,7 @@ public class Login extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 	private JTextField TF_Usuario;
-	private JTextField TF_Password;
+	private JPasswordField PFPassword;
 
 	/**
 	 * Launch the application.
@@ -62,14 +65,14 @@ public class Login extends JFrame {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 457, 321);
 		contentPane = new JPanel();
-		contentPane.setBackground(new Color(240, 204, 136));
+		contentPane.setBackground(new Color(254, 255, 255));
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
 		JPanel panel = new JPanel();
-		panel.setBackground(new Color(146, 146, 146));
+		panel.setBackground(new Color(245, 245, 245));
 		panel.setBounds(23, 6, 412, 267);
 		contentPane.add(panel);
 		panel.setLayout(null);
@@ -77,28 +80,7 @@ public class Login extends JFrame {
 		JButton Btn_Entrar = new JButton("Ingresar");
 		Btn_Entrar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				
-				try {
-					//Respuesta respuesta = controladorLogin.validarUsuario(TF_Usuario.getText(), TF_Password.getText());
-					Respuesta respuesta = controladorLogin.AccesoUsuario(TF_Usuario.getText(), TF_Password.getText());
-					JOptionPane.showConfirmDialog(panel,respuesta.getMensaje());
-					
-					if (!respuesta.getValor()) {
-						return;
-					}
-					
-					MenuPrincipal_Form menu = new MenuPrincipal_Form();
-					menu.setVisible(true);
-					cerrar();
-
-				} catch (Exception e) {
-					// TODO: handle exception
-					System.out.println(e.getMessage());
-					e.printStackTrace();
-				}
-				
-				
-				
+				iniciarSesion();
 			}
 		});
 		Btn_Entrar.setBounds(68, 199, 117, 29);
@@ -108,11 +90,6 @@ public class Login extends JFrame {
 		TF_Usuario.setBounds(58, 99, 309, 26);
 		panel.add(TF_Usuario);
 		TF_Usuario.setColumns(10);
-		
-		TF_Password = new JTextField();
-		TF_Password.setColumns(10);
-		TF_Password.setBounds(58, 161, 309, 26);
-		panel.add(TF_Password);
 		
 		JLabel JL_Usuario = new JLabel("Usuario");
 		JL_Usuario.setBounds(61, 76, 61, 16);
@@ -136,6 +113,33 @@ public class Login extends JFrame {
 		JL_Usuario_1.setHorizontalAlignment(SwingConstants.CENTER);
 		JL_Usuario_1.setBounds(6, 6, 400, 53);
 		panel.add(JL_Usuario_1);
+		
+		PFPassword = new JPasswordField();
+		PFPassword.setBounds(58, 161, 309, 26);
+		panel.add(PFPassword);
+	}
+	
+	public void iniciarSesion() {
+		
+		try {
+			char[] password = PFPassword.getPassword();
+			//Respuesta respuesta = controladorLogin.validarUsuario(TF_Usuario.getText(), TF_Password.getText());
+			Respuesta respuesta = controladorLogin.AccesoUsuario(TF_Usuario.getText(), new String(password));
+			JOptionPane.showMessageDialog(this,respuesta.getMensaje());
+			
+			if (!respuesta.getValor()) {
+				return;
+			}
+			
+			MenuPrincipal_Form menu = new MenuPrincipal_Form();
+			menu.setVisible(true);
+			cerrar();
+
+		} catch (Exception e) {
+			// TODO: handle exception
+			System.out.println(e.getMessage());
+			e.printStackTrace();
+		}
 	}
 	
 	public void cerrar() {

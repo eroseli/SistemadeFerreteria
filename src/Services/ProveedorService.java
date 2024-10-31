@@ -74,6 +74,16 @@ public class ProveedorService {
 		return respuesta;
 	}
 	
+	public Respuesta seleccionar(String nombre) {
+		respuesta = new Respuesta("",true, null);
+		ProveedoresDAO dao =new ProveedoresDAO();
+		
+		if (nombre.isEmpty() || nombre.equals("")) {
+			return dao.obtenerProveedores();
+		}
+		return dao.obtenerProveedorDescripcion(nombre);		
+	}
+	
 	public Respuesta TraducirProveedor(ProveedorView proveedorView, int tipoOperacion) {
 		
 		respuesta = new Respuesta("",true,null);

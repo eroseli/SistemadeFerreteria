@@ -1,8 +1,10 @@
 package DAO;
 
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,7 +47,8 @@ public class UsuariosDAO {
 		                resultados.getString("correo"),
 		                resultados.getString("direccion"), 
 		                resultados.getString("puesto"),
-		                resultados.getString("telefono")
+		                resultados.getString("telefono"),
+		                resultados.getDate("fechaRegistro")
                 );
             }   
             
@@ -89,7 +92,8 @@ public class UsuariosDAO {
 		                resultados.getString("correo"),
 		                resultados.getString("direccion"), 
 		                resultados.getString("puesto"),
-		                resultados.getString("telefono")
+		                resultados.getString("telefono"),
+		                resultados.getDate("fechaRegistro")
                 );
             }   
             
@@ -111,6 +115,52 @@ public class UsuariosDAO {
 		return respuesta;
 	}
 
+	public Respuesta obtenerUsuarioDescripcion(String nombre) {
+		
+		respuesta = new Respuesta("Usuarios Cargados Correctamente",true,null);
+		query = "select * from usuarios where nombre like '%"+nombre+"%' or telefono like '%"+nombre+"%';";
+
+		try {
+			
+            ConexionGlobal.establecerConexio();
+            stm =  (PreparedStatement) ConexionGlobal.connection.prepareStatement(query);           
+            resultados =  stm.executeQuery();           
+            usuarios.clear();
+            
+            while (resultados.next()) {                
+                usuario = new Usuario(
+                		resultados.getInt("Id_Usuario"),
+                		resultados.getString("usuario"),
+                		resultados.getString("password"),
+                		resultados.getString("nombre"),
+		                resultados.getString("apaterno"),
+		                resultados.getString("amaterno"),
+		                resultados.getString("correo"),
+		                resultados.getString("direccion"), 
+		                resultados.getString("puesto"),
+		                resultados.getString("telefono"),
+		                resultados.getDate("fechaRegistro")
+                );
+                usuarios.add(usuario);
+            }   
+            
+            respuesta.setRespuesta(usuarios);
+			
+		} catch (SQLException e) {
+			// TODO: handle exception
+			respuesta = new Respuesta("Error al intentar obtener a los usuarios "+e.getMessage(), false, null);
+		}
+		finally {
+			try {
+				ConexionGlobal.cerrarConexion();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+		return respuesta;
+	}
 	
 	public Respuesta obtenerUsuarios() {
 		
@@ -135,7 +185,8 @@ public class UsuariosDAO {
 		                resultados.getString("correo"),
 		                resultados.getString("direccion"), 
 		                resultados.getString("puesto"),
-		                resultados.getString("telefono")
+		                resultados.getString("telefono"),
+		                resultados.getDate("fechaRegistro")
                 );
                 usuarios.add(usuario);
             }   
@@ -161,8 +212,8 @@ public class UsuariosDAO {
 	public Respuesta insertarUsuario(Usuario usuarioR) {
 		
 		respuesta = new Respuesta("Usuario insertado Correctamente",true,null);
-		query = "insert into Usuarios(usuario,password,nombre,apaterno,amaterno,correo,direccion,puesto,telefono)"
-				+"values(?,?,?,?,?,?,?,?,?)";
+		query = "insert into Usuarios(usuario,password,nombre,apaterno,amaterno,correo,direccion,puesto,telefono,fechaRegistro)"
+				+"values(?,?,?,?,?,?,?,?,?,?)";
 		
 		try {
 			
@@ -178,7 +229,7 @@ public class UsuariosDAO {
             stm.setString(7,usuarioR.getDireccion());
             stm.setString(8,usuarioR.getPuesto());
             stm.setString(9,usuarioR.getTelefono());
-            
+            stm.setDate(10, Date.valueOf(LocalDate.now()));
             stm.execute();
 
 			
@@ -296,8 +347,8 @@ public class UsuariosDAO {
 			"a",
 			"a",
 			"a",
-			"a"
-						);
+			"a",
+			null			);
 		
 //		r = dao.insertarUsuario(u);
 //		r = dao.actualizarUsuario(u);

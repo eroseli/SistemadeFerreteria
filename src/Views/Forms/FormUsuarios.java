@@ -7,7 +7,6 @@ import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
-import com.jgoodies.looks.windows.WindowsLookAndFeel;
 
 import java.awt.Dimension;
 import javax.swing.JLabel;
@@ -67,7 +66,7 @@ public class FormUsuarios extends JDialog {
 			usuarioPrueba.setPuesto("Administrador");
 			usuarioPrueba.setTelefono("9514134591");
 			
-			FormUsuarios dialog = new FormUsuarios(Herramientas.tipoOperacion.actualizar,usuarioPrueba);
+			FormUsuarios dialog = new FormUsuarios(Herramientas.tipoOperacion.insertar,usuarioPrueba);
 			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 			dialog.setVisible(true);
 		} catch (Exception e) {

@@ -130,9 +130,16 @@ public class JD_DescripcionProducto extends JDialog {
 		
 		this.producto.setCantidadComprar((int) S_Cantidad.getValue());
 		this.producto.setDescuentoM( RB_Mayoreo.isSelected()? Herramientas.cadenas.CadenaSi:Herramientas.cadenas.CadenaNo );
+	
+		if ( ((Integer)S_Cantidad.getValue())  ==0) {
+			jf_Venta.productosVenta.remove(indice);
+		}
+		else {
+			jf_Venta.productosVenta.set(indice, producto);
+		}
 		
-		jf_Venta.productosVenta.set(indice, producto);
 		jf_Venta.llenarTabla();
+		jf_Venta.TF_total.setText(Herramientas.formatoDinero( jf_Venta.calcularTotal()));
 		this.dispose();
 		
 	}

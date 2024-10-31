@@ -5,6 +5,9 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+
+import Views.Forms.JP_Clientes;
+
 import java.awt.Color;
 import java.awt.Dimension;
 
@@ -71,26 +74,24 @@ public class MenuPrincipal_Form extends JFrame {
 		panel.setLayout(null);
 		
 		JLabel lblNewLabel = new JLabel("Bienvenido Usuario");
+		lblNewLabel.setBounds(6, 21, 344, 64);
 		
 		lblNewLabel.setForeground(new Color(254, 255, 255));
 		lblNewLabel.setFont(new Font("Arial", Font.BOLD, 20));
 		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
-		lblNewLabel.setBounds(6, 21, 344, 64);
 		panel.add(lblNewLabel);
 		
 		JButton BProductos = new JButton("Productos");
+		BProductos.setBounds(33, 133, 210, 29);
 		BProductos.setForeground(new Color(255, 255, 255));
 		BProductos.setFont(new Font("Segoe UI", Font.PLAIN, 12));
 		BProductos.setBackground(new Color(66, 77, 81));
-		BProductos.setBounds(32, 152, 210, 23);
 		BProductos.setFocusPainted(false); // Evita que se pinte el borde al obtener el foco
-		BProductos.setBorder(BorderFactory.createEmptyBorder(5, 15, 5, 15)); // Crea un borde vacío
-
-		
-		BProductos.setBounds(32, 91, 210, 29);
+		BProductos.setBorder(BorderFactory.createEmptyBorder(5, 15, 5, 15));
 		panel.add(BProductos);
 		
 		JButton JBUsuarios = new JButton("Usuarios");
+		JBUsuarios.setBounds(33, 174, 210, 23);
 		JBUsuarios.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				JP_Usuarios jp_Usuarios = new JP_Usuarios();
@@ -100,11 +101,71 @@ public class MenuPrincipal_Form extends JFrame {
 		JBUsuarios.setForeground(new Color(255, 255, 255));
 		JBUsuarios.setFont(new Font("Segoe UI", Font.PLAIN, 12));
 		JBUsuarios.setBackground(new Color(66, 77, 81));
-		JBUsuarios.setBounds(32, 152, 210, 23);
 		JBUsuarios.setFocusPainted(false); // Evita que se pinte el borde al obtener el foco
 		JBUsuarios.setBorder(BorderFactory.createEmptyBorder(5, 15, 5, 15)); // Crea un borde vacío
 
 		panel.add(JBUsuarios);
+		
+		JButton btnProveedores = new JButton("Proveedores");
+		btnProveedores.setBounds(33, 209, 210, 23);
+		btnProveedores.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				JP_Proveedores jp_Proveedores = new JP_Proveedores();
+				Presentar(JP_Principal, jp_Proveedores);
+			}
+		});
+		btnProveedores.setForeground(Color.WHITE);
+		btnProveedores.setFont(new Font("Dialog", Font.PLAIN, 12));
+		btnProveedores.setFocusPainted(false);
+		btnProveedores.setBorder(BorderFactory.createEmptyBorder(5, 15, 5, 15));
+		btnProveedores.setBackground(new Color(66, 77, 81));
+		panel.add(btnProveedores);
+		
+		JButton btnClientes = new JButton("Clientes");
+		btnClientes.setBounds(33, 244, 210, 23);
+		btnClientes.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				JP_Clientes jp_Clientes = new JP_Clientes();
+				Presentar(JP_Principal, jp_Clientes);
+			}
+		});
+		btnClientes.setForeground(Color.WHITE);
+		btnClientes.setFont(new Font("Dialog", Font.PLAIN, 12));
+		btnClientes.setFocusPainted(false);
+		btnClientes.setBorder(BorderFactory.createEmptyBorder(5, 15, 5, 15));
+		btnClientes.setBackground(new Color(66, 77, 81));
+		panel.add(btnClientes);
+		
+		JButton btnVenta = new JButton("Venta");
+		btnVenta.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				JF_Venta jf_Venta = new JF_Venta();
+				jf_Venta.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+				jf_Venta.setVisible(true);
+			}
+		});
+		btnVenta.setForeground(Color.WHITE);
+		btnVenta.setFont(new Font("Dialog", Font.PLAIN, 12));
+		btnVenta.setFocusPainted(false);
+		btnVenta.setBorder(BorderFactory.createEmptyBorder(5, 15, 5, 15));
+		btnVenta.setBackground(new Color(66, 77, 81));
+		btnVenta.setBounds(33, 92, 210, 29);
+		panel.add(btnVenta);
+		
+		JButton BtnHistoricoVenta = new JButton("Historico de Venta");
+		BtnHistoricoVenta.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				JP_Ventas jp_ventas = new JP_Ventas();
+				Presentar(JP_Principal,jp_ventas);
+			}
+		});
+		BtnHistoricoVenta.setForeground(Color.WHITE);
+		BtnHistoricoVenta.setFont(new Font("Dialog", Font.PLAIN, 12));
+		BtnHistoricoVenta.setFocusPainted(false);
+		BtnHistoricoVenta.setBorder(BorderFactory.createEmptyBorder(5, 15, 5, 15));
+		BtnHistoricoVenta.setBackground(new Color(66, 77, 81));
+		BtnHistoricoVenta.setBounds(33, 283, 210, 23);
+		panel.add(BtnHistoricoVenta);
 		
 		JP_Principal = new JPanel();
 		JP_Principal.setBackground(new Color(66, 66, 66));

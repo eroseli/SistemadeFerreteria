@@ -11,7 +11,9 @@ import javax.swing.JScrollPane;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import DAO.ModelsDAO.Producto;
+import HerramientasConexion.Herramientas;
 import Models.ProductoVenta;
+import Models.Respuesta;
 import Models.Components.JTableEdited;
 import Views.JF_Venta;
 import javax.swing.JTable;
@@ -39,7 +41,7 @@ public class JD_Productos extends JDialog {
 
 	private DAO.ProductosDAO productosDAO = new DAO.ProductosDAO();
 	private ArrayList<Producto> productos = new ArrayList<Producto>();
-	
+	private Respuesta respuesta;
 	public String codigo = "";
 	public JF_Venta padre;
 	
@@ -121,7 +123,7 @@ public class JD_Productos extends JDialog {
 		Producto producto = obtenerProducto();
 		agregarProductoCarrito(producto);
 		padre.llenarTabla();
-		padre.TF_total.setText(""+padre.calcularTotal());	
+		padre.TF_total.setText(Herramientas.formatoDinero(padre.calcularTotal()));	
 		this.dispose();
 		return true;
 	}
@@ -176,8 +178,7 @@ public class JD_Productos extends JDialog {
 		productoVenta.setP_Adquisicion(producto.getP_Adquisicion());
 		productoVenta.setExistencia(producto.getExistencia());
 		productoVenta.setCategoria(producto.getCategoria());
-		productoVenta.setMarca(producto.getMarca());
-		
+		productoVenta.setMarca(producto.getMarca());	
 		productoVenta.setCantidadComprar(cantidad);
 		productoVenta.setPrecioCompra(precio);
 		productoVenta.setDescuentoM(descuentoM);
@@ -192,9 +193,18 @@ public class JD_Productos extends JDialog {
 		String[] columnNames = {"ID", "Codigo", "Nombre", "Descripcion",
 								"Cantidad", "Fecha Cad.", "P. Público", "P. Mayoreo",
 								"P. Adquisición", "Existencia", "Categoría", "Marca",};
-
-		productos = (ArrayList<Producto>) productosDAO.obtenerProductos().getRespuesta();
-		Object[][] datos = new Object[productos.size()][12];
+		
+		
+		respuesta = (Respuesta) productosDAO.obtenerProductos();
+		
+		if ( !respuesta.getValor() ) {
+			JOptionPane.showMessageDialog(this, "Error "+respuesta.getMensaje());
+			return ;
+		}
+		
+		productos = (ArrayList<Producto>) respuesta.getRespuesta();
+		
+		Object[][] datos = new Object[productos != null? productos.size():0][13];
 		
 		int i=0;
 		

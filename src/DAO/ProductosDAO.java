@@ -14,7 +14,9 @@ import javax.swing.JOptionPane;
 
 import HerramientasConexion.ConexionGlobal;
 import Models.ProductoBusquedaView;
+import Models.ProductoVenta;
 import Models.Respuesta;
+import DAO.ModelsDAO.CarritoDAO;
 import DAO.ModelsDAO.Producto;
 
 public class ProductosDAO {
@@ -24,12 +26,15 @@ public class ProductosDAO {
 	ResultSet resultados = null;
 	Respuesta respuesta;
 	Producto producto =null;
+	CarritoDAO carrito = null;
 	List<Producto> productos = null;;
-	
+	List<CarritoDAO> carritos = null;
+	ProductoVenta productoVenta = null;
+	List<ProductoVenta> productosVenta = null;
 	
 	public ProductosDAO() {
 		productos = new ArrayList<Producto>();
-
+		carritos = new ArrayList<CarritoDAO>();
 	}
 	
 public Respuesta obtenerProductoCodigo(String nombre) {
@@ -298,20 +303,283 @@ public Respuesta obtenerProductoCodigo(String nombre) {
                 		resultados.getString("Marca"),
                 		resultados.getDate("FechaRegistro")
                 		);
-				
+				System.out.println(producto.getNombre());
 				productos.add(producto);
 			}
 			
 			respuesta.setRespuesta(productos);
 			ConexionGlobal.cerrarConexion();
 			
-		} catch (Exception e) {
-			respuesta = new Respuesta("Error al obtener los datos", false, null);
+		} catch (SQLException e) {
+			respuesta = new Respuesta("Error al obtener los datos "+e.getMessage(), false, null);
 		}
 		finally {
 			
 		}
 		
+		return respuesta;
+	}
+	
+	public Respuesta insertarCarrito(String idCliente, String nombre) {
+		respuesta = new Respuesta("Carritos Insertado Correctamente",true,null);
+		String query = "INSERT INTO Carritos(IdCliente, Nombre, fechaRegistro, horaRegistro) values(?,?,current_date(), curtime())";
+		try {
+			
+			ConexionGlobal.establecerConexio();	
+            stm =  (PreparedStatement) ConexionGlobal.connection.prepareStatement(query);           
+			
+			stm.setString(1,idCliente);
+			stm.setString(2,nombre);
+            stm.execute();			
+			
+		}  catch (Exception e) {
+			respuesta = new Respuesta("Error al Registrar Porducto. "+e.getMessage(), false, null);
+			e.printStackTrace();
+			System.out.println(e.getMessage());
+		}
+		finally {         
+			try {
+				ConexionGlobal.cerrarConexion();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+		return respuesta;
+	}
+	
+	public Respuesta obtenerUltimoIdentificador() {
+		respuesta = new Respuesta("Id del carrito obtenido Correctamente",true,null);
+		String query = " select IdCarrito from Carritos order by IdCarrito desc limit 1";
+		try {
+			
+			ConexionGlobal.establecerConexio();
+            stm =  (PreparedStatement) ConexionGlobal.connection.prepareStatement(query);           
+			resultados = stm.executeQuery();
+			int idCarrito =0;
+			
+			while (resultados.next()) {
+				 idCarrito = resultados.getInt("IdCarrito");
+				 System.out.println(idCarrito);
+			}
+			
+			respuesta.setRespuesta(idCarrito);
+			ConexionGlobal.cerrarConexion();			
+			
+		}  catch (Exception e) {
+			respuesta = new Respuesta("Error al Obtener el registro. "+e.getMessage(), false, null);
+			e.printStackTrace();
+			System.out.println(e.getMessage());
+		}
+		finally {         
+			try {
+				ConexionGlobal.cerrarConexion();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+		return respuesta;
+	}
+	
+	public Respuesta obtenerCarritoDetalleProductos(int idCarrito) {
+		
+		productosVenta = new ArrayList<ProductoVenta>();
+		
+		respuesta = new Respuesta("Carrito Detalle",true,null);
+		String query = " select * from Carritos  C inner join Carritosdet CD on C.IdCarrito = CD.Id_Carrito "
+				+ "    inner join productos P on CD.Id_Producto = P.Id_producto  where  C.IdCarrito = "+idCarrito;		
+
+		try {
+			ConexionGlobal.establecerConexio();
+            stm =  (PreparedStatement) ConexionGlobal.connection.prepareStatement(query);           
+			resultados = stm.executeQuery();
+
+			while (resultados.next()) {
+				System.out.println("Entro");
+				productoVenta = new ProductoVenta();
+				
+				productoVenta.setId_producto(resultados.getInt("Id_Producto"));
+				productoVenta.setCodigo(resultados.getString("Codigo"));
+				productoVenta.setNombre(resultados.getString("Nombre"));
+				productoVenta.setDescripcion(resultados.getString("Descripcion"));
+				productoVenta.setCantidad(resultados.getString("Cantidad"));
+				productoVenta.setFecha_caducidad(resultados.getDate("Fecha_caducidad"));
+				productoVenta.setP_publico(resultados.getFloat("P_publico"));
+				productoVenta.setP_Mayoreo(resultados.getFloat("P_Mayoreo"));
+				productoVenta.setP_Adquisicion(resultados.getFloat("P_Adquisicion"));
+				productoVenta.setExistencia(resultados.getInt("Existencia"));
+				productoVenta.setCategoria(resultados.getString("Categoria"));
+				productoVenta.setMarca(resultados.getString("Marca"));
+				productoVenta.setCantidadComprar(resultados.getInt("CD.Cantidad"));
+				productoVenta.setPrecioCompra(resultados.getFloat("P_publico"));
+				productoVenta.setDescuentoM(resultados.getString("descuento"));
+				productoVenta.setDescuentoE(resultados.getInt("DescuentoEspecial"));
+				
+				productosVenta.add(productoVenta);
+				System.out.println(productoVenta.getNombre());
+			}
+			
+			respuesta.setRespuesta(productosVenta);
+			
+		} catch (SQLException e) {
+			// TODO: handle exception
+			return new Respuesta("Error: "+e.getMessage(),false,null);
+		}
+		finally {
+			try {
+				ConexionGlobal.cerrarConexion();
+			} catch (SQLException e) {
+				System.out.println("Error: "+e.getMessage());
+			}
+		}
+		
+		return respuesta;
+		
+	}
+	
+	public Respuesta obtenerCarritos() {
+		
+		respuesta = new Respuesta("Carrito Detalle Insertado Correctamente",true,null);
+		String query = " select * from Carritos ORDER BY FechaRegistro desc";		
+		
+		try {
+			ConexionGlobal.establecerConexio();
+            stm =  (PreparedStatement) ConexionGlobal.connection.prepareStatement(query);           
+			resultados = stm.executeQuery();
+			carritos.clear();
+			System.out.println("Entro a la funcion");
+			while (resultados.next()) {
+				System.out.println("Entro");
+				carrito = new CarritoDAO(
+						resultados.getInt("IdCarrito"),
+                		resultados.getString("Nombre"),
+                		resultados.getInt("IdCliente"),
+                		resultados.getDate("fechaRegistro"),
+                		resultados.getTime("horaRegistro")
+                		);
+				carritos.add(carrito);
+				System.out.println("Carrito "+carrito.getNombre());
+			}
+			
+			respuesta.setRespuesta(carritos);
+			
+		} catch (SQLException e) {
+			// TODO: handle exception
+			return new Respuesta("Error: "+e.getMessage(),false,null);
+		}
+		finally {
+			try {
+				ConexionGlobal.cerrarConexion();
+			} catch (SQLException e) {
+				System.out.println("Error: "+e.getMessage());
+			}
+		}
+		
+		return respuesta;
+	}
+	
+	public Respuesta insertarDetalleCarrito(ProductoVenta productoVenta, int idCarrito) {
+		respuesta = new Respuesta("Carrito Detalle Insertado Correctamente",true,null);
+		String query = "INSERT INTO Carritosdet(Id_Carrito, Id_Producto, Cantidad, Descuento, DescuentoEspecial, fechaRegistro)"
+				+ " values(?,?,?,?,?,current_date())";
+		try {
+			
+			ConexionGlobal.establecerConexio();	
+            stm =  (PreparedStatement) ConexionGlobal.connection.prepareStatement(query);           
+			
+			stm.setInt(1,idCarrito);
+			stm.setInt(2,productoVenta.getId_producto());
+			stm.setInt(3, productoVenta.getCantidadComprar());
+			stm.setString(4, String.valueOf(productoVenta.getDescuentoM()));
+			stm.setInt(5,productoVenta.getDescuentoE());
+            stm.execute();			
+			
+		}  catch (Exception e) {
+			respuesta = new Respuesta("Error al Registrar Porducto. "+e.getMessage(), false, null);
+			e.printStackTrace();
+			System.out.println(e.getMessage());
+		}
+		finally {         
+			try {
+				ConexionGlobal.cerrarConexion();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+		return respuesta;
+	}
+	
+	public Respuesta obtenerNumeroCarritos() {
+		respuesta = new Respuesta("Cantidad de Carritos",true,null);
+		try {
+			String query = "SELECT COUNT(*) carritos FROM Carritos;";
+			ConexionGlobal.establecerConexio();	
+            stm =  (PreparedStatement) ConexionGlobal.connection.prepareStatement(query);           
+			resultados = stm.executeQuery();
+
+            while (resultados.next()) {
+            	
+				respuesta.setRespuesta(resultados.getInt("carritos"));
+				System.out.println("Respuesta = "+respuesta.getRespuesta());
+			}
+            System.out.println("La funcions");
+		} catch (SQLException e) {
+			System.out.println("Error "+e.getMessage());
+		}
+		return respuesta;
+	}
+	
+	public  Respuesta NombreCarritoRepetido(String nombre) {
+		respuesta = new Respuesta("Cantidad de Carritos",true,0);
+		try {
+			String query = " select count(Nombre) nombres from Carritos  where Nombre ='"+nombre+"';";
+			ConexionGlobal.establecerConexio();	
+            stm =  (PreparedStatement) ConexionGlobal.connection.prepareStatement(query);           
+			resultados = stm.executeQuery();
+            while (resultados.next()) {            	
+				respuesta.setRespuesta(resultados.getInt("nombres"));
+				System.out.println("Respuesta = "+respuesta.getRespuesta());
+			}
+            System.out.println("La funcions");
+		} catch (SQLException e) {
+			System.out.println("Error "+e.getMessage());
+			respuesta = new Respuesta("Problemas al obtener el Número de Carritos con en mismo Nombre",false,0);
+		}
+		return respuesta;
+	}
+	
+	public Respuesta eliminarCarrito(int idCarrito) {
+		
+		respuesta = new Respuesta("Carrito Eliminado Correctamente",true,null);
+		String query = " delete from Carritos where IdCarrito ="+idCarrito;
+		System.out.println("Consulta : "+ query);
+		try {
+			ConexionGlobal.establecerConexio();	
+            stm =  (PreparedStatement) ConexionGlobal.connection.prepareStatement(query);           		
+            stm.execute();
+		} catch (SQLException e) {
+			respuesta = new Respuesta("Problemas al eliminar el registro : "+e.getMessage(),true, null);
+		}	
+		return respuesta;
+		
+	}
+	
+	public Respuesta eliminarCarritoDet(int idCarrito) {
+		respuesta = new Respuesta("Carrito Eliminado Correctamente",true,null);
+		String query = "delete from Carritosdet where Id_Carrito = "+idCarrito;
+		System.out.println(query);
+		try {
+			ConexionGlobal.establecerConexio();	
+            stm =  (PreparedStatement) ConexionGlobal.connection.prepareStatement(query);           		
+            stm.execute();            
+		} catch (SQLException e) {
+			respuesta = new Respuesta("Problemas al eliminar el registro : "+e.getMessage(),true, null);
+		}	
 		return respuesta;
 	}
 	

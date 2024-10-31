@@ -29,6 +29,7 @@ public class ControllerCliente {
 			respuesta = clienteService.eliminar(clienteView.getId_Cliente());
 			break;
 		case Herramientas.tipoOperacion.seleccionar:
+			respuesta = clienteService.seleccionar((String)objeto);
 			break;
 		}
 		

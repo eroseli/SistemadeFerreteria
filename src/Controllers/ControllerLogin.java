@@ -11,13 +11,14 @@ public class ControllerLogin {
 	
 	Respuesta respuesta;
 	
-    public Respuesta AccesoUsuario(String usuairo, String password) {
+    public Respuesta AccesoUsuario(String usuario, String password) {
     	
     	LoginDAO loginDAO = new LoginDAO();
     	respuesta = new Respuesta("",true,null);
     	
+    	System.out.println(usuario+" "+password);
     	
-    	respuesta = loginDAO.validarUsuario(usuairo, password);
+    	respuesta = loginDAO.validarUsuario(usuario, password);
     	
     	return respuesta;
     }

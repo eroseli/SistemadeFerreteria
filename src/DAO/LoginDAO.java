@@ -34,7 +34,9 @@ public class LoginDAO {
 		                resultados.getString("correo"),
 		                resultados.getString("direccion"), 
 		                resultados.getString("puesto"),
-		                resultados.getString("telefono")
+		                resultados.getString("telefono"),
+		                resultados.getDate("fechaRegistro")
+
                 );
                 respuesta.setRespuesta(usuario);
                 ConexionGlobal.cerrarConexion();

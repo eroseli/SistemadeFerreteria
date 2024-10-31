@@ -12,6 +12,8 @@ import javax.swing.JScrollPane;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
+import Controllers.ControllerProducto;
+import Controllers.ControllerVenta;
 import HerramientasConexion.Herramientas;
 import Models.Carrito;
 import DAO.ModelsDAO.Cliente;
@@ -19,7 +21,10 @@ import DAO.ModelsDAO.Producto;
 import DAO.ModelsDAO.Usuario;
 import Models.ProductoVenta;
 import Models.Respuesta;
+import Utileria.ComboItem;
+import Views.Catalogos.JD_Clientes;
 import Views.Catalogos.JD_Productos;
+import Views.Emergentes.JD_CarritoDescripcion;
 
 import javax.swing.JTable;
 
@@ -40,6 +45,9 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.JPopupMenu;
 import java.awt.Component;
+import java.awt.Color;
+import java.awt.Font;
+import javax.swing.UIManager;
 
 public class JF_Venta extends JFrame {
 
@@ -55,15 +63,14 @@ public class JF_Venta extends JFrame {
 	private JButton btnNewButton_2;
 	private JTextField TF_SubTotal;
 	public JTextField TF_total;
-	private JTextField TF_Cliente;
-	private JList<String> L_Carritos;
+	public JTextField TF_Cliente;
 	private JTable TablaProductos;
 	private JScrollPane scrollPane;
 	private JPopupMenu JPM_MenuProductos;
 	private JMenuItem MI_Editar,MI_Eliminar;
-	private JComboBox<String> CB_Carritos;
 	JScrollPane scrollPaneHorizontal;
-	JComboBox<String> CB_FormaPago;
+	JComboBox<ComboItem> CB_FormaPago;
+	public JLabel LNombreCarrito;
 
 	/**
 	 * Launch the application.
@@ -91,8 +98,9 @@ public class JF_Venta extends JFrame {
 	String[] columnNames = {"ID", "Codigo", "Nombre","Descripcion","Cantidad del Producto",
 			"Fecha Caducidad","Precio","Precio Mayoreo","Existencia", "Cantidad",
 			"Descuento","Descuento Especial"};
+	private JButton BGuardarCarrito;
 	
-	private JButton BT_CargarCarrito;
+	public ComboItem carritoComboItem = null;
 
 	public JF_Venta() {
 		
@@ -101,6 +109,7 @@ public class JF_Venta extends JFrame {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 1000, 700);
 		contentPane = new JPanel();
+		contentPane.setBackground(new Color(255, 255, 255));
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 
 		setContentPane(contentPane);
@@ -108,7 +117,7 @@ public class JF_Venta extends JFrame {
 		
 		scrollPane = new JScrollPane();
 		scrollPane.setEnabled(false);
-		scrollPane.setBounds(16, 44, 962, 467);
+		scrollPane.setBounds(6, 38, 988, 473);
 		contentPane.add(scrollPane);
 		
 		TablaProductos = new JTable();
@@ -120,7 +129,8 @@ public class JF_Venta extends JFrame {
 		//TablaProductos.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 		
 		panel = new JPanel();
-		panel.setBounds(0, 517, 1000, 149);
+		panel.setBackground(Color.LIGHT_GRAY);
+		panel.setBounds(0, 517, 1000, 155);
 		contentPane.add(panel);
 		panel.setLayout(null);
 		
@@ -164,7 +174,7 @@ public class JF_Venta extends JFrame {
 		btnClear.setBounds(352, 105, 75, 29);
 		panel.add(btnClear);
 		
-		CB_FormaPago = new JComboBox<String>();
+		CB_FormaPago = new JComboBox<ComboItem>();
 		CB_FormaPago.setBounds(813, 17, 136, 27);
 		CB_FormaPago.setName("Formas De Pago");
 		panel.add(CB_FormaPago);
@@ -186,7 +196,9 @@ public class JF_Venta extends JFrame {
 		TF_SubTotal.setColumns(10);
 		
 		TF_total = new JTextField();
-		TF_total.setBounds(653, 55, 130, 26);
+		TF_total.setFont(new Font("Arial", Font.PLAIN, 18));
+		TF_total.setForeground(new Color(0, 143, 81));
+		TF_total.setBounds(653, 55, 130, 39);
 		TF_total.setColumns(10);
 		panel.add(TF_total);
 		
@@ -195,7 +207,7 @@ public class JF_Venta extends JFrame {
 		panel.add(lblNewLabel);
 		
 		JLabel lblTotal = new JLabel("Total");
-		lblTotal.setBounds(560, 60, 61, 16);
+		lblTotal.setBounds(560, 66, 61, 16);
 		panel.add(lblTotal);
 		
 		JLabel lblNewLabel_1 = new JLabel("Cliente");
@@ -203,48 +215,30 @@ public class JF_Venta extends JFrame {
 		panel.add(lblNewLabel_1);
 		
 		TF_Cliente = new JTextField();
-		TF_Cliente.setBounds(76, 17, 130, 26);
+		TF_Cliente.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				obtenerCliente();
+			}
+		});
+		TF_Cliente.setBounds(76, 17, 241, 26);
 		panel.add(TF_Cliente);
 		TF_Cliente.setColumns(10);
 		
-		JPopupMenu popupMenu = new JPopupMenu();
-		addPopup(TF_Cliente, popupMenu);
-		
-		L_Carritos = new JList<String>();
-		L_Carritos.setBounds(6, 6, 388, 26);
-		contentPane.add(L_Carritos);
-		
-		inicializarLista(L_Carritos);
+		JButton BLimpiarCliente = new JButton("Limpiar");
+		BLimpiarCliente.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				limpiarCliente();
+			}
+		});
+		BLimpiarCliente.setBounds(318, 16, 91, 29);
+		panel.add(BLimpiarCliente);
 
 		Object[][] datos = new Object[1][12];	
 		
 		//DefaultTableModel dtm = new DefaultTableModel(datos, columnNames);
 		DefaultTableModel dtm = new DefaultTableModel(datos, columnNames);
-        TablaProductos.setModel(dtm);	
-        
-        CB_Carritos = new JComboBox();
-        CB_Carritos.setActionCommand("CB_Carritos");
-        CB_Carritos.setBounds(406, 5, 165, 27);
-        CB_Carritos.addItem("Seleccionar");
-        contentPane.add(CB_Carritos);
-        
-        JButton JB_Carrito = new JButton("Guardar Carrito");
-        JB_Carrito.addActionListener(new ActionListener() {
-        	public void actionPerformed(ActionEvent arg0) {
-        		agregarCarrito(mapaCarritos);
-        	}
-        });
-        JB_Carrito.setBounds(838, 6, 140, 29);
-        contentPane.add(JB_Carrito);
-        
-        BT_CargarCarrito = new JButton("Cargar");
-        BT_CargarCarrito.addActionListener(new ActionListener() {
-        	public void actionPerformed(ActionEvent arg0) {
-        		presentarCarritoTabla();
-        	}
-        });
-        BT_CargarCarrito.setBounds(568, 3, 117, 29);
-        contentPane.add(BT_CargarCarrito);
+        TablaProductos.setModel(dtm);
         
         
         JPM_MenuProductos = new JPopupMenu();
@@ -255,6 +249,20 @@ public class JF_Venta extends JFrame {
         JPM_MenuProductos.add(MI_Eliminar);
         
         TablaProductos.setComponentPopupMenu(JPM_MenuProductos);
+        
+        BGuardarCarrito = new JButton("Carrito");
+        BGuardarCarrito.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+        		mostrarPantallaCarrito();
+        	}
+        });
+        BGuardarCarrito.setBounds(0, 0, 140, 29);
+        contentPane.add(BGuardarCarrito);
+        
+        LNombreCarrito = new JLabel("");
+        LNombreCarrito.setFont(new Font("Arial", Font.PLAIN, 11));
+        LNombreCarrito.setBounds(142, 5, 140, 16);
+        contentPane.add(LNombreCarrito);
         
         MI_Editar.addActionListener(new ActionListener() {
 			
@@ -268,9 +276,51 @@ public class JF_Venta extends JFrame {
           
 	}
 	
-	public void cargarPantallaPago() {
+	public void limpiarCliente() {
+		cliente = null;
+		TF_Cliente.setText("");
+	}
 	
-		JD_PagarCompra jd_pagarcompra = new JD_PagarCompra(this,productosVenta,cliente,usuario, (String) CB_FormaPago.getSelectedItem());
+	public void obtenerCliente() {
+		JD_Clientes jd_cliente = new JD_Clientes(this);		
+		jd_cliente.setVisible(true);
+	}
+	
+	public void mostrarPantallaCarrito() {		
+		JD_CarritoDescripcion carritoDescripcion = new JD_CarritoDescripcion(this);
+		carritoDescripcion.setVisible(true);				
+	}
+	
+	public Respuesta guardarCarrito(String nombre) {
+		ControllerVenta controllerVenta = new ControllerVenta();
+		Respuesta respuesta = new Respuesta("",true,null);
+		
+		if (productosVenta.size()==0) {
+			//JOptionPane.showMessageDialog(this, "No hay Productos en el Carrito.");
+			return new Respuesta("No hay Productos en el Carrito.",false,null) ;
+		}		
+		respuesta = controllerVenta.guardarCarrito( cliente==null? null:cliente.getIdentificador(), productosVenta,nombre);
+		return respuesta;
+		//JOptionPane.showMessageDialog(this, respuesta.getMensaje());
+	}
+	
+	public void eliminarCarrito(int idCarrito) {
+		ControllerVenta controllerVenta = new ControllerVenta();
+		Respuesta respuesta = new Respuesta("",true,null);
+		
+		respuesta = controllerVenta.eliminarCarrito( idCarrito );
+		JOptionPane.showMessageDialog(this,respuesta.getMensaje());
+		
+	}
+	
+	public void cargarPantallaPago() {
+		
+		if(productosVenta.size()==0) {
+			JOptionPane.showMessageDialog(this, "No hay Productos en el Carrito");
+			return;
+		}
+		ComboItem combo = (ComboItem) CB_FormaPago.getSelectedItem();
+		JD_PagarCompra jd_pagarcompra = new JD_PagarCompra(this,productosVenta,cliente,usuario, combo.getKey());
 		jd_pagarcompra.setModal(true);
 		jd_pagarcompra.setLocationRelativeTo(null);
 		jd_pagarcompra.setVisible(true);
@@ -284,8 +334,7 @@ public class JF_Venta extends JFrame {
 		try {
 			
 			indice = TablaProductos.getSelectedRow();
-			String codigo =(String) TablaProductos.getValueAt(indice, 1);
-			
+			String codigo =(String) TablaProductos.getValueAt(indice, 1);			
 			 producto = productosVenta.get(indice);
 			
 		} catch (Exception e) {
@@ -350,15 +399,23 @@ public class JF_Venta extends JFrame {
 		}
 		
 		llenarTabla();
-		
+		TF_total.setText(Herramientas.formatoDinero(calcularTotal()));
 	}
-	
+		
 	public void limpiarCarrito() {
 		
-		productosVenta.clear();
-		
+		productosVenta.clear();		
 		DefaultTableModel dtm = new DefaultTableModel(null, columnNames);
         TablaProductos.setModel(dtm);	        
+		TF_total.setText(Herramientas.formatoDinero(calcularTotal()));
+	}
+	
+	public void limpiarPantalla() {
+		
+		productos.clear();
+		TF_Cliente.setText("");
+		TF_SubTotal.setText("");
+		TF_total.setText(Herramientas.formatoDinero(calcularTotal()));
 		
 	}
 	
@@ -367,7 +424,7 @@ public class JF_Venta extends JFrame {
 		DefaultTableModel dtm = new DefaultTableModel(null, columnNames);
         TablaProductos.setModel(dtm);	        		
         TF_SubTotal.setText("");
-        TF_total.setText("");
+        TF_total.setText(Herramientas.formatoDinero(calcularTotal()));
         
 	}
 	
@@ -378,27 +435,15 @@ public class JF_Venta extends JFrame {
 		Respuesta respuesta = new Respuesta("",false,null);
 		
 		if (e.getKeyChar() == KeyEvent.VK_ENTER) {
-			
-			JOptionPane.showConfirmDialog(BT_CargarCarrito, "Precionaste enter");
 			respuesta = productosDAO.obtenerProductoCodigo(TF_Busqueda.getText());
-			producto_buscado = (Producto) respuesta.getRespuesta();
-			
-		}	
-		
+			producto_buscado = (Producto) respuesta.getRespuesta();			
+		}			
 		if (respuesta.getValor()) {
 			agregarProductoCarrito(producto_buscado, producto_buscado.getCodigo());
 			TF_Busqueda.setText("");
-			llenarTabla();			
-		}
-		
-	}
-	
-	public void presentarCarritoTabla() {
-		
-
-		this.getMapaCarritos().put("", null);
-		this.mapaCarritos.put("", null);
-	
+			llenarTabla();	
+			TF_total.setText( Herramientas.formatoDinero(calcularTotal()));
+		}		
 	}
 	
 	public void agregarProducto() {
@@ -411,6 +456,7 @@ public class JF_Venta extends JFrame {
 			System.out.println(producto.getNombre());
 		}
 		llenarTabla();
+		
 	}
 	
 	public void llenarTabla() {
@@ -437,18 +483,6 @@ public class JF_Venta extends JFrame {
 		DefaultTableModel dtm = new DefaultTableModel(datos, columnNames);
         TablaProductos.setModel(dtm);	
 		
-	}
-	
-	public void agregarCarrito(Map<String, List<Producto>> mapaCarritos) {
-		
-		String name = JOptionPane.showInputDialog("Elige un nombre para tu carrito: ");
-		List<Producto> p =  getProductos();
-		Carrito c = new Carrito(name, p);
-		carritos.add(c);
-		mapaCarritos.put(name,p);
-		llenarCarritos();
-		limpiarPantalla();
-		llenarTabla();
 	}
 	
 	public void agregarProductoCarrito(Producto producto, String codigo) {
@@ -510,30 +544,10 @@ public class JF_Venta extends JFrame {
 		
 	}
 	
-	public void limpiarPantalla() {
-		
-		productos.clear();
-		TF_Cliente.setText("");
-		TF_SubTotal.setText("");
-		TF_total.setText("");
-		
-	}
-	
-	public void llenarCarritos() {
-		
-		CB_Carritos.removeAllItems();
-        CB_Carritos.addItem("Seleccionar"); //Estado por defecto
-        for (Map.Entry<String, List<Producto>> entry: this.getMapaCarritos().entrySet()) {       	
-        	CB_Carritos.addItem(entry.getKey());        	
-        }		
-	}
-	
-	public void inicializarCombos(JComboBox<String> e) {
-		e.addItem("Efectivo");
-		e.addItem("Tarjeta");
-		e.addItem("Mixto");
-		
-		
+	public void inicializarCombos(JComboBox<ComboItem> e) {
+		e.addItem(new ComboItem("E","Efectivo"));
+		e.addItem(new ComboItem("T","tarjeta"));
+		e.addItem(new ComboItem("M","Mixto"));	
 	}
 	
 	public void inicializarLista(JList<String> J_Carritos) {
@@ -541,7 +555,6 @@ public class JF_Venta extends JFrame {
 		modelo.addElement("Elemento1");
 		modelo.addElement("Elemento2");
 		modelo.addElement("Elemento3");
-		J_Carritos.setModel(modelo);	
 	}
 	
 
@@ -571,25 +584,5 @@ public class JF_Venta extends JFrame {
 
 	public void setMapaCarritos(Map<String, List<Producto>> mapaCarritos) {
 		this.mapaCarritos = mapaCarritos;
-	}
-	
-	
-	
-	private static void addPopup(Component component, final JPopupMenu popup) {
-		component.addMouseListener(new MouseAdapter() {
-			public void mousePressed(MouseEvent e) {
-				if (e.isPopupTrigger()) {
-					showMenu(e);
-				}
-			}
-			public void mouseReleased(MouseEvent e) {
-				if (e.isPopupTrigger()) {
-					showMenu(e);
-				}
-			}
-			private void showMenu(MouseEvent e) {
-				popup.show(e.getComponent(), e.getX(), e.getY());
-			}
-		});
 	}
 }

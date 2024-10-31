@@ -71,7 +71,7 @@ public class FormCliente extends JDialog {
 			prueba.setCorreo("dema@gmail.com");
 			prueba.setCompras(1);
 			
-			FormCliente dialog = new FormCliente(Herramientas.tipoOperacion.eliminar, prueba);
+			FormCliente dialog = new FormCliente(Herramientas.tipoOperacion.insertar, prueba);
 			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 			dialog.setVisible(true);
 		} catch (Exception e) {

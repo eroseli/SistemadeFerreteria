@@ -105,7 +105,7 @@ public class ProveedoresDAO {
 	public Respuesta obtenerProveedorDescripcion(String descripcionNombre) {
 		
 		respuesta = new Respuesta("",true,null);
-		query  = "select * from proveedores where nombre like '%"+descripcionNombre+"%' ";
+		query  = "select * from proveedores where nombre like '%"+descripcionNombre+"%' and Estatus = 'ACTIVO' ";
 		proveedores = new ArrayList<Proveedor>();
 		
 		try {
@@ -344,52 +344,52 @@ public class ProveedoresDAO {
 	}
 	
 	
-	public static void main(String[]args) {
-		ProveedoresDAO dao = new ProveedoresDAO();
-		Respuesta r = new Respuesta("",true,null);
-		
-		List <Proveedor> proveedores_ = new ArrayList<Proveedor>();
-		
-		r = dao.obtenerProveedores();
-		
-		proveedores_ =  (List<Proveedor>) r.getRespuesta();
-		
-		for  (Proveedor proveedor : proveedores_) {
-			System.out.println(proveedor.getNombre());
-		}
-		
-		proveedores_.clear();
-		r = dao.obtenerProveedorDescripcion("esp");
-		proveedores_ = (List<Proveedor>)  r.getRespuesta();
-		
-		for (Proveedor proveedor : proveedores_) {
-			System.out.println(proveedor.getNombre());
-		}
-		
-		java.util.Date utilDate = new java.util.Date();
-		java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
-		
-		Proveedor p = new Proveedor(
-				"9",
-			"Sarmiento",
-			"1",
-			"1",
-			"1",
-			"1",
-			"1",
-			"1",
-			sqlDate,
-			"",
-			""
-			);
-		
-//		r = dao.insertarProveedor(p);
-		r = dao.actualizarProveedor(p);
-		
-		System.out.println(r.getMensaje());
-		
-		
-		
-	}
+//	public static void main(String[]args) {
+//		ProveedoresDAO dao = new ProveedoresDAO();
+//		Respuesta r = new Respuesta("",true,null);
+//		
+//		List <Proveedor> proveedores_ = new ArrayList<Proveedor>();
+//		
+//		r = dao.obtenerProveedores();
+//		
+//		proveedores_ =  (List<Proveedor>) r.getRespuesta();
+//		
+//		for  (Proveedor proveedor : proveedores_) {
+//			System.out.println(proveedor.getNombre());
+//		}
+//		
+//		proveedores_.clear();
+//		r = dao.obtenerProveedorDescripcion("esp");
+//		proveedores_ = (List<Proveedor>)  r.getRespuesta();
+//		
+//		for (Proveedor proveedor : proveedores_) {
+//			System.out.println(proveedor.getNombre());
+//		}
+//		
+//		java.util.Date utilDate = new java.util.Date();
+//		java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
+//		
+//		Proveedor p = new Proveedor(
+//				"9",
+//			"Sarmiento",
+//			"1",
+//			"1",
+//			"1",
+//			"1",
+//			"1",
+//			"1",
+//			sqlDate,
+//			"",
+//			""
+//			);
+//		
+////		r = dao.insertarProveedor(p);
+//		r = dao.actualizarProveedor(p);
+//		
+//		System.out.println(r.getMensaje());
+//		
+//		
+//		
+//	}
 	
 }

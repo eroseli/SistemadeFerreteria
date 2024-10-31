@@ -25,6 +25,7 @@ public class ControllerProveedor {
 			respuesta = proveedorService.eliminar(((ProveedorView) objeto));
 			break;
 		case Herramientas.tipoOperacion.seleccionar:
+			respuesta = proveedorService.seleccionar((String)objeto);
 			break;
 		}
 		return respuesta;
