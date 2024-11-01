@@ -8,6 +8,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JOptionPane;
+
 import DAO.ModelsDAO.Cliente;
 import DAO.ModelsDAO.Proveedor;
 import HerramientasConexion.ConexionGlobal;
@@ -68,7 +70,9 @@ public class ClientesDAO {
 
 		try {
 			
-			ConexionGlobal.establecerConexio();
+			if( !ConexionGlobal.establecerConexio())
+				return new Respuesta("Conexión No Establecida para el servidor...",false,null);
+				
 			stm = (PreparedStatement) ConexionGlobal.connection.prepareStatement(query);
 			resultados  = stm.executeQuery();
 			
@@ -92,14 +96,14 @@ public class ClientesDAO {
 			
 		} catch (SQLException e) {
 			respuesta = new Respuesta("Error al intentar obtener los Clientes"+e.getMessage(), false, null);
-			e.printStackTrace();
+			System.out.println(e.getMessage()); 
 		}
 		finally {
 			try {
 				ConexionGlobal.cerrarConexion();
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				System.out.println(e.getMessage()); 
 			}
 		}
 		
@@ -311,8 +315,13 @@ public class ClientesDAO {
 		List<Cliente>clientes = new ArrayList<Cliente>();
 		
 		r = dao.obtenerClientes();
-		clientes = (List<Cliente>)r.getRespuesta();
 		
+		if(!r.getValor()) {
+			JOptionPane.showMessageDialog(null, r.getMensaje(), "Error", JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+		
+		clientes = (List<Cliente>)r.getRespuesta();
 		
 		for (Cliente cliente : clientes) {
 			System.out.println(cliente.getNombre());

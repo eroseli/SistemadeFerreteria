@@ -44,7 +44,9 @@ import javax.swing.JRadioButton;
 import javax.swing.JPopupMenu;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.lang.reflect.Field;
 import java.sql.Date;
+import java.time.LocalDate;
 
 public class JP_Productos extends JPanel {
 
@@ -190,7 +192,7 @@ public class JP_Productos extends JPanel {
 		RBFecha.setFont(new Font("Segoe UI", Font.PLAIN, 11));
 		RBFecha.setBounds(258, 13, 101, 23);
 		add(RBFecha);
-		
+		pintarTabla2();
 	}
 	
 	private void actualizarProducto() {
@@ -291,6 +293,53 @@ public class JP_Productos extends JPanel {
 			JOptionPane.showMessageDialog(this, "Problemas al obtener la lista de productos"+e.getMessage());
 		}
 		
+	}
+	
+	public <T> Object[][]  GenerarMatrizObjetos(ArrayList<T> lista) {
+		
+		Object[][] datos = new Object[lista != null?lista.size():0][13];
+		int i=0;
+		
+		int a=0,b=0;
+		for (Object obj: lista) {
+			
+			Class<?> clazz = obj.getClass();
+			Field[] fields = clazz.getDeclaredFields();
+			
+			System.out.println("Valores de "+clazz.getSimpleName());
+			b=0;
+			for(Field field: fields) {
+				field.setAccessible(true);
+				try {
+					Object value = field.get(obj);
+					System.out.println(field.getName()+" : "+ value);
+					System.out.println(a+" "+b);				
+					//rellenar arreglo
+					datos[a][b] =  value == null? "":value;
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				b++;
+			}
+			System.out.println();
+			a++;
+		}
+		
+		return datos;
+	}
+	
+	public void pintarTabla2() {
+		
+		ArrayList<Producto> listproductos = new ArrayList<>();		
+		listproductos.add(new Producto(1,"q1w2","Tornillo","Tornillo de Cruz","1",Date.valueOf(LocalDate.now()),10f,10f,10f,10,"","" ));
+		listproductos.add(new Producto(1,"q1w3","Tornillo 2","Tornillo Plano","1",Date.valueOf(LocalDate.now()),10f,10f,10f,10,"","" ));
+		listproductos.add(new Producto(1,"q1w4","Tornillo 3","Tornillo Estrella","1",Date.valueOf(LocalDate.now()),10f,10f,10f,10,"","" ));
+		
+		Object[][] datos  = GenerarMatrizObjetos(listproductos);
+	
+		dtm = new DefaultTableModel(datos,columnNames);
+		JT_Productos.setModel(dtm);
+		ajustarTabla(JT_Productos);
 	}
 	
 	public void pintarTabla(ArrayList<Producto> productos) {

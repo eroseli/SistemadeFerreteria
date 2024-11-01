@@ -23,6 +23,7 @@ import Models.ProductoBusquedaView;
 import Models.Respuesta;
 import Models.Components.CustomHeaderRenderer;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
 
@@ -49,6 +50,7 @@ public class JP_Clientes extends JPanel {
     
     private JTable TClientes;
     
+    //ImageIcon img = new ImageIcon("C:\\Users/DESARROLLO4/Downloads/Error.png");
     
     //variables 
     
@@ -95,16 +97,15 @@ public class JP_Clientes extends JPanel {
 		
 		Respuesta respuesta = new Respuesta("",true,null);
 		
-		 respuesta = controllerCliente.proceso(Herramientas.tipoOperacion.seleccionar, TFBuscar.getText());
-		 clientes = (ArrayList<Cliente>) respuesta.getRespuesta();
-		 		
+		respuesta = controllerCliente.proceso(Herramientas.tipoOperacion.seleccionar, TFBuscar.getText());
+		clientes = (ArrayList<Cliente>) respuesta.getRespuesta();
+		
 		if(!respuesta.getValor()) {
-			JOptionPane.showMessageDialog(this,respuesta.getMensaje());
+			JOptionPane.showMessageDialog(this, respuesta.getMensaje(), "Error", JOptionPane.ERROR_MESSAGE);//,img);
 			return;
 		}
 		
 		pintarTabla((ArrayList<Cliente>) respuesta.getRespuesta());	
-		
 		
 	}
 	

@@ -31,19 +31,19 @@ public class ConexionGlobal {
 		return instancia;
 	}
 	
-	public static Connection establecerConexio() {
+	public static Boolean establecerConexio() {
 		 try {
 			 System.out.println("Obtener conexion");
 	            Class.forName("com.mysql.jdbc.Driver");
 	            connection = (Connection) DriverManager.getConnection(url,user,pass);
 	            //con = (Connection) DriverManager.getConnection("jdbc:mysql://localhost/farmacia","root","root");
 	            System.out.println("Conexion establecida correctamente desde Conexion Global");
-	            return connection;
+	            return true;
 	        } catch (Exception e) {
-	            System.out.println("Problemas al conectar "+e.getMessage());
-	            establecerConexionRemota();
+	            System.out.println("Problemas al conectar local"+e.getMessage());
+	            return establecerConexionRemota();
 	        }
-	        return null;
+	        
 	}
 	
 	public static void reasignacionVariables() {
@@ -52,24 +52,37 @@ public class ConexionGlobal {
 		pass = "IbyJPkPmhQnKu0BQfd7u";
 	}
 	
-	public static Connection establecerConexionRemota() {
+	public static Boolean establecerConexionRemota() {
 		try {
 			reasignacionVariables();
             Class.forName("com.mysql.jdbc.Driver");
             connection = (Connection) DriverManager.getConnection(url,user,pass);
             //con = (Connection) DriverManager.getConnection("jdbc:mysql://localhost/farmacia","root","root");
             System.out.println("Conexion establecida correctamente desde Conexion Global");
-            return connection;
+            return true;
         } catch (Exception e) {
-            System.out.println("Problemas al conectar "+e.getMessage());
+            System.out.println("Problemas al conectar remoto "+e.getMessage());
         }
-        return null;
+        return false;
+	}
+	
+	public static boolean isConnectionOpen() {
+		try {
+			return connection != null;
+		} catch (Exception e) {
+			System.out.println("Error al concer el status de la Conexión : "+e.getMessage());
+			return false;
+		}
 	}
 	
 	public static Connection cerrarConexion() throws SQLException{
+		if (!isConnectionOpen())
+			return null;
+		
        connection.close();
        System.out.println("Se ha cerrado la conexion...");
        return null;
+       
    }
 
 	
