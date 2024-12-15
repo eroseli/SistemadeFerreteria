@@ -16,17 +16,28 @@ import java.awt.Font;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.JTextField;
+
+import Controllers.ControllerPuestos;
 import Controllers.ControllerUsuario;
+import DAO.ModelsDAO.MarcaDAO;
+import DAO.ModelsDAO.PuestoDAO;
 import DAO.ModelsDAO.Usuario;
 import HerramientasConexion.Herramientas;
 import Models.Respuesta;
 import Models.UsuarioView;
+import Utileria.ComboItem;
 import Utileria.ComponentesDesing;
+import Views.JP_Usuarios;
 
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.awt.event.ActionEvent;
 import javax.swing.JPasswordField;
 import java.awt.Color;
+import javax.swing.JComboBox;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import javax.swing.JSeparator;
 
 public class FormUsuarios extends JDialog {
 
@@ -39,17 +50,20 @@ public class FormUsuarios extends JDialog {
 	private JTextField TFAMaterno;
 	private JTextField TFCorreoElectronico;
 	private JTextField TFDireccion;
-	private JTextField TFPuesto;
 	private JTextField TFTelefono;
 	private JButton B_Grabar; 
 	private JButton BEliminar ;
 	private JButton BCancelar ;
+	private JComboBox CBPuesto;
 	
 	private Respuesta respuesta;
 	private int tipoOperacion;
 	private Usuario usuario;
 	private final JPasswordField PFPassword = new JPasswordField();
 	private JPasswordField PFValidarPassword;
+	private JP_Usuarios jp_Usuarios;
+	private ArrayList<PuestoDAO> puestos = new ArrayList<PuestoDAO>();
+	private JSeparator separator;
 	
 	public static void main(String[] args) {
 		try {
@@ -66,7 +80,7 @@ public class FormUsuarios extends JDialog {
 			usuarioPrueba.setPuesto("Administrador");
 			usuarioPrueba.setTelefono("9514134591");
 			
-			FormUsuarios dialog = new FormUsuarios(Herramientas.tipoOperacion.insertar,usuarioPrueba);
+			FormUsuarios dialog = new FormUsuarios(null,Herramientas.tipoOperacion.insertar,usuarioPrueba);
 			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 			dialog.setVisible(true);
 		} catch (Exception e) {
@@ -77,7 +91,7 @@ public class FormUsuarios extends JDialog {
 	/**
 	 * Create the dialog.
 	 */
-	public FormUsuarios(int tipoOperacion, Usuario usuario) {
+	public FormUsuarios(JP_Usuarios jp_Usuarios,int tipoOperacion, Usuario usuario) {
 		setResizable(false);
 		setMinimumSize(new Dimension(450, 540));
 		setMaximumSize(new Dimension(450, 600));
@@ -92,125 +106,182 @@ public class FormUsuarios extends JDialog {
 		LId.setHorizontalTextPosition(SwingConstants.CENTER);
 		LId.setHorizontalAlignment(SwingConstants.RIGHT);
 		LId.setFont(new Font("Segoe UI", Font.PLAIN, 11));
-		LId.setBounds(28, 62, 107, 24);
+		LId.setBounds(28, 72, 107, 24);
 		contentPanel.add(LId);
 		
 		TFId = new JTextField();
 		TFId.setColumns(10);
-		TFId.setBounds(145, 62, 260, 24);
+		TFId.setBounds(145, 72, 260, 24);
 		contentPanel.add(TFId);
 		
 		JLabel LUsuario = new JLabel("Usuario");
 		LUsuario.setHorizontalAlignment(SwingConstants.RIGHT);
 		LUsuario.setFont(new Font("Segoe UI", Font.PLAIN, 11));
-		LUsuario.setBounds(28, 97, 107, 24);
+		LUsuario.setBounds(28, 107, 107, 24);
 		contentPanel.add(LUsuario);
 		
 		TFUsuario = new JTextField();
+		TFUsuario.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyTyped(KeyEvent e) {
+				Herramientas.tamanioCadena(e, TFUsuario, Herramientas.TamCampos.nombres);
+			}
+		});
 		TFUsuario.setColumns(10);
-		TFUsuario.setBounds(145, 97, 260, 24);
+		TFUsuario.setBounds(145, 107, 260, 24);
 		contentPanel.add(TFUsuario);
 		
 		JLabel LPassword = new JLabel("Contraseña");
 		LPassword.setHorizontalAlignment(SwingConstants.RIGHT);
 		LPassword.setFont(new Font("Segoe UI", Font.PLAIN, 11));
-		LPassword.setBounds(28, 130, 107, 24);
+		LPassword.setBounds(28, 140, 107, 24);
 		contentPanel.add(LPassword);
 		
 		JLabel Lnombre = new JLabel("Nombre");
 		Lnombre.setHorizontalAlignment(SwingConstants.RIGHT);
 		Lnombre.setFont(new Font("Segoe UI", Font.PLAIN, 11));
-		Lnombre.setBounds(28, 198, 107, 24);
+		Lnombre.setBounds(28, 208, 107, 24);
 		contentPanel.add(Lnombre);
 		
 		TFNombre = new JTextField();
+		TFNombre.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyTyped(KeyEvent e) {
+				Herramientas.tamanioCadena(e, TFNombre, Herramientas.TamCampos.nombres);
+			}
+		});
 		TFNombre.setColumns(10);
-		TFNombre.setBounds(145, 198, 260, 24);
+		TFNombre.setBounds(145, 208, 260, 24);
 		contentPanel.add(TFNombre);
 		
 		JLabel LPaterno = new JLabel("Apellido Paterno");
 		LPaterno.setHorizontalAlignment(SwingConstants.RIGHT);
 		LPaterno.setFont(new Font("Segoe UI", Font.PLAIN, 11));
-		LPaterno.setBounds(28, 231, 107, 24);
+		LPaterno.setBounds(28, 241, 107, 24);
 		contentPanel.add(LPaterno);
 		
 		TFAPaterno = new JTextField();
+		TFAPaterno.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyTyped(KeyEvent e) {
+				Herramientas.tamanioCadena(e, TFAPaterno, Herramientas.TamCampos.nombres);
+			}
+		});
 		TFAPaterno.setColumns(10);
-		TFAPaterno.setBounds(145, 231, 260, 24);
+		TFAPaterno.setBounds(145, 241, 260, 24);
 		contentPanel.add(TFAPaterno);
 		
 		JLabel LMaterno = new JLabel("Apellido Materno");
 		LMaterno.setHorizontalAlignment(SwingConstants.RIGHT);
 		LMaterno.setFont(new Font("Segoe UI", Font.PLAIN, 11));
-		LMaterno.setBounds(28, 266, 107, 24);
+		LMaterno.setBounds(28, 276, 107, 24);
 		contentPanel.add(LMaterno);
 		
 		TFAMaterno = new JTextField();
+		TFAMaterno.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyTyped(KeyEvent e) {
+				Herramientas.tamanioCadena(e, TFAMaterno, Herramientas.TamCampos.nombres);
+			}
+		});
 		TFAMaterno.setColumns(10);
-		TFAMaterno.setBounds(145, 266, 260, 24);
+		TFAMaterno.setBounds(145, 276, 260, 24);
 		contentPanel.add(TFAMaterno);
 		
 		JLabel LCorreo = new JLabel("Correo Electrónico");
 		LCorreo.setHorizontalAlignment(SwingConstants.RIGHT);
 		LCorreo.setFont(new Font("Segoe UI", Font.PLAIN, 11));
-		LCorreo.setBounds(28, 301, 107, 24);
+		LCorreo.setBounds(28, 311, 107, 24);
 		contentPanel.add(LCorreo);
 		
 		TFCorreoElectronico = new JTextField();
+		TFCorreoElectronico.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyTyped(KeyEvent e) {
+				Herramientas.tamanioCadena(e, TFCorreoElectronico, Herramientas.TamCampos.nombres);
+			}
+		});
 		TFCorreoElectronico.setColumns(10);
-		TFCorreoElectronico.setBounds(145, 301, 260, 24);
+		TFCorreoElectronico.setBounds(145, 311, 260, 24);
 		contentPanel.add(TFCorreoElectronico);
 		
 		JLabel Ldireccion = new JLabel("Dirección");
 		Ldireccion.setHorizontalAlignment(SwingConstants.RIGHT);
 		Ldireccion.setFont(new Font("Segoe UI", Font.PLAIN, 11));
-		Ldireccion.setBounds(28, 334, 107, 24);
+		Ldireccion.setBounds(28, 344, 107, 24);
 		contentPanel.add(Ldireccion);
 		
 		TFDireccion = new JTextField();
+		TFDireccion.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyTyped(KeyEvent e) {
+				Herramientas.tamanioCadena(e, TFDireccion, Herramientas.TamCampos.descripcionCorta);
+			}
+		});
 		TFDireccion.setColumns(10);
-		TFDireccion.setBounds(145, 334, 260, 24);
+		TFDireccion.setBounds(145, 344, 260, 24);
 		contentPanel.add(TFDireccion);
 		
 		JLabel LPuesto = new JLabel("Puesto");
 		LPuesto.setHorizontalAlignment(SwingConstants.RIGHT);
 		LPuesto.setFont(new Font("Segoe UI", Font.PLAIN, 11));
-		LPuesto.setBounds(28, 369, 107, 24);
+		LPuesto.setBounds(28, 379, 107, 24);
 		contentPanel.add(LPuesto);
 		
-		TFPuesto = new JTextField();
-		TFPuesto.setColumns(10);
-		TFPuesto.setBounds(145, 369, 260, 24);
-		contentPanel.add(TFPuesto);
-		
-		JLabel L_Formulario = new JLabel("Formulario Usuarios");
+		JLabel L_Formulario = new JLabel("Gestión de Usuario");
 		L_Formulario.setHorizontalAlignment(SwingConstants.CENTER);
 		L_Formulario.setFont(new Font("Segoe UI", Font.PLAIN, 20));
-		L_Formulario.setBounds(0, 8, 434, 43);
+		L_Formulario.setBounds(6, 6, 434, 43);
 		contentPanel.add(L_Formulario);
 		
 		JLabel LTelefono = new JLabel("Teléfono");
 		LTelefono.setHorizontalAlignment(SwingConstants.RIGHT);
 		LTelefono.setFont(new Font("Segoe UI", Font.PLAIN, 11));
-		LTelefono.setBounds(28, 404, 107, 24);
+		LTelefono.setBounds(28, 414, 107, 24);
 		contentPanel.add(LTelefono);
 		
 		TFTelefono = new JTextField();
+		TFTelefono.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyTyped(KeyEvent arg0) {
+				Herramientas.validarTelefono(arg0, TFTelefono);
+			}
+		});
 		TFTelefono.setColumns(10);
-		TFTelefono.setBounds(145, 404, 260, 24);
+		TFTelefono.setBounds(145, 414, 260, 24);
 		contentPanel.add(TFTelefono);
-		PFPassword.setBounds(145, 132, 260, 24);
+		PFPassword.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyTyped(KeyEvent e) {
+				Herramientas.tamanioCadena(e, PFPassword, Herramientas.TamCampos.nombres);
+			}
+		});
+		PFPassword.setBounds(145, 142, 260, 24);
 		contentPanel.add(PFPassword);
 		
 		JLabel LPasswordValida = new JLabel("Validar Contraseña");
 		LPasswordValida.setHorizontalAlignment(SwingConstants.RIGHT);
 		LPasswordValida.setFont(new Font("Segoe UI", Font.PLAIN, 11));
-		LPasswordValida.setBounds(28, 165, 107, 24);
+		LPasswordValida.setBounds(28, 175, 107, 24);
 		contentPanel.add(LPasswordValida);
 		
 		PFValidarPassword = new JPasswordField();
-		PFValidarPassword.setBounds(145, 167, 260, 24);
+		PFValidarPassword.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyTyped(KeyEvent e) {
+				Herramientas.tamanioCadena(e, PFValidarPassword, Herramientas.TamCampos.nombres);
+			}
+		});
+		PFValidarPassword.setBounds(145, 177, 260, 24);
 		contentPanel.add(PFValidarPassword);
+		
+		CBPuesto = new JComboBox();
+		CBPuesto.setBounds(145, 380, 260, 27);
+		contentPanel.add(CBPuesto);
+		
+		separator = new JSeparator();
+		separator.setBounds(28, 55, 377, 6);
+		contentPanel.add(separator);
 		{
 			JPanel buttonPane = new JPanel();
 			buttonPane.setBackground(new Color(255, 255, 255));
@@ -218,6 +289,8 @@ public class FormUsuarios extends JDialog {
 			getContentPane().add(buttonPane, BorderLayout.SOUTH);
 			{
 				B_Grabar = new JButton("Grabar");
+				B_Grabar.setMnemonic(KeyEvent.VK_ENTER);
+				B_Grabar.setToolTipText("Grabar Registro");
 				B_Grabar.setFont(new Font("Segoe UI", Font.PLAIN, 11));
 				B_Grabar.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
@@ -235,7 +308,6 @@ public class FormUsuarios extends JDialog {
 				buttonPane.add(BEliminar);
 				B_Grabar.setActionCommand("OK");
 				buttonPane.add(B_Grabar);
-				getRootPane().setDefaultButton(B_Grabar);
 			}
 			{
 				BCancelar = new JButton("Cancel");
@@ -252,11 +324,33 @@ public class FormUsuarios extends JDialog {
 		
 		this.usuario = usuario;
 		this.tipoOperacion = tipoOperacion;
+		this.jp_Usuarios = jp_Usuarios;
+		rellenarCampos();
 		inicializarPantalla();
 		configurarPantalla();
 		ComponentesDesing.JButtonDesing(B_Grabar,Herramientas.tipoButton.grabar);
 		ComponentesDesing.JButtonDesing(BEliminar,Herramientas.tipoButton.eliminar);
 		ComponentesDesing.JButtonDesing(BCancelar,Herramientas.tipoButton.cancelar);
+	}
+	
+	public void rellenarCampos() {
+		
+		ControllerPuestos controllerPuestos = new ControllerPuestos();
+		respuesta = new Respuesta("",true,null);
+		
+		respuesta = controllerPuestos.proceso(Herramientas.tipoOperacion.seleccionar, null);
+		
+		if (!respuesta.getValor()) {
+			JOptionPane.showMessageDialog(this, "Error : "+respuesta.getMensaje(),"Error",JOptionPane.ERROR_MESSAGE);
+		}
+		
+		puestos = (ArrayList<PuestoDAO>) respuesta.getRespuesta();
+		
+		for (PuestoDAO p : puestos) {
+			ComboItem c = new ComboItem( String.valueOf( p.getId_puesto()), p.getNombre());
+			CBPuesto.addItem( c);
+		}
+		
 	}
 	
 	public void configurarPantalla() {
@@ -271,8 +365,17 @@ public class FormUsuarios extends JDialog {
 			TFAMaterno.setText(usuario.getAmaterno());
 			TFCorreoElectronico.setText(usuario.getCorreo());
 			TFDireccion.setText(usuario.getDireccion());
-			TFPuesto.setText(usuario.getPuesto());
 			TFTelefono.setText(usuario.getTelefono());
+		
+			for (int i = 0; i < CBPuesto.getItemCount(); i++) {
+			    ComboItem item = (ComboItem) CBPuesto.getItemAt(i);
+			    if (item.getValue().equals(usuario.getPuesto())) {
+			    	CBPuesto.setSelectedIndex(i);  // Seleccionar el índice correspondiente
+			        break;
+			    }
+			    System.out.println(item.getValue());
+			}
+			
 		}
 	}
 	
@@ -289,20 +392,29 @@ public class FormUsuarios extends JDialog {
 				B_Grabar.setText("Actualizar");
 				break;
 			case Herramientas.tipoOperacion.eliminar:
-				B_Grabar.setVisible(false);
-				ComponentesDesing.textFieldDeshabilitar(TFUsuario);
-				ComponentesDesing.textFieldDeshabilitar(TFNombre);
-				ComponentesDesing.textFieldDeshabilitar(TFAPaterno);
-				ComponentesDesing.textFieldDeshabilitar(TFAMaterno);
-				ComponentesDesing.textFieldDeshabilitar(TFCorreoElectronico);
-				ComponentesDesing.textFieldDeshabilitar(TFDireccion);
-				ComponentesDesing.textFieldDeshabilitar(TFPuesto);
-				ComponentesDesing.textFieldDeshabilitar(TFTelefono);
-				ComponentesDesing.JPasswordFieldDeshabilitar(PFPassword);
-				ComponentesDesing.JPasswordFieldDeshabilitar(PFValidarPassword);
+				configuracionCompartida();
+				break;
+			case Herramientas.tipoOperacion.seleccionar:
+				configuracionCompartida();
+				BEliminar.setVisible(false);
+				BCancelar.setText("Cerrar");
 				break;
 		}
 		
+	}
+	
+	public void configuracionCompartida() {
+		B_Grabar.setVisible(false);
+		ComponentesDesing.textFieldDeshabilitar(TFUsuario);
+		ComponentesDesing.textFieldDeshabilitar(TFNombre);
+		ComponentesDesing.textFieldDeshabilitar(TFAPaterno);
+		ComponentesDesing.textFieldDeshabilitar(TFAMaterno);
+		ComponentesDesing.textFieldDeshabilitar(TFCorreoElectronico);
+		ComponentesDesing.textFieldDeshabilitar(TFDireccion);
+		CBPuesto.setEnabled(false);		
+		ComponentesDesing.textFieldDeshabilitar(TFTelefono);
+		ComponentesDesing.JPasswordFieldDeshabilitar(PFPassword);
+		ComponentesDesing.JPasswordFieldDeshabilitar(PFValidarPassword);
 	}
 	
 	public void eliminarUsuario() {
@@ -315,8 +427,14 @@ public class FormUsuarios extends JDialog {
 		
 		usuarioView.setId_Usuario(TFId.getText());
 		
-		respuesta = controllerUsuario.proceso(Herramientas.tipoOperacion.eliminar, usuarioView);
+		respuesta = controllerUsuario.proceso(Herramientas.tipoOperacion.eliminar, usuarioView.getId_Usuario());
 		JOptionPane.showMessageDialog(this, respuesta.getMensaje());
+		
+		if (respuesta.getValor()) {
+			jp_Usuarios.iniciarPantalla();
+			dispose();
+		}
+		
 	}
 	
 	public void grabarRegistro() {
@@ -334,10 +452,26 @@ public class FormUsuarios extends JDialog {
 		usuarioView.setAmaterno(TFAMaterno.getText());
 		usuarioView.setCorreo(TFCorreoElectronico.getText());
 		usuarioView.setDireccion(TFDireccion.getText());
-		usuarioView.setPuesto(TFPuesto.getText());
 		usuarioView.setTelefono(TFTelefono.getText());
 		
+		ComboItem CIPuesto =  (ComboItem) CBPuesto.getSelectedItem(); 		
+		usuarioView.setPuesto(CIPuesto.getValue());
+		
 		respuesta = controllerUsuario.proceso(tipoOperacion, usuarioView);
-		JOptionPane.showMessageDialog(this, respuesta.getMensaje());
+		
+		if (!respuesta.getValor()) {
+			JOptionPane.showMessageDialog(this,respuesta.getMensaje(),"Advertencia", JOptionPane.WARNING_MESSAGE);
+		}		
+		
+		JOptionPane.showMessageDialog(this, respuesta.getMensaje(),"Información",JOptionPane.INFORMATION_MESSAGE);
+		bloquearPantalla();
+		
+		
+	}
+	
+	
+	public void bloquearPantalla() {		
+		jp_Usuarios.iniciarPantalla();
+		this.dispose();
 	}
 }

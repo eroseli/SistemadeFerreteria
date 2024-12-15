@@ -75,7 +75,7 @@ public class JP_Ventas extends JPanel {
 		setMaximumSize(new Dimension(872, 644));
 		setLayout(null);
 		
-		JScrollPane SPUsuarios = new JScrollPane((Component) null); //tabla usuarios
+		JScrollPane SPUsuarios = new JScrollPane((Component) null);
 		SPUsuarios.setBackground(Color.WHITE);
 		SPUsuarios.setBounds(12, 42, 850, 321);
 		add(SPUsuarios);
@@ -91,6 +91,7 @@ public class JP_Ventas extends JPanel {
 		dtm = new DefaultTableModel(null, columnNames);
 		TUsuarios.setModel(dtm);
 		SPUsuarios.setViewportView(TUsuarios);
+		TUsuarios.setDefaultEditor(Object.class, null);
 		
 		JTableHeader header = TUsuarios.getTableHeader();
 		header.setDefaultRenderer(new CustomHeaderRenderer(2));
@@ -105,6 +106,9 @@ public class JP_Ventas extends JPanel {
 		dtmp = new DefaultTableModel(null,NamesProductosTabla );
 		TProductos.setModel(dtmp);				
 		SPProductos.setViewportView(TProductos);
+		
+		//TProductos.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+		TProductos.setDefaultEditor(Object.class, null);
 		
 		JTableHeader headerProducto =  TProductos.getTableHeader();
 		headerProducto.setDefaultRenderer(new  CustomHeaderRenderer(2));
@@ -350,7 +354,7 @@ public class JP_Ventas extends JPanel {
 	
 	private void limpiarTablaProducto() {
 		try {
-			dtmp = new DefaultTableModel(null,columnNames);
+			dtmp = new DefaultTableModel(null,NamesProductosTabla);
 			TProductos.setModel(dtmp);
 		} catch (Exception e) {
 			System.out.println("Error al limpiar tabla Productos: "+e.getMessage());

@@ -11,6 +11,8 @@ import javax.xml.transform.TransformerFactoryConfigurationError;
 
 import Controllers.ControllerVenta;
 import DAO.ModelsDAO.ProductosVentaDAO;
+import HerramientasConexion.Configuracion;
+import HerramientasConexion.Herramientas;
 import Models.Respuesta;
 
 import java.awt.Color;
@@ -145,7 +147,6 @@ public class JD_ProductoDescripcionVenta extends JDialog {
 			}
 			
 		}
-		
 		this.idHistorial = idHistorial;
 		CconfiguracionPantalla();
 		obtenerValoresPantalla();

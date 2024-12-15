@@ -29,6 +29,7 @@ import java.util.List;
 import java.awt.event.ActionEvent;
 import javax.swing.JComboBox;
 import Utileria.ComboItem;
+import javax.swing.JSeparator;
 
 public class JD_CarritoDescripcion extends JDialog {
 
@@ -54,7 +55,10 @@ public class JD_CarritoDescripcion extends JDialog {
 	 * Create the dialog.
 	 */
 	public JD_CarritoDescripcion(JF_Venta jf_Venta) {
-		setBounds(100, 100, 330, 300);
+	
+		this.setLocationRelativeTo(null);
+		
+		setBounds(100, 100, 330, 314);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBackground(Color.WHITE);
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -62,32 +66,34 @@ public class JD_CarritoDescripcion extends JDialog {
 		contentPanel.setLayout(null);
 		{
 			TF_Nombre = new JTextField();
-			TF_Nombre.setBounds(40, 74, 240, 26);
+			TF_Nombre.setBounds(41, 63, 250, 26);
 			contentPanel.add(TF_Nombre);
 			TF_Nombre.setColumns(10);
 		}
 		
 		JLabel lblNewLabel = new JLabel("Carrito");
 		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
-		lblNewLabel.setFont(new Font("Arial", Font.PLAIN, 18));
-		lblNewLabel.setBounds(0, 18, 330, 16);
+		lblNewLabel.setFont(new Font("Helvetica", Font.PLAIN, 18));
+		lblNewLabel.setBounds(0, 6, 330, 28);
 		contentPanel.add(lblNewLabel);
 		
 		JLabel LNombreCarrito = new JLabel("Nombre del Carrito");
-		LNombreCarrito.setFont(new Font("Arial", Font.PLAIN, 11));
-		LNombreCarrito.setBounds(41, 46, 125, 16);
+		LNombreCarrito.setFont(new Font("Helvetica", Font.PLAIN, 12));
+		LNombreCarrito.setBounds(41, 35, 125, 16);
 		contentPanel.add(LNombreCarrito);
 		
 		CBCarritos = new JComboBox();
-		CBCarritos.setBounds(40, 187, 240, 27);
+		CBCarritos.setBounds(40, 201, 251, 27);
 		contentPanel.add(CBCarritos);
 		
 		JLabel lblListaDeCarritos = new JLabel("Lista de Carritos");
-		lblListaDeCarritos.setFont(new Font("Arial", Font.PLAIN, 11));
-		lblListaDeCarritos.setBounds(40, 159, 125, 16);
+		lblListaDeCarritos.setFont(new Font("Helvetica", Font.PLAIN, 12));
+		lblListaDeCarritos.setBounds(41, 173, 125, 16);
 		contentPanel.add(lblListaDeCarritos);
 		BGrabar = new JButton("Grabar");
-		BGrabar.setBounds(195, 109, 85, 29);
+		BGrabar.setForeground(new Color(251, 252, 255));
+		BGrabar.setFont(new Font("Helvetica", Font.PLAIN, 13));
+		BGrabar.setBounds(110, 101, 85, 29);
 		contentPanel.add(BGrabar);
 		BGrabar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -98,7 +104,7 @@ public class JD_CarritoDescripcion extends JDialog {
 		getRootPane().setDefaultButton(BGrabar);
 		{
 			JPanel buttonPane = new JPanel();
-			buttonPane.setBounds(0, 232, 330, 40);
+			buttonPane.setBounds(0, 240, 330, 40);
 			contentPanel.add(buttonPane);
 			{
 				
@@ -136,6 +142,10 @@ public class JD_CarritoDescripcion extends JDialog {
 			}
 		}
 		
+		JSeparator separator = new JSeparator();
+		separator.setBounds(40, 145, 250, 12);
+		contentPanel.add(separator);
+		
 		this.jf_Venta = jf_Venta;
 		obtenerCarritos();
 	}
@@ -143,7 +153,7 @@ public class JD_CarritoDescripcion extends JDialog {
 	public void EliminarCarritos() {
 		ComboItem comboItem = (ComboItem) CBCarritos.getSelectedItem();
 		if (comboItem ==null) {
-			JOptionPane.showConfirmDialog(this, "Seleccione un Carrito");
+			JOptionPane.showMessageDialog(this,"Seleccione un Carrito para Eliminar", "Advertencia",JOptionPane.WARNING_MESSAGE);
 			return ;
 		}
 		
@@ -168,14 +178,14 @@ public class JD_CarritoDescripcion extends JDialog {
 		ComboItem comboItem = (ComboItem) CBCarritos.getSelectedItem();
 		
 		if (comboItem == null) {
-			JOptionPane.showMessageDialog(this, "Seleccione un Carrito a Cargar.");
+			JOptionPane.showMessageDialog(this, "Seleccione un Carrito a Cargar.","Advertencia",JOptionPane.WARNING_MESSAGE);
 			return;
 		}
 		
 		respuesta = controllerVenta.obtenerCarritoDetalleProductos( Integer.parseInt(comboItem.getKey()));
 		
 		if (!respuesta.getValor()) {
-			JOptionPane.showMessageDialog(this, "Problemas al obtener los Productos de tu carrito");
+			JOptionPane.showMessageDialog(this, "Problemas al obtener los Productos de tu carrito","Error",JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 		
@@ -185,8 +195,8 @@ public class JD_CarritoDescripcion extends JDialog {
 		jf_Venta.TF_total.setText(Herramientas.formatoDinero( jf_Venta.calcularTotal()));
 		jf_Venta.carritoComboItem = comboItem;
 		jf_Venta.LNombreCarrito.setText(comboItem.getValue());
-		
-		this.dispose();	
+		jf_Venta.idCarrito = Integer.parseInt(comboItem.getKey());
+		this.dispose();	 
 		
 	}
 	
@@ -208,7 +218,7 @@ public class JD_CarritoDescripcion extends JDialog {
 		
 		if(TF_Nombre.getText().trim().isEmpty())
 		{
-			JOptionPane.showMessageDialog(this, "Agrega un Nombre para el Carrito");
+			JOptionPane.showMessageDialog(this, "Agrega un Nombre para el Carrito","Advertencia",JOptionPane.WARNING_MESSAGE);
 			return;
 		}
 		
@@ -217,10 +227,19 @@ public class JD_CarritoDescripcion extends JDialog {
 		if (!respuesta.getValor()) {
 			JOptionPane.showMessageDialog(this, respuesta.getMensaje());
 			return;
+		}else {
+			bloquearPantalla();
 		}	
 		
 		obtenerCarritos();		
 		JOptionPane.showMessageDialog(this, respuesta.getMensaje());
 		
 	}
+	
+	public void bloquearPantalla() {
+		TF_Nombre.setEditable(false);
+		TF_Nombre.setText("");
+		BGrabar.setEnabled(false);
+	}
+	
 }

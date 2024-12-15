@@ -9,6 +9,7 @@ import javax.swing.JOptionPane;
 import java.awt.Font;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Optional;
 
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
@@ -18,7 +19,9 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
 import DAO.ModelsDAO.Producto;
+import DAO.ModelsDAO.Usuario;
 import HerramientasConexion.Herramientas;
+import HerramientasConexion.Herramientas.tipoOperacion;
 import Models.ProductoBusquedaView;
 import Models.Respuesta;
 import Models.Components.CustomHeaderRenderer;
@@ -45,6 +48,7 @@ import javax.swing.JPopupMenu;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.Date;
+import java.awt.event.KeyEvent;
 
 public class JP_Productos extends JPanel {
 
@@ -67,14 +71,6 @@ public class JP_Productos extends JPanel {
 	
 	// Ejemplo de datos (puedes llenar con datos reales de tu aplicación)
     Object[][] datos = {
-            {1, "ABC123", "Producto A", "Descripción del producto A",
-                    10, "2024-12-31", 100.0, 80.0, 50.0, 20, "Electrónica", "Marca A",""},
-            {2, "XYZ456", "Producto B", "Descripción del producto B",
-                    5, "2023-10-15", 120.0, 100.0, 70.0, 15, "Ropa", "Marca B",""},
-            {3, "XYZ456", "Producto C", "Descripción del producto B",
-                        5, "2023-10-15", 120.0, 100.0, 70.0, 15, "Ropa", "Marca B",""},
-            {4, "XYZ456", "Producto D", "Descripción del producto B",
-                            5, "2023-10-15", 120.0, 100.0, 70.0, 15, "Ropa", "Marca B",""}
     };
     private JTextField TBuscar;
     private JPopupMenu PMProductos;
@@ -103,25 +99,50 @@ public class JP_Productos extends JPanel {
 		
         JScrollPane scrollPane = new JScrollPane(JT_Productos);//,JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
         scrollPane.setBackground(new Color(255, 255, 255));
-        scrollPane.setBounds(10, 44, 850, 483);
+        scrollPane.setBounds(10, 44, 864, 596);
         
         this.add(scrollPane, BorderLayout.CENTER);
         ajustarTabla(JT_Productos);
         
         PMProductos = new JPopupMenu();        
         PMProductos.setFont(new Font("Arial", Font.PLAIN, 11));
-		JMenuItem editarItem = new JMenuItem("Editar");
+		
+        JMenuItem seleccionarItem = new JMenuItem("Visualizar");
+        seleccionarItem.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+        		visualizarProducto();
+        	}
+        	
+        });
+        
+        
+        JMenuItem editarItem = new JMenuItem("Editar");
 		editarItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				actualizarProducto();
 			}
-		});
-		
+		});	
 		editarItem.setBackground(new Color(255, 255, 255));
+		
+		
 		JMenuItem eliminarItem = new JMenuItem("Eliminar");
+		eliminarItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				eliminarRegistro();
+			}
+		});
 		eliminarItem.setBackground(new Color(255, 255, 255));
+		
 		JMenuItem agregarItem = new JMenuItem("Agregar");
+		agregarItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				agregarProducto();
+			}
+		});
 		agregarItem.setBackground(new Color(255, 255, 255));
+		
+		
+		PMProductos.add(seleccionarItem);
 		PMProductos.add(editarItem);
 		PMProductos.add(eliminarItem);
 		PMProductos.add(agregarItem);
@@ -143,7 +164,7 @@ public class JP_Productos extends JPanel {
         	}
         });
         BBuscar.setFont(new Font("Segoe UI", Font.PLAIN, 11));
-        BBuscar.setBounds(787, 13, 73, 20);
+        BBuscar.setBounds(801, 13, 73, 20);
         add(BBuscar);
         
         DCInicial = new JDateChooser();
@@ -151,7 +172,7 @@ public class JP_Productos extends JPanel {
         DCInicial.setMaximumSize(new Dimension(140, 28));
         DCInicial.setMinimumSize(new Dimension(140, 28));
         DCInicial.setFont(new Font("Segoe UI", Font.PLAIN, 11));
-        DCInicial.setBounds(365, 13, 120, 20);
+        DCInicial.setBounds(393, 13, 120, 20);
         add(DCInicial);
         
         DCFinal = new JDateChooser();
@@ -159,39 +180,154 @@ public class JP_Productos extends JPanel {
         DCFinal.setMinimumSize(new Dimension(140, 28));
         DCFinal.setMaximumSize(new Dimension(140, 28));
         DCFinal.setFont(new Font("Segoe UI", Font.PLAIN, 11));
-        DCFinal.setBounds(491, 13, 120, 20);
+        DCFinal.setBounds(525, 13, 120, 20);
         add(DCFinal);
         
         TBuscar = new JTextField();
-        TBuscar.setBounds(621, 13, 156, 20);
+        TBuscar.setBounds(657, 12, 140, 20);
         add(TBuscar);
         TBuscar.setColumns(10);
         
         CBBuscar = new JComboBox();
         CBBuscar.setFont(new Font("Segoe UI", Font.PLAIN, 12));
         CBBuscar.setModel(new DefaultComboBoxModel(new String[] {"Buscar", "Fecha de Registro", "Stock Positivo", "Por Terminar", "Faltantes", "Precio de Compra", "A - Z", "Z - A"}));
-        CBBuscar.setBounds(90, 13, 140, 22);
+        CBBuscar.setBounds(151, 11, 140, 22);
         add(CBBuscar);
         
-        JButton BReporte = new JButton("Reporte");
-        BReporte.setFont(new Font("Segoe UI", Font.PLAIN, 11));
-        BReporte.setBounds(10, 13, 73, 23);
-        add(BReporte);
+        JButton BAgregar = new JButton("Agregar");
+        BAgregar.setSelected(true);
+        BAgregar.setMnemonic('N');
+        BAgregar.setMnemonic(KeyEvent.VK_N);
+        BAgregar.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent arg0) {
+        		Agregar();
+        	}
+        });
+        BAgregar.setFont(new Font("Segoe UI", Font.PLAIN, 11));
+        BAgregar.setBounds(75, 9, 73, 23);
+        add(BAgregar);
         
 		
-//		cursor = Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR);
-//        setCursor(cursor);		
-//        iniciarPantalla();
-//		cursor = Cursor.getDefaultCursor();
-//		setCursor(cursor);
+		cursor = Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR);
+        setCursor(cursor);		
+        iniciarPantalla();
+		cursor = Cursor.getDefaultCursor();
+		setCursor(cursor);
 		
 		RBFecha = new JRadioButton("Fecha Registro");
 		RBFecha.setBackground(new Color(255, 255, 255));
 		RBFecha.setFont(new Font("Segoe UI", Font.PLAIN, 11));
-		RBFecha.setBounds(258, 13, 101, 23);
+		RBFecha.setBounds(284, 10, 111, 23);
 		add(RBFecha);
+
+	}
+	
+	private void Agregar() {
+		
+		FormProductos formproductos = new FormProductos(this,tipoOperacion.insertar,null);
+		formproductos.setVisible(true);
+	}
+	
+	private void eliminarRegistro() {
+		
+		Optional<Producto> pro = java.util.Optional.empty();
+		Respuesta respuesta = new Respuesta("",true,null);
+		
+		try {
+			
+			int indice = JT_Productos.getSelectedRow();
+			
+			if (indice == -1) {
+				JOptionPane.showMessageDialog(this,"No hay fila Seleccionada", "Advertencia",JOptionPane.WARNING_MESSAGE);
+				return;
+			}
+			
+			int idProducto = (int) JT_Productos.getValueAt(indice, 0);
+			
+			pro = productos.stream()
+					.filter(p -> p.getId_producto() == idProducto)
+					.findFirst();
+			
+			if (pro.orElse(null)== null) {
+				JOptionPane.showMessageDialog(this,"Producto No Encontrado","Error" ,JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+			
+			Producto p = pro.get();
+			
+			int continuar = JOptionPane.showConfirmDialog(this, 
+                    "¿Estás seguro que deseas Eliminar el Producto "+ p.getCodigo()+" ?", 
+                    "Confirmación", 
+                    JOptionPane.YES_NO_OPTION, 
+                    JOptionPane.QUESTION_MESSAGE);
+
+			System.out.println("Continuar"+continuar);
+			
+			if (continuar == JOptionPane.NO_OPTION || continuar == JOptionPane.CLOSED_OPTION ) {
+				return;
+			}
+			
+			respuesta = controllerProducto.proceso(Herramientas.tipoOperacion.eliminar, p.getCodigo());
+			
+			if (!respuesta.getValor()) {
+				JOptionPane.showMessageDialog(this, respuesta.getMensaje(),"Error",JOptionPane.ERROR_MESSAGE);
+				return ;
+			}
+			
+			iniciarPantalla();
+			JOptionPane.showMessageDialog(this,"Registro "+p.getCodigo()+" Eliminado Correctamente.");
+			
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		}
 		
 	}
+	
+	private void agregarProducto() {
+		
+		FormProductos formProductos = new FormProductos(this,Herramientas.tipoOperacion.insertar, null);
+		formProductos.setVisible(true);
+		
+	}
+	
+	private void visualizarProducto() {
+		
+		try {
+			
+			int seleccion = JT_Productos.getSelectedRow();
+			
+			if(seleccion == -1) {
+				JOptionPane.showMessageDialog(this,"Seleccione Algún Producto","Advertencia", JOptionPane.WARNING_MESSAGE);
+				return;
+			}
+			
+			int idProducto = (int) JT_Productos.getValueAt(seleccion, 0);
+			
+			Producto producto = productos.stream()
+					.filter(p-> p.getId_producto() == idProducto)
+					.findFirst()
+					.orElse(null);
+			
+			if (producto == null) {
+				JOptionPane.showMessageDialog(this,"Producto No Encontrado","Error",JOptionPane.ERROR_MESSAGE);
+				return;		
+			}
+			
+			producto.setCategoria((String) JT_Productos.getValueAt(seleccion, 10));
+			producto.setMarca((String) JT_Productos.getValueAt(seleccion, 11));
+
+			FormProductos formProductos = new FormProductos(this, Herramientas.tipoOperacion.seleccionar , producto);
+			formProductos.setVisible(true);	
+			
+			
+		}
+		catch(Exception e) {
+			System.out.println("Error al obtener el valor de pantalla"+e.getMessage());
+		}
+		
+		
+	}
+
 	
 	private void actualizarProducto() {
 		
@@ -199,7 +335,14 @@ public class JP_Productos extends JPanel {
 		
 		try {
 			
-			int seleccion = JT_Productos.getSelectedRow();			
+			int seleccion = JT_Productos.getSelectedRow();
+			
+			if(seleccion == -1)
+			{
+				JOptionPane.showMessageDialog(this, "Seleccione Algún Producto.","Advertencia",JOptionPane.WARNING_MESSAGE);
+				return;
+			}
+				
 			System.out.println(seleccion);
 			producto.setId_producto( (int) JT_Productos.getValueAt(seleccion, 0 ) );
 			producto.setCodigo((String) JT_Productos.getValueAt(seleccion, 1) );
@@ -219,10 +362,12 @@ public class JP_Productos extends JPanel {
 			Date fechaRegistro = (Date) JT_Productos.getValueAt(seleccion,12);
 			producto.setFechaRegistro(fechaRegistro);
 			
-			FormProductos formProductos = new FormProductos( Herramientas.tipoOperacion.actualizar , producto);
+			FormProductos formProductos = new FormProductos(this, Herramientas.tipoOperacion.actualizar , producto);
 			formProductos.setVisible(true);		
 			
 		}catch (Exception e) {
+			System.out.println(e.getMessage());
+			e.printStackTrace();
 		}
 	}
 	
@@ -233,7 +378,7 @@ public class JP_Productos extends JPanel {
 	    for (int i=0; i<tabla.getColumnCount(); i++) {
 	    	columna=tabla.getColumnModel().getColumn(i);
 		    columna.setPreferredWidth(120);
-		    columna.setMaxWidth(200);
+		    columna.setMaxWidth(250);
 		    columna.setMinWidth(120);
 	    }
 	    JT_Productos.setRowHeight(22);
@@ -266,6 +411,32 @@ public class JP_Productos extends JPanel {
 		pintarTabla((ArrayList<Producto>) respuesta.getRespuesta());	
 	}
 	
+	public boolean validarParametrosBusqueda() {
+		
+		
+		
+		try {
+						
+			if (DCInicial.getDate()  == null && DCFinal.getDate() ==null) {
+				return true;
+			}
+			else if (DCInicial.getDate()  != null && DCFinal.getDate() !=null) {
+				return true;
+			}
+			else {
+				JOptionPane.showConfirmDialog(this,"Para Buscar por Fechas es necesario Introducir una Fecha de Inicio y Final Válida.","Advertencia",JOptionPane.WARNING_MESSAGE);
+				return false;
+				
+			}
+		} catch (Exception e) {
+			System.out.println("Error al validar Parametros de La Busqueda : "+e.getMessage());
+			e.printStackTrace();
+		}
+		
+		
+		return true;
+	}
+	
 	public void recargarPantalla() {
 		
 		ProductoBusquedaView productoBusquedaView = new ProductoBusquedaView();	
@@ -273,11 +444,16 @@ public class JP_Productos extends JPanel {
 		
 		try {
 			
+			if (!validarParametrosBusqueda()) {
+				return;
+			}
+			
 			productoBusquedaView.setBusqueda( TBuscar.getText() );
 			productoBusquedaView.setFiltroBusqueda((String)CBBuscar.getSelectedItem());
 			productoBusquedaView.setFechaInicio( DCInicial.getDate()!= null?  Herramientas.convertirFecha(DCInicial):null);
 			productoBusquedaView.setFechaFinal(DCFinal.getDate() != null? Herramientas.convertirFecha(DCFinal):null);
-			productoBusquedaView.setFecha( RBFecha.isSelected()? "Fecha_caducidad":"FechaRegistro" );
+			productoBusquedaView.setFecha( RBFecha.isSelected()? "FechaRegistro":"Fecha_caducidad" );
+			System.out.println("Tipo de fecha a buscar : "+productoBusquedaView.getFecha());
 			respuesta = controllerProducto.proceso(Herramientas.tipoOperacion.seleccionar, productoBusquedaView);
 
 			if(!respuesta.getValor()) {

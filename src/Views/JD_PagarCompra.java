@@ -8,6 +8,7 @@ import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import Controllers.ControllerCarrito;
 import Controllers.ControllerVenta;
 import DAO.ModelsDAO.Cliente;
 import DAO.ModelsDAO.REGISTROVENTA;
@@ -35,6 +36,8 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import javax.swing.event.CaretListener;
 import javax.swing.event.CaretEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 public class JD_PagarCompra extends JDialog {
 
@@ -50,18 +53,26 @@ public class JD_PagarCompra extends JDialog {
 	private JF_Venta jf_venta;
 	private Usuario usuario;
 	private Cliente cliente;
-	private ArrayList<ProductoVenta> productosVenta;
+	private ArrayList<ProductoVenta> productosVenta = null;
 	private float globalPagoEfectivo =0f;
 	private float globalPagoTarjeta= 0f;
 	private String tipoPago;
 	private JLabel LTarjeta;
 	private JLabel LEfectivo;
 	private JButton BCancelar ;
+	private int idcarrito;
 	
 	
 	float totalVenta =0f;
+	boolean ventaProcesada = false;
 	
-	public JD_PagarCompra(JF_Venta jf_venta, ArrayList<ProductoVenta> productosVenta, Cliente cliente, Usuario usuario,String tipoPago) {
+	public JD_PagarCompra(JF_Venta jf_venta, ArrayList<ProductoVenta> productosVentaE, Cliente cliente, Usuario usuario,String tipoPago, int idcarrito) {
+		addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent arg0) {
+				cierreVentana();
+			}
+		});
 		setBounds(100, 100, 450, 450);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -74,20 +85,22 @@ public class JD_PagarCompra extends JDialog {
 			panel.setLayout(null);
 			
 			TF_CantidadVenta = new JTextField();
-			TF_CantidadVenta.setBounds(84, 75, 258, 26);
+			TF_CantidadVenta.setFont(new Font("Lucida Grande", Font.PLAIN, 14));
+			TF_CantidadVenta.setBounds(84, 75, 258, 40);
 			panel.add(TF_CantidadVenta);
 			TF_CantidadVenta.setColumns(10);
 			
 			JLabel L_Total = new JLabel("Total");
-			L_Total.setBounds(84, 54, 61, 16);
+			L_Total.setBounds(84, 61, 61, 16);
 			panel.add(L_Total);
 			{
 				LEfectivo = new JLabel(" Cantidad Efectivo");
-				LEfectivo.setBounds(84, 115, 126, 16);
+				LEfectivo.setBounds(84, 127, 126, 16);
 				panel.add(LEfectivo);
 			}
 			{
 				TF_CantidadEfectivo = new JTextField();
+				TF_CantidadEfectivo.setFont(new Font("Lucida Grande", Font.PLAIN, 14));
 				TF_CantidadEfectivo.addCaretListener(new CaretListener() {
 					public void caretUpdate(CaretEvent e) {
 						obtenerValore();
@@ -100,22 +113,24 @@ public class JD_PagarCompra extends JDialog {
 					}
 				});
 				TF_CantidadEfectivo.setColumns(10);
-				TF_CantidadEfectivo.setBounds(84, 143, 258, 26);
+				TF_CantidadEfectivo.setBounds(84, 143, 258, 40);
 				panel.add(TF_CantidadEfectivo);
 			}
 			{
 				JLabel L_Cambio = new JLabel("Cambio");
-				L_Cambio.setBounds(84, 254, 61, 16);
+				L_Cambio.setBounds(84, 264, 61, 16);
 				panel.add(L_Cambio);
 			}
 			{
 				TF_Cambio = new JTextField();
+				TF_Cambio.setFont(new Font("Lucida Grande", Font.PLAIN, 20));
+				TF_Cambio.setForeground(new Color(59, 119, 70));
 				TF_Cambio.setColumns(10);
-				TF_Cambio.setBounds(84, 282, 258, 26);
+				TF_Cambio.setBounds(84, 282, 258, 50);
 				panel.add(TF_Cambio);
 			}
 			{
-				JLabel L_PantallaPago = new JLabel("Realizar Pago");
+				JLabel L_PantallaPago = new JLabel("Procesar Compra");
 				L_PantallaPago.setForeground(new Color(66, 66, 66));
 				L_PantallaPago.setHorizontalAlignment(SwingConstants.CENTER);
 				L_PantallaPago.setFont(new Font("Lucida Grande", Font.BOLD, 22));
@@ -124,6 +139,7 @@ public class JD_PagarCompra extends JDialog {
 			}
 			{
 				TF_CantidadTarjeta = new JTextField();
+				TF_CantidadTarjeta.setFont(new Font("Lucida Grande", Font.PLAIN, 14));
 				TF_CantidadTarjeta.addCaretListener(new CaretListener() {
 					public void caretUpdate(CaretEvent e) {
 						obtenerValore();
@@ -136,12 +152,12 @@ public class JD_PagarCompra extends JDialog {
 					}
 				});
 				TF_CantidadTarjeta.setColumns(10);
-				TF_CantidadTarjeta.setBounds(84, 209, 258, 26);
+				TF_CantidadTarjeta.setBounds(84, 209, 258, 40);
 				panel.add(TF_CantidadTarjeta);
 			}
 			{
 				LTarjeta = new JLabel("Cantidad Tarjeta");
-				LTarjeta.setBounds(84, 181, 126, 16);
+				LTarjeta.setBounds(84, 195, 126, 16);
 				panel.add(LTarjeta);
 			}
 		}
@@ -158,7 +174,6 @@ public class JD_PagarCompra extends JDialog {
 				});
 				B_Pagar.setActionCommand("OK");
 				buttonPane.add(B_Pagar);
-				getRootPane().setDefaultButton(B_Pagar);
 			}
 			{
 				BCancelar = new JButton("Cancel");
@@ -177,14 +192,28 @@ public class JD_PagarCompra extends JDialog {
 		this.jf_venta = jf_venta;
 		this.cliente = cliente;
 		this.usuario = usuario;
-		this.productosVenta = productosVenta;
+		this.productosVenta = productosVentaE;
 		this.tipoPago = tipoPago;
+		this.idcarrito = idcarrito;
 
 		// obtener el total de la venta
 		totalVenta = jf_venta.calcularTotal();
 		System.out.println("Total de la venta : "+totalVenta);
 		cargarPantalla();
-		
+
+		System.err.println("");
+		System.err.println("");
+		System.err.println("");
+		System.err.println("");
+		for (ProductoVenta pVenta : productosVentaE) {
+			System.out.println(pVenta.toString());
+		}
+
+		System.err.println("");
+		System.err.println("");
+		System.err.println("");
+		System.err.println("");
+		System.err.println("");
 	}
 	
 	public void cerrarPantalla() {		
@@ -195,11 +224,24 @@ public class JD_PagarCompra extends JDialog {
 		dispose();		
 	}
 	
+	public void  cierreVentana() {
+		
+		if (ventaProcesada) {
+			jf_venta.limpiarPantalla();
+			jf_venta.limpiarCarrito();
+		}
+		
+	}
+	
 	public void obtenerValore() {
 				
 		String efectivo = (TF_CantidadEfectivo.getText().equals("") || TF_CantidadEfectivo.getText().isEmpty() )? "0":TF_CantidadEfectivo.getText();
 		String tarjeta = (TF_CantidadTarjeta.getText().equals("") || TF_CantidadTarjeta.getText().isEmpty() )? "0":TF_CantidadTarjeta.getText();
 		Float cambio = 0f;
+		
+		if (ventaProcesada) {
+			return;
+		}
 		
 		try {			
 			cambio =  Float.parseFloat(efectivo) + Float.parseFloat(tarjeta) - totalVenta;		
@@ -243,6 +285,8 @@ public class JD_PagarCompra extends JDialog {
 				return;
 			}
 			
+		
+			
 		} catch (Exception e) {
 			arg0.consume();
 			System.out.println("Error causado >"+e.getMessage());
@@ -254,6 +298,7 @@ public class JD_PagarCompra extends JDialog {
 	public void cargarPantalla() {
 		TF_CantidadVenta.setText(""+ Herramientas.formatoDinero( totalVenta) );
 		TF_CantidadVenta.setEditable(false);
+		TF_Cambio.setEditable(false);
 		B_Pagar.setEnabled(false);
 		
 		System.out.println("Tipo del pago"+tipoPago);
@@ -272,9 +317,9 @@ public class JD_PagarCompra extends JDialog {
 	
 	public int obtenerNumProductos() {
 		int totalProductos =0;
-		for(ProductoVenta  ProductoVenta: productosVenta) {
+		for(ProductoVenta  PVenta: productosVenta) {
 			
-			totalProductos = totalProductos = ProductoVenta.getCantidadComprar();
+			totalProductos = totalProductos + PVenta.getCantidadComprar();
 			
 		}
 		
@@ -292,7 +337,6 @@ public class JD_PagarCompra extends JDialog {
 		ArrayList<REGISTROVENTADET> registroventadetList= new ArrayList<REGISTROVENTADET>();
 		REGISTROVENTADET registroventadet = new REGISTROVENTADET();
 		Venta venta = new Venta();
-		
 		registroventa.setParam_Id_Usuario( usuario != null ? usuario.getId_Usuario(): 0  );
 		registroventa.setParam_Id_Cliente( cliente != null ? cliente.getIdentificador(): "" );
 		registroventa.setParam_NumProductos(obtenerNumProductos());
@@ -310,21 +354,35 @@ public class JD_PagarCompra extends JDialog {
 		registroventa.setParam_mensaje("");
 		
 		
-		for( ProductoVenta productoVenta: productosVenta) {
+		try {
 			
-			registroventadet.setParam_Id_Producto(productoVenta.getId_producto());
-			registroventadet.setParam_NumProductos(productoVenta.getCantidadComprar());
-			registroventadet.setParam_Id_Venta(0);
-			registroventadet.setParam_Precio( productoVenta.getDescuentoM().equals(cadenas.CadenaSi) ? productoVenta.getP_Mayoreo() : productoVenta.getP_publico() );
-			registroventadet.setParam_DescuentoM(productoVenta.getDescuentoM());
-			registroventadet.setParam_DescuentoEsp(productoVenta.getDescuentoE());
-			registroventadet.setParam_Id_Cliente(   cliente != null ? cliente.getIdentificador(): "");
-			registroventadet.setParam_respuesta(0);
-			registroventadet.setParam_mensaje("");
+			for (ProductoVenta PVenta: this.productosVenta) {
+				System.out.println("Tama;o del arreglo"+PVenta.toString());
+			}
 			
-			registroventadetList.add(registroventadet);
+			System.out.println("Tama;o del arreglo"+this.productosVenta.size());
+			for( ProductoVenta PVenta: this.productosVenta) {
+				registroventadet = new REGISTROVENTADET();
+				registroventadet.setParam_Id_Producto(PVenta.getId_producto());
+				registroventadet.setParam_NumProductos(PVenta.getCantidadComprar());
+				registroventadet.setParam_Id_Venta(0);
+				registroventadet.setParam_Precio( PVenta.getDescuentoM().equals(cadenas.CadenaSi) ? PVenta.getP_Mayoreo() : PVenta.getP_publico() );
+				registroventadet.setParam_DescuentoM(PVenta.getDescuentoM());
+				registroventadet.setParam_DescuentoEsp(PVenta.getDescuentoE());
+				registroventadet.setParam_Id_Cliente(   cliente != null ? cliente.getIdentificador(): "");
+				registroventadet.setParam_respuesta(0);
+				registroventadet.setParam_mensaje("");
+				
+				registroventadetList.add(registroventadet);
+			}
 			
+		} catch (Exception e) {
+			System.out.println("Error aqui"+e.getMessage());
+			System.out.println(e.getStackTrace());
+			e.printStackTrace();
 		}
+		
+		
 		
 		venta = new Venta(registroventa,registroventadetList);
 		
@@ -334,9 +392,24 @@ public class JD_PagarCompra extends JDialog {
 		
 		if (respuesta.getValor())
 		{
-			B_Pagar.setEnabled(false);
-			BCancelar.setText("Cerrar");
+			eliminarCarrito();
+			bloquearPantalla();
 		}
+		
+	}
+	
+	public void bloquearPantalla() {
+		ventaProcesada = true; //Procesar venta a realizada
+		B_Pagar.setEnabled(false);
+		BCancelar.setText("Cerrar");
+		TF_CantidadEfectivo.setEnabled(false);
+		TF_CantidadTarjeta.setEnabled(false);
+	}
+	
+	public void eliminarCarrito() {
+		
+		ControllerCarrito controllercarrito = new ControllerCarrito();
+		Respuesta respuesta = controllercarrito.proceso(Herramientas.tipoOperacion.eliminar, this.idcarrito);
 		
 	}
 	

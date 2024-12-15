@@ -11,6 +11,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
 
 import Controllers.ControllerProducto;
 import Controllers.ControllerVenta;
@@ -21,17 +22,26 @@ import DAO.ModelsDAO.Producto;
 import DAO.ModelsDAO.Usuario;
 import Models.ProductoVenta;
 import Models.Respuesta;
+import Models.Sesion;
+import Models.Components.CustomHeaderRenderer;
+import Models.Components.JTableEdited;
 import Utileria.ComboItem;
+import Utileria.ComponentesDesing;
 import Views.Catalogos.JD_Clientes;
 import Views.Catalogos.JD_Productos;
+import Views.Emergentes.JD_AyudaVenta;
 import Views.Emergentes.JD_CarritoDescripcion;
 
 import javax.swing.JTable;
 
 import javax.swing.JTextField;
+import javax.swing.KeyStroke;
+import javax.swing.AbstractAction;
+import javax.swing.ActionMap;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JMenuItem;
@@ -48,6 +58,10 @@ import java.awt.Component;
 import java.awt.Color;
 import java.awt.Font;
 import javax.swing.UIManager;
+import javax.swing.ImageIcon;
+import javax.swing.InputMap;
+import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 
 public class JF_Venta extends JFrame {
 
@@ -71,7 +85,7 @@ public class JF_Venta extends JFrame {
 	JScrollPane scrollPaneHorizontal;
 	JComboBox<ComboItem> CB_FormaPago;
 	public JLabel LNombreCarrito;
-
+	public int  idCarrito;
 	/**
 	 * Launch the application.
 	 */
@@ -94,13 +108,15 @@ public class JF_Venta extends JFrame {
 	public Map<String, List<Producto>> mapaCarritos; 
 	public Cliente cliente = null;
 	public Usuario usuario = null;
+	public Sesion sesion = null;
 	private DAO.ProductosDAO productosDAO = new DAO.ProductosDAO();
-	String[] columnNames = {"ID", "Codigo", "Nombre","Descripcion","Cantidad del Producto",
-			"Fecha Caducidad","Precio","Precio Mayoreo","Existencia", "Cantidad",
-			"Descuento","Descuento Especial"};
+	String[] columnNames = {"ID", "Codigo", "Nombre","Descripcion", "Cantidad","Existencia","Precio P.",
+			"Precio M.","T. V. Producto","Des. Mayoreo","Des Porcentual"};
 	private JButton BGuardarCarrito;
 	
 	public ComboItem carritoComboItem = null;
+	private JLabel lblNewLabel_2;
+	private JButton BAyuda;
 
 	public JF_Venta() {
 		
@@ -116,20 +132,39 @@ public class JF_Venta extends JFrame {
 		contentPane.setLayout(null);
 		
 		scrollPane = new JScrollPane();
+		scrollPane.setFont(new Font("Arial", Font.PLAIN, 12));
 		scrollPane.setEnabled(false);
-		scrollPane.setBounds(6, 38, 988, 473);
+		scrollPane.setBounds(6, 38, 988, 475);
 		contentPane.add(scrollPane);
 		
-		TablaProductos = new JTable();
-		scrollPane.setViewportView(TablaProductos);
-		//TablaProductos.setModel(dtm);
+		TablaProductos = new JTable(); // configuracion filas seleccion y fuente
+		TablaProductos.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				acciones(e);
+			}
+		});
+		TablaProductos.setRowHeight(40);
+		TablaProductos.setSelectionBackground(new Color(59, 131, 220));
+		TablaProductos.setFont(new Font("Arial", Font.PLAIN, 15));
 		
 		TablaProductos.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		TablaProductos.setDefaultEditor(Object.class, null);
 		//TablaProductos.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 		
+		// tabla personalizada
+		JTableHeader header = TablaProductos.getTableHeader();
+		header.setDefaultRenderer(new CustomHeaderRenderer(2));
+		
+		
+		TablaProductos.setGridColor(Color.red);
+		TablaProductos.setShowGrid(true);
+		TablaProductos.setDefaultRenderer(Object.class, new CustomHeaderRenderer(2));
+		
+		scrollPane.setViewportView(TablaProductos);
+
 		panel = new JPanel();
-		panel.setBackground(Color.LIGHT_GRAY);
+		panel.setBackground(Color.DARK_GRAY);
 		panel.setBounds(0, 517, 1000, 155);
 		contentPane.add(panel);
 		panel.setLayout(null);
@@ -142,7 +177,7 @@ public class JF_Venta extends JFrame {
 			
 			}
 		});
-		TF_Busqueda.setBounds(6, 105, 200, 26);
+		TF_Busqueda.setBounds(76, 105, 200, 26);
 		panel.add(TF_Busqueda);
 		TF_Busqueda.setColumns(10);
 		
@@ -152,17 +187,18 @@ public class JF_Venta extends JFrame {
 				eliminarProducto();
 			}
 		});
-		btnNewButton.setBounds(277, 105, 75, 29);
+		btnNewButton.setBounds(347, 105, 75, 29);
 		panel.add(btnNewButton);
 		
 		Btn_Agregar = new JButton("+");
+		Btn_Agregar.setMnemonic('c');
 		Btn_Agregar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
 				agregarProducto();
 			}
 		});
-		Btn_Agregar.setBounds(205, 105, 75, 29);
+		Btn_Agregar.setBounds(275, 105, 75, 29);
 		panel.add(Btn_Agregar);
 		
 		btnClear = new JButton("clear");
@@ -171,11 +207,11 @@ public class JF_Venta extends JFrame {
 				limpiarCarrito();
 			}
 		});
-		btnClear.setBounds(352, 105, 75, 29);
+		btnClear.setBounds(422, 105, 75, 29);
 		panel.add(btnClear);
 		
 		CB_FormaPago = new JComboBox<ComboItem>();
-		CB_FormaPago.setBounds(813, 17, 136, 27);
+		CB_FormaPago.setBounds(843, 18, 136, 27);
 		CB_FormaPago.setName("Formas De Pago");
 		panel.add(CB_FormaPago);
 		
@@ -187,30 +223,35 @@ public class JF_Venta extends JFrame {
 				cargarPantallaPago();
 			}
 		});
-		btnNewButton_2.setBounds(832, 105, 117, 29);
+		btnNewButton_2.setBounds(843, 105, 136, 29);
 		panel.add(btnNewButton_2);
 		
 		TF_SubTotal = new JTextField();
-		TF_SubTotal.setBounds(653, 17, 130, 26);
+		TF_SubTotal.setEditable(false);
+		TF_SubTotal.setBounds(701, 18, 130, 26);
 		panel.add(TF_SubTotal);
 		TF_SubTotal.setColumns(10);
 		
 		TF_total = new JTextField();
+		TF_total.setEditable(false);
 		TF_total.setFont(new Font("Arial", Font.PLAIN, 18));
 		TF_total.setForeground(new Color(0, 143, 81));
-		TF_total.setBounds(653, 55, 130, 39);
+		TF_total.setBounds(701, 56, 130, 39);
 		TF_total.setColumns(10);
 		panel.add(TF_total);
 		
 		JLabel lblNewLabel = new JLabel("Sub Total");
-		lblNewLabel.setBounds(560, 22, 61, 16);
+		lblNewLabel.setForeground(Color.WHITE);
+		lblNewLabel.setBounds(608, 23, 61, 16);
 		panel.add(lblNewLabel);
 		
 		JLabel lblTotal = new JLabel("Total");
-		lblTotal.setBounds(560, 66, 61, 16);
+		lblTotal.setForeground(Color.WHITE);
+		lblTotal.setBounds(608, 67, 61, 16);
 		panel.add(lblTotal);
 		
 		JLabel lblNewLabel_1 = new JLabel("Cliente");
+		lblNewLabel_1.setForeground(Color.WHITE);
 		lblNewLabel_1.setBounds(18, 22, 61, 16);
 		panel.add(lblNewLabel_1);
 		
@@ -233,14 +274,22 @@ public class JF_Venta extends JFrame {
 		});
 		BLimpiarCliente.setBounds(318, 16, 91, 29);
 		panel.add(BLimpiarCliente);
+		
+		lblNewLabel_2 = new JLabel("");
+		lblNewLabel_2.setHorizontalTextPosition(SwingConstants.CENTER);
+		lblNewLabel_2.setIcon(new ImageIcon(JF_Venta.class.getResource("/Recursos/CodigoBarras.png")));
+		lblNewLabel_2.setBounds(23, 105, 41, 26);
+		panel.add(lblNewLabel_2);
 
 		Object[][] datos = new Object[1][12];	
 		
 		//DefaultTableModel dtm = new DefaultTableModel(datos, columnNames);
-		DefaultTableModel dtm = new DefaultTableModel(datos, columnNames);
-        TablaProductos.setModel(dtm);
-        
-        
+//		DefaultTableModel dtm = new DefaultTableModel(datos, columnNames);
+//        TablaProductos.setModel(dtm);
+//		Herramientas.PreferredWithTable(TablaProductos);			
+//        
+		formatoTabla(null);
+		
         JPM_MenuProductos = new JPopupMenu();
         MI_Editar = new JMenuItem("Editar");
         MI_Eliminar = new JMenuItem("Eliminar");
@@ -256,13 +305,22 @@ public class JF_Venta extends JFrame {
         		mostrarPantallaCarrito();
         	}
         });
-        BGuardarCarrito.setBounds(0, 0, 140, 29);
+        BGuardarCarrito.setBounds(6, 5, 140, 29);
         contentPane.add(BGuardarCarrito);
         
         LNombreCarrito = new JLabel("");
         LNombreCarrito.setFont(new Font("Arial", Font.PLAIN, 11));
-        LNombreCarrito.setBounds(142, 5, 140, 16);
+        LNombreCarrito.setBounds(147, 10, 140, 16);
         contentPane.add(LNombreCarrito);
+        
+        BAyuda = new JButton("Ayuda");
+        BAyuda.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent arg0) {
+        		ayuda();
+        	}
+        });
+        BAyuda.setBounds(877, 5, 117, 29);
+        contentPane.add(BAyuda);
         
         MI_Editar.addActionListener(new ActionListener() {
 			
@@ -273,7 +331,109 @@ public class JF_Venta extends JFrame {
 				
 			}
 		});
+        
+        //evento desde cualquier parte de la pantalla
+        KeyStroke keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_P, KeyEvent.ALT_DOWN_MASK);
+        
+        InputMap inputMap = getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
+        ActionMap actionMap = getRootPane().getActionMap();
+
+        // Asociamos la combinación de teclas con la acción
+        inputMap.put(keyStroke, "openProductWindow");
+        actionMap.put("openProductWindow", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+            	agregarProducto();  // Llamamos a la función para abrir la ventana de productos
+            }
+        });
           
+        this.sesion = Sesion.obtenerInstancia();
+        
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                TF_Busqueda.requestFocusInWindow(); // Coloca el foco en el JTextField
+            }
+        });        
+	}
+	
+	public void ayuda() {
+		JD_AyudaVenta jp_ayudaVenta = new JD_AyudaVenta();
+		jp_ayudaVenta.setVisible(true);
+	}
+	
+	public  void acciones(KeyEvent arg0) {
+	
+		Respuesta respuesta = new Respuesta("",false,null);
+		
+		if (arg0.isAltDown() && arg0.getKeyCode() == KeyEvent.VK_UP ) {
+			System.out.println("Entro");
+			respuesta = productoMas();
+		}
+		else if (arg0.isAltDown() && arg0.getKeyCode() == KeyEvent.VK_DOWN) {
+			respuesta = productoMenos();
+		}	
+		
+		if (respuesta.getValor()) {
+			llenarTabla();	
+			TablaProductos.setRowSelectionInterval( (Integer)respuesta.getRespuesta() ,(Integer) respuesta.getRespuesta());
+		}
+		
+	}
+	public Respuesta productoMenos() {
+		
+		
+		try {
+			
+			if (TablaProductos.getSelectedRow()==-1) 
+				return new Respuesta("",false,-1);
+			
+			int idProducto = (int) TablaProductos.getValueAt(TablaProductos.getSelectedRow(),0 );	
+			
+			productosVenta.stream()
+				.filter(p-> p.getId_producto() == idProducto)
+				.findFirst()
+				.ifPresent(p -> //p.setCantidad( p.getCantidad() +1 ));
+				{
+					if (p.getCantidadComprar()>1) {
+						p.setCantidadComprar( p.getCantidadComprar() -1 );
+					}
+				});
+			
+			return new Respuesta("",true,TablaProductos.getSelectedRow());
+
+		} catch (Exception e) {
+			System.out.println("Error al intentar agregar producto + 1");
+		}
+		
+		return new Respuesta("",false,-1);
+	}
+	
+	public Respuesta productoMas() {
+				
+		try {
+			
+			if (TablaProductos.getSelectedRow()==-1) 
+				return new Respuesta("",false,-1);
+			
+			int idProducto = (int) TablaProductos.getValueAt(TablaProductos.getSelectedRow(),0 );
+			System.out.println("Indice Tomado : "+TablaProductos.getSelectedRow()+ " ID "+idProducto);			
+			productosVenta.stream()
+				.filter(p-> p.getId_producto() == idProducto)
+				.findFirst()
+				.ifPresent(p -> //p.setCantidad( p.getCantidad() +1 ));
+				{
+					if (p.getCantidadComprar()<1000) {
+						p.setCantidadComprar( p.getCantidadComprar() + 1 );
+					}
+				});
+			
+			return new Respuesta("",true,TablaProductos.getSelectedRow());
+			
+		} catch (Exception e) {
+			System.out.println("Error al intentar agregar producto + 1");
+		}
+		
+		return new Respuesta("",false,-1);
 	}
 	
 	public void limpiarCliente() {
@@ -296,12 +456,10 @@ public class JF_Venta extends JFrame {
 		Respuesta respuesta = new Respuesta("",true,null);
 		
 		if (productosVenta.size()==0) {
-			//JOptionPane.showMessageDialog(this, "No hay Productos en el Carrito.");
 			return new Respuesta("No hay Productos en el Carrito.",false,null) ;
 		}		
 		respuesta = controllerVenta.guardarCarrito( cliente==null? null:cliente.getIdentificador(), productosVenta,nombre);
 		return respuesta;
-		//JOptionPane.showMessageDialog(this, respuesta.getMensaje());
 	}
 	
 	public void eliminarCarrito(int idCarrito) {
@@ -316,14 +474,20 @@ public class JF_Venta extends JFrame {
 	public void cargarPantallaPago() {
 		
 		if(productosVenta.size()==0) {
-			JOptionPane.showMessageDialog(this, "No hay Productos en el Carrito");
+			JOptionPane.showMessageDialog(this, "No hay Productos en el Carrito","Advertencia",JOptionPane.WARNING_MESSAGE);
 			return;
 		}
+		
+		for (ProductoVenta produc : productosVenta) {
+			System.out.println("Producto aqui" + produc.toString());
+		}
+		
 		ComboItem combo = (ComboItem) CB_FormaPago.getSelectedItem();
-		JD_PagarCompra jd_pagarcompra = new JD_PagarCompra(this,productosVenta,cliente,usuario, combo.getKey());
+		JD_PagarCompra jd_pagarcompra = new JD_PagarCompra(this,productosVenta,cliente,sesion.getUsuario(), combo.getKey(), this.idCarrito);
 		jd_pagarcompra.setModal(true);
 		jd_pagarcompra.setLocationRelativeTo(null);
 		jd_pagarcompra.setVisible(true);
+		TF_Busqueda.requestFocus();
 		
 	}
 	
@@ -335,10 +499,11 @@ public class JF_Venta extends JFrame {
 			
 			indice = TablaProductos.getSelectedRow();
 			String codigo =(String) TablaProductos.getValueAt(indice, 1);			
-			 producto = productosVenta.get(indice);
-			
+			producto = productosVenta.get(indice);
+			producto.setCantidadComprar((Integer) TablaProductos.getValueAt(indice, 4) );
+			System.out.println("Asignando cantidad de compra : "+ producto.getCantidadComprar());
 		} catch (Exception e) {
-			// TODO: handle exception
+			System.out.println("Error al asignar parametros de entrada : "+e.getMessage());
 		}
 		
 		JD_DescripcionProducto descripcionProducto =  new JD_DescripcionProducto(this, producto, indice);
@@ -405,9 +570,15 @@ public class JF_Venta extends JFrame {
 	public void limpiarCarrito() {
 		
 		productosVenta.clear();		
-		DefaultTableModel dtm = new DefaultTableModel(null, columnNames);
-        TablaProductos.setModel(dtm);	        
+		formatoTabla(null);
 		TF_total.setText(Herramientas.formatoDinero(calcularTotal()));
+
+	}
+	
+	public void formatoTabla(Object[][] datos) {
+		DefaultTableModel dtm = new DefaultTableModel(datos, columnNames);
+        TablaProductos.setModel(dtm);	        
+		ComponentesDesing.PreferredWithTableProductoVenta(TablaProductos);			
 	}
 	
 	public void limpiarPantalla() {
@@ -416,16 +587,10 @@ public class JF_Venta extends JFrame {
 		TF_Cliente.setText("");
 		TF_SubTotal.setText("");
 		TF_total.setText(Herramientas.formatoDinero(calcularTotal()));
-		
-	}
-	
-	public void limpiarPantallla() {
-		
-		DefaultTableModel dtm = new DefaultTableModel(null, columnNames);
-        TablaProductos.setModel(dtm);	        		
-        TF_SubTotal.setText("");
-        TF_total.setText(Herramientas.formatoDinero(calcularTotal()));
-        
+		this.idCarrito = 0;
+		this.cliente = null;
+		this.LNombreCarrito.setText("");
+		formatoTabla(null);			
 	}
 	
 	public void buscarProductoCaracter(KeyEvent e) {
@@ -434,21 +599,32 @@ public class JF_Venta extends JFrame {
 		Producto producto_buscado = new Producto();
 		Respuesta respuesta = new Respuesta("",false,null);
 		
-		if (e.getKeyChar() == KeyEvent.VK_ENTER) {
-			respuesta = productosDAO.obtenerProductoCodigo(TF_Busqueda.getText());
-			producto_buscado = (Producto) respuesta.getRespuesta();			
-		}			
-		if (respuesta.getValor()) {
-			agregarProductoCarrito(producto_buscado, producto_buscado.getCodigo());
+		try {
+			
+			if (e.getKeyChar() != KeyEvent.VK_ENTER) {
+				return;	
+			}
+			
+			respuesta = productosDAO.obtenerProductoCodigo(TF_Busqueda.getText().trim());
+			producto_buscado = (Producto) respuesta.getRespuesta();	
+			
+			if (respuesta.getValor()) {
+				agregarProductoCarrito(producto_buscado, producto_buscado.getCodigo());
+				llenarTabla();	
+				TF_total.setText( Herramientas.formatoDinero(calcularTotal()));			
+			}
+			TF_Busqueda.setText("");			
+			
+		} catch (Exception ex) {
+			System.out.println("Error al intentar buscar el producto : "+ex.getMessage());
 			TF_Busqueda.setText("");
-			llenarTabla();	
-			TF_total.setText( Herramientas.formatoDinero(calcularTotal()));
-		}		
+		}
+			
 	}
 	
 	public void agregarProducto() {
 		
-		JD_Productos jd_Productos = new JD_Productos(this);
+		JD_Productos jd_Productos = new JD_Productos(this,null);
 		jd_Productos.setModal(true);
 		jd_Productos.setVisible(true);
 		
@@ -460,29 +636,39 @@ public class JF_Venta extends JFrame {
 	}
 	
 	public void llenarTabla() {
-		Object[][] datos = new Object[productosVenta.size()][12];
+		Object[][] datos = new Object[productosVenta.size()][11];
 		int indice = 0;
+		float MTProducto = 0f;
 		
 		for(ProductoVenta productoVenta: productosVenta) {
+			
+			if (productoVenta.getDescuentoE()==1) {
+				MTProducto = productoVenta.getP_Mayoreo() *  productoVenta.getCantidadComprar();
+			}
+			else if (productoVenta.getDescuentoM().equals("Si")) {
+				MTProducto = productoVenta.getP_Mayoreo() *  productoVenta.getCantidadComprar();
+			}
+			else {
+				MTProducto = productoVenta.getP_publico() *  productoVenta.getCantidadComprar();
+			}
 			
 			datos[indice][0] = productoVenta.getId_producto();
 			datos[indice][1] = productoVenta.getCodigo();
 			datos[indice][2] = productoVenta.getNombre();
 			datos[indice][3] = productoVenta.getDescripcion();
-			datos[indice][4] = productoVenta.getCantidad();
-			datos[indice][5] = productoVenta.getFecha_caducidad();
+			datos[indice][4] = productoVenta.getCantidadComprar();
+			datos[indice][5] = productoVenta.getExistencia();
 			datos[indice][6] = productoVenta.getP_publico();
 			datos[indice][7] = productoVenta.getP_Mayoreo();
-			datos[indice][8] = productoVenta.getExistencia();
-			datos[indice][9] = productoVenta.getCantidadComprar();
-			datos[indice][10]= productoVenta.getDescuentoM();
-			datos[indice][11] = (productoVenta.getDescuentoE()==1) ? "Si":"No";			
+			datos[indice][8] = MTProducto;
+			datos[indice][9]= productoVenta.getDescuentoM();
+			datos[indice][10] = (productoVenta.getDescuentoE()==1) ? "Si":"No";			
 			indice++;
-		}				
+		}	
 		
-		DefaultTableModel dtm = new DefaultTableModel(datos, columnNames);
-        TablaProductos.setModel(dtm);	
-		
+		String[] columnNames = {"ID", "Codigo", "Nombre","Descripcion", "Cantidad","Existencia","Precio ",
+				"Precio M.","T. V. Producto","Des. Mayoreo","Des Porcentual"};			
+		formatoTabla(datos);
 	}
 	
 	public void agregarProductoCarrito(Producto producto, String codigo) {
@@ -494,7 +680,6 @@ public class JF_Venta extends JFrame {
 		for (ProductoVenta productoA: productosVenta) {
 			
 			if(productoA.getCodigo().equals(codigo)) {
-				
 				productoActualizado = modelarProductoVenta(
 						producto, 
 						productoA.getCantidadComprar()+1, 
@@ -522,7 +707,7 @@ public class JF_Venta extends JFrame {
 		
 		ProductoVenta productoVenta =new ProductoVenta();
 		
-		productoVenta.setId_producto(0);
+		productoVenta.setId_producto(producto.getId_producto());
 		productoVenta.setCodigo(producto.getCodigo());
 		productoVenta.setNombre(producto.getNombre());
 		productoVenta.setDescripcion(producto.getDescripcion());

@@ -25,6 +25,8 @@ import HerramientasConexion.Herramientas;
 import Models.ProveedorView;
 import Models.Respuesta;
 import Utileria.ComponentesDesing;
+import Views.JP_Proveedores;
+
 import java.awt.event.ActionListener;
 import java.sql.Date;
 import java.time.LocalDate;
@@ -33,6 +35,9 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.Component;
 import java.awt.Cursor;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import javax.swing.JSeparator;
 
 public class FormProveedor extends JDialog {
 
@@ -53,11 +58,13 @@ public class FormProveedor extends JDialog {
 	
 	private Proveedor proveedor;
 	private int tipoOperacion;
+	private JP_Proveedores jp_Proveedores;
 	
 	private ControllerProveedor controllerProveedor;
 	private Respuesta respuesta;
 	private JTextField TFTipoProducto;
 	private JTextField TFNotasAdicionales;
+	private JSeparator separator;
 	
 	public static void main(String[] args) {
 		try {
@@ -74,7 +81,7 @@ public class FormProveedor extends JDialog {
 			proveedorPrueba.setDireccion("10 de Diciembre");
 			proveedorPrueba.setFechaRegistro(Date.valueOf(LocalDate.now()));
 			
-			FormProveedor dialog = new FormProveedor(proveedorPrueba, Herramientas.tipoOperacion.eliminar);
+			FormProveedor dialog = new FormProveedor(null,Herramientas.tipoOperacion.eliminar,proveedorPrueba);
 			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 			dialog.setVisible(true);
 		} catch (Exception e) {
@@ -82,7 +89,7 @@ public class FormProveedor extends JDialog {
 		}
 	}
 
-	public FormProveedor(Proveedor proveedor, int tipoOperacion) {
+	public FormProveedor(JP_Proveedores jp_proveedores, int tipoOperacion,Proveedor proveedor) {
 		setResizable(false);
 		setMinimumSize(new Dimension(450, 530));
 		setMaximumSize(new Dimension(450, 500));
@@ -112,6 +119,12 @@ public class FormProveedor extends JDialog {
 		contentPanel.add(LNombre);
 		
 		TFNombre = new JTextField();
+		TFNombre.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyTyped(KeyEvent e) {
+				Herramientas.tamanioCadena(e, TFNombre, Herramientas.TamCampos.nombres);
+			}
+		});
 		TFNombre.setColumns(10);
 		TFNombre.setBounds(143, 100, 260, 24);
 		contentPanel.add(TFNombre);
@@ -123,6 +136,12 @@ public class FormProveedor extends JDialog {
 		contentPanel.add(LApaterno);
 		
 		TFApaterno = new JTextField();
+		TFApaterno.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyTyped(KeyEvent e) {
+				Herramientas.tamanioCadena(e, TFApaterno, Herramientas.TamCampos.nombres);
+			}
+		});
 		TFApaterno.setColumns(10);
 		TFApaterno.setBounds(143, 135, 260, 24);
 		contentPanel.add(TFApaterno);
@@ -134,6 +153,12 @@ public class FormProveedor extends JDialog {
 		contentPanel.add(LAmaterno);
 		
 		TFAmaterno = new JTextField();
+		TFAmaterno.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyTyped(KeyEvent e) {
+				Herramientas.tamanioCadena(e, TFAmaterno, Herramientas.TamCampos.nombres);
+			}
+		});
 		TFAmaterno.setColumns(10);
 		TFAmaterno.setBounds(143, 168, 260, 24);
 		contentPanel.add(TFAmaterno);
@@ -145,6 +170,12 @@ public class FormProveedor extends JDialog {
 		contentPanel.add(LTelefono);
 		
 		TFTelefono = new JTextField();
+		TFTelefono.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyTyped(KeyEvent e) {
+				Herramientas.validarTelefono(e, TFTelefono);
+			}
+		});
 		TFTelefono.setColumns(10);
 		TFTelefono.setBounds(143, 203, 260, 24);
 		contentPanel.add(TFTelefono);
@@ -156,6 +187,12 @@ public class FormProveedor extends JDialog {
 		contentPanel.add(LCorreo);
 		
 		TFCorreo = new JTextField();
+		TFCorreo.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyTyped(KeyEvent e) {
+				Herramientas.tamanioCadena(e, TFCorreo, Herramientas.TamCampos.nombres);
+			}
+		});
 		TFCorreo.setColumns(10);
 		TFCorreo.setBounds(143, 238, 260, 24);
 		contentPanel.add(TFCorreo);
@@ -163,13 +200,13 @@ public class FormProveedor extends JDialog {
 		JLabel LDireccion = new JLabel("Dirección");
 		LDireccion.setHorizontalAlignment(SwingConstants.RIGHT);
 		LDireccion.setFont(new Font("Segoe UI", Font.PLAIN, 11));
-		LDireccion.setBounds(26, 311, 107, 24);
+		LDireccion.setBounds(26, 309, 107, 24);
 		contentPanel.add(LDireccion);
 		
-		JLabel L_Formulario = new JLabel("Formulario Proveedores");
+		JLabel L_Formulario = new JLabel("Gestión de Proveedor");
 		L_Formulario.setHorizontalAlignment(SwingConstants.CENTER);
 		L_Formulario.setFont(new Font("Segoe UI", Font.PLAIN, 20));
-		L_Formulario.setBounds(0, 11, 434, 43);
+		L_Formulario.setBounds(6, 0, 434, 43);
 		contentPanel.add(L_Formulario);
 		
 		JLabel Empresa = new JLabel("Empresa");
@@ -179,47 +216,75 @@ public class FormProveedor extends JDialog {
 		contentPanel.add(Empresa);
 		
 		TFEmpresa = new JTextField();
+		TFEmpresa.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyTyped(KeyEvent e) {
+				Herramientas.tamanioCadena(e, TFEmpresa, Herramientas.TamCampos.nombres);
+			}
+		});
 		TFEmpresa.setColumns(10);
 		TFEmpresa.setBounds(143, 273, 260, 24);
 		contentPanel.add(TFEmpresa);
 		
 		TFDireccion = new JTextField();
+		TFDireccion.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyTyped(KeyEvent e) {
+				Herramientas.tamanioCadena(e, TFDireccion, Herramientas.TamCampos.descripcionCorta);
+			}
+		});
 		TFDireccion.setColumns(10);
-		TFDireccion.setBounds(143, 311, 260, 24);
+		TFDireccion.setBounds(143, 309, 260, 24);
 		contentPanel.add(TFDireccion);
 		
 		DCFechaRegistro = new JDateChooser();
 		DCFechaRegistro.setName("DCFechaNac");
-		DCFechaRegistro.setBounds(143, 346, 260, 24);
+		DCFechaRegistro.setBounds(143, 416, 260, 24);
 		contentPanel.add(DCFechaRegistro);
 		
 		JLabel LFechaRegistro = new JLabel("Fecha de Registro");
 		LFechaRegistro.setHorizontalAlignment(SwingConstants.RIGHT);
 		LFechaRegistro.setFont(new Font("Segoe UI", Font.PLAIN, 11));
-		LFechaRegistro.setBounds(26, 346, 107, 24);
+		LFechaRegistro.setBounds(26, 416, 107, 24);
 		contentPanel.add(LFechaRegistro);
 		
 		JLabel LNotasAdicionales = new JLabel("Notas Adicionales");
 		LNotasAdicionales.setHorizontalAlignment(SwingConstants.RIGHT);
 		LNotasAdicionales.setFont(new Font("Segoe UI", Font.PLAIN, 11));
-		LNotasAdicionales.setBounds(26, 413, 107, 24);
+		LNotasAdicionales.setBounds(26, 379, 107, 24);
 		contentPanel.add(LNotasAdicionales);
 		
 		JLabel LTipoProducto = new JLabel("Tipo de Producto");
 		LTipoProducto.setHorizontalAlignment(SwingConstants.RIGHT);
 		LTipoProducto.setFont(new Font("Segoe UI", Font.PLAIN, 11));
-		LTipoProducto.setBounds(26, 378, 107, 24);
+		LTipoProducto.setBounds(26, 344, 107, 24);
 		contentPanel.add(LTipoProducto);
 		
 		TFTipoProducto = new JTextField();
+		TFTipoProducto.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyTyped(KeyEvent e) {
+				Herramientas.tamanioCadena(e, TFTipoProducto, Herramientas.TamCampos.descripcionCorta);
+			}
+		});
 		TFTipoProducto.setColumns(10);
-		TFTipoProducto.setBounds(143, 378, 260, 24);
+		TFTipoProducto.setBounds(143, 344, 260, 24);
 		contentPanel.add(TFTipoProducto);
 		
 		TFNotasAdicionales = new JTextField();
+		TFNotasAdicionales.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyTyped(KeyEvent e) {
+				Herramientas.tamanioCadena(e, TFNotasAdicionales, Herramientas.TamCampos.descripcionCorta);
+			}
+		});
 		TFNotasAdicionales.setColumns(10);
-		TFNotasAdicionales.setBounds(143, 414, 260, 24);
+		TFNotasAdicionales.setBounds(143, 380, 260, 24);
 		contentPanel.add(TFNotasAdicionales);
+		
+		separator = new JSeparator();
+		separator.setBounds(26, 46, 393, 12);
+		contentPanel.add(separator);
 		{
 			JPanel buttonPane = new JPanel();
 			buttonPane.setBackground(new Color(255, 255, 255));
@@ -227,6 +292,7 @@ public class FormProveedor extends JDialog {
 			getContentPane().add(buttonPane, BorderLayout.SOUTH);
 			{
 				BGrabar = new JButton("Grabar");
+				BGrabar.setMnemonic(KeyEvent.VK_ENTER);
 				BGrabar.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						grabarRegistro();
@@ -258,7 +324,6 @@ public class FormProveedor extends JDialog {
 				buttonPane.add(BEliminar);
 				BGrabar.setActionCommand("OK");
 				buttonPane.add(BGrabar);
-				getRootPane().setDefaultButton(BGrabar);
 			}
 			{
 				BCancelar = new JButton("Cancel");
@@ -274,7 +339,7 @@ public class FormProveedor extends JDialog {
 		
 		this.tipoOperacion = tipoOperacion;
 		this.proveedor = proveedor;
-		
+		this.jp_Proveedores =  jp_proveedores;
 
 		//Contruir variables
 		ConfigurarPantalla();
@@ -292,7 +357,9 @@ public class FormProveedor extends JDialog {
 			TFCorreo.setText(proveedor.getCorreo());
 			TFEmpresa.setText(proveedor.getEmpresa());
 			TFDireccion.setText(proveedor.getDireccion());
-			DCFechaRegistro.setDate(new java.util.Date(proveedor.getFechaRegistro().getTime()));
+			if (proveedor.getFechaRegistro() != null) {
+				DCFechaRegistro.setDate(new java.util.Date(proveedor.getFechaRegistro().getTime()));				
+			}
 			TFTipoProducto.setText(proveedor.getTipoProducto());
 			TFNotasAdicionales.setText(proveedor.getNotasAdicionales());
 		}
@@ -308,14 +375,19 @@ public class FormProveedor extends JDialog {
 		
 		Cursor cursor = Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR);
         setCursor(cursor);		
-        respuesta =controllerProveedor.proceso(tipoOperacion, proveedorView);
+        respuesta =controllerProveedor.proceso(Herramientas.tipoOperacion.eliminar, proveedorView.getId_Proveedor());
 		cursor = Cursor.getDefaultCursor();
 		setCursor(cursor);
 		
-		JOptionPane.showMessageDialog(this, respuesta.getMensaje());
+		if(!respuesta.getValor()) {
+			JOptionPane.showMessageDialog(this,respuesta.getMensaje(),"Error",JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+	
+		JOptionPane.showMessageDialog(this,respuesta.getMensaje(),"Información", JOptionPane.INFORMATION_MESSAGE);
+		procesoFinalizado();
+		this.dispose();
 		
-		if (respuesta.getValor())
-			procesoFinalizado();
 	}
 	
 	public void grabarRegistro() {
@@ -341,10 +413,17 @@ public class FormProveedor extends JDialog {
 		cursor = Cursor.getDefaultCursor();
 		setCursor(cursor);
 		
-		JOptionPane.showMessageDialog(this, respuesta.getMensaje());
+		if(!respuesta.getValor())
+		{
+			JOptionPane.showMessageDialog(this, respuesta.getMensaje(),"Advertencia",JOptionPane.WARNING_MESSAGE);
+			return;
+		}
+
+		JOptionPane.showMessageDialog(this, respuesta.getMensaje(),"Información",JOptionPane.INFORMATION_MESSAGE);
+		bloquearPnatalla();
+		procesoFinalizado();
+		this.dispose();
 		
-		if (respuesta.getValor())
-			procesoFinalizado();
 	}
 	
 	public void procesoFinalizado() {
@@ -357,35 +436,53 @@ public class FormProveedor extends JDialog {
 			BGrabar.setEnabled(false);
 			BCancelar.setText("Cerrar");
 		}else {
-			BCancelar.setText("Cerrar");
-		}
+			BGrabar.setEnabled(false);
+			BCancelar.setText("Cerrar");			
+		}	
 		
+		jp_Proveedores.buscar();
 	}
 	
+	public void bloquearPnatalla() {
+		
+		ComponentesDesing.textFieldDeshabilitar(TFNombre);
+		ComponentesDesing.textFieldDeshabilitar(TFApaterno);
+		ComponentesDesing.textFieldDeshabilitar(TFAmaterno);
+		ComponentesDesing.textFieldDeshabilitar(TFTelefono);
+		ComponentesDesing.textFieldDeshabilitar(TFCorreo);
+		ComponentesDesing.textFieldDeshabilitar(TFEmpresa);		
+		ComponentesDesing.textFieldDeshabilitar(TFDireccion);
+		ComponentesDesing.JDatachoser(DCFechaRegistro);
+		ComponentesDesing.textFieldDeshabilitar(TFTipoProducto);		
+		ComponentesDesing.textFieldDeshabilitar(TFNotasAdicionales);
+		
+	}	
+	
+	public void generarFecha() {
+		long currentTimeMillis = System.currentTimeMillis();
+		Date currentDate = new Date(currentTimeMillis);	        
+		DCFechaRegistro.setDate(currentDate);
+	}
 	
 	public void ConfigurarPantalla() {
 		
 		ComponentesDesing.textFieldDeshabilitar(TFId);
-	    
+	    DCFechaRegistro.setEnabled(false);		
+		
 		if (tipoOperacion == Herramientas.tipoOperacion.insertar) {
+			generarFecha();
 			BGrabar.setText("Agregar");
-			BEliminar.setVisible(false);
-			
+			BEliminar.setVisible(false);			
 		}else if(tipoOperacion == Herramientas.tipoOperacion.actualizar) {
 			BGrabar.setText("Actualizar");
 		}else if(tipoOperacion == Herramientas.tipoOperacion.eliminar) {
 			BGrabar.setVisible(false);
-			ComponentesDesing.textFieldDeshabilitar(TFNombre);
-			ComponentesDesing.textFieldDeshabilitar(TFApaterno);
-			ComponentesDesing.textFieldDeshabilitar(TFAmaterno);
-			ComponentesDesing.textFieldDeshabilitar(TFTelefono);
-			ComponentesDesing.textFieldDeshabilitar(TFCorreo);
-			ComponentesDesing.textFieldDeshabilitar(TFEmpresa);		
-			ComponentesDesing.textFieldDeshabilitar(TFDireccion);
-			ComponentesDesing.JDatachoser(DCFechaRegistro);
-			ComponentesDesing.textFieldDeshabilitar(TFTipoProducto);		
-			ComponentesDesing.textFieldDeshabilitar(TFNotasAdicionales);
-			
+			bloquearPnatalla();			
+		}else if (tipoOperacion == Herramientas.tipoOperacion.seleccionar) {
+			bloquearPnatalla();
+			BGrabar.setVisible(false);
+			BEliminar.setVisible(false);
+			BCancelar.setText("Cerrar");
 		}
 		ComponentesDesing.JButtonDesing(BCancelar, Herramientas.tipoButton.cancelar);
 		ComponentesDesing.JButtonDesing(BGrabar, Herramientas.tipoButton.grabar);

@@ -13,12 +13,15 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
 
 import Controllers.ControllerCliente;
 import DAO.ModelsDAO.Cliente;
 import DAO.ModelsDAO.Producto;
 import HerramientasConexion.Herramientas;
+import HerramientasConexion.Herramientas.tipoOperacion;
 import Models.Respuesta;
+import Models.Components.CustomHeaderRenderer;
 import Models.Components.JTableEdited;
 import Views.JF_Venta;
 
@@ -26,6 +29,9 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import javax.swing.JTextField;
+import javax.swing.event.CaretListener;
+import javax.swing.event.CaretEvent;
 
 public class JD_Clientes extends JDialog {
 
@@ -39,26 +45,50 @@ public class JD_Clientes extends JDialog {
 	private List<Cliente> clientes;
 	private JF_Venta jf_Venta;
 	String identificador = "";
+	private JTextField TFBuscar;
 
 
 	public JD_Clientes(JF_Venta jf_Venta) {
-		setBounds(100, 100, 800, 600);
+		setTitle("Busqueda de Clientes");
+		setBounds(100, 100, 802, 600);
 		getContentPane().setLayout(new BorderLayout());
+		contentPanel.setBackground(new Color(254, 255, 255));
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
-		contentPanel.setLayout(null);
 		
 		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(6, 6, 791, 430);
+		scrollPane.setBounds(6, 34, 791, 493);
 		
 		TablaClientes = new JTableEdited();
 		TablaClientes.setFont(new Font("Arial", Font.PLAIN, 12));
 		scrollPane.setViewportView(TablaClientes);
-		TablaClientes.setBackground(new Color(229, 247, 246));
+		TablaClientes.setBackground(new Color(254, 255, 255));
 		TablaClientes.setAutoCreateRowSorter(true);
 		TablaClientes.isCellEditable(0,0);
 		
+		// tabla personalizada
+		JTableHeader header = TablaClientes.getTableHeader();
+		header.setDefaultRenderer(new CustomHeaderRenderer(2));
+		TablaClientes.setDefaultRenderer(Object.class, new CustomHeaderRenderer(2));
+					
+		
+		contentPanel.setLayout(null);
+		
 		contentPanel.add(scrollPane);
+		
+		TFBuscar = new JTextField();
+		TFBuscar.addCaretListener(new CaretListener() {
+			public void caretUpdate(CaretEvent e) {
+				buscarCliente();
+			}
+		});
+		TFBuscar.setBounds(478, 6, 200, 26);
+		contentPanel.add(TFBuscar);
+		TFBuscar.setColumns(10);
+		
+		JButton BBuscar = new JButton("Buscar");
+		BBuscar.setBounds(680, 6, 117, 29);
+		contentPanel.add(BBuscar);
 		{
 			JPanel buttonPane = new JPanel();
 			buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
@@ -76,14 +106,40 @@ public class JD_Clientes extends JDialog {
 			}
 			{
 				JButton cancelButton = new JButton("Cancel");
+				cancelButton.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						dispose();
+					}
+				});
 				cancelButton.setActionCommand("Cancel");
 				buttonPane.add(cancelButton);
 			}
 		}
 		
 		//Locales
-		obtenerClientes();
+		buscarCliente();
 		this.jf_Venta = jf_Venta;
+		
+	}
+	
+	public void buscarCliente() {
+		
+		ControllerCliente controllerCliente =  new ControllerCliente();
+		respuesta = new Respuesta("",true,null);
+		String nombre = TFBuscar.getText().trim();
+		
+		if (TFBuscar.getText().trim() =="" || TFBuscar.getText().trim().isEmpty() ) {
+			nombre = null;
+		}
+		
+		respuesta = controllerCliente.proceso(Herramientas.tipoOperacion.seleccionar,nombre);
+		
+		if (!respuesta.getValor()) {
+			JOptionPane.showMessageDialog(this,respuesta.getMensaje(),"Error",JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+		
+		pintarTablaClientes( (ArrayList<Cliente>) respuesta.getRespuesta());
 		
 	}
 	
@@ -115,20 +171,12 @@ public class JD_Clientes extends JDialog {
 	}
 	
 	
-	public void obtenerClientes() {
+	public void pintarTablaClientes(ArrayList<Cliente> clientesList) {
 		
 		respuesta = new Respuesta("",true,null);
 		String[] columnNames = {"Id","Identificador","Nombre","A. Paterno","A. Materno","Fechan Nacimiento","Teléfono","Correo", "Compras","Fecha Ingreso"};
-
-	
-		respuesta = controllerClintes.proceso(Herramientas.tipoOperacion.seleccionar, null);
-
-		if ( !respuesta.getValor() ) {
-			JOptionPane.showMessageDialog(this, "Error: "+respuesta.getMensaje());
-			return ;
-		}
 		
-		clientes = (ArrayList<Cliente>) respuesta.getRespuesta();
+		clientes = clientesList;
 		
 		Object[][] datos = new Object[clientes != null? clientes.size():0][10];
 		
@@ -161,6 +209,4 @@ public class JD_Clientes extends JDialog {
 		//dtm.setColumnIdentifiers(columnNames);
 		TablaClientes.setModel(dtm);	
 	}
-	
-	
 }

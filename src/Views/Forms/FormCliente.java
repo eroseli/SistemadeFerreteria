@@ -17,6 +17,7 @@ import java.awt.Font;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.JTextField;
+import javax.swing.SpinnerNumberModel;
 import javax.swing.JPasswordField;
 import java.awt.event.ActionListener;
 import java.sql.Date;
@@ -36,6 +37,8 @@ import Utileria.ComponentesDesing;
 import javax.swing.JSpinner;
 import java.awt.Color;
 import java.awt.Cursor;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 public class FormCliente extends JDialog {
 
@@ -57,6 +60,7 @@ public class FormCliente extends JDialog {
 	private ControllerCliente controllerCliente;
 	private int tipoOperacion;
 	private Cliente cliente;
+	private JP_Clientes jp_Clientes;
 	
 	public static void main(String[] args) {
 		try {
@@ -71,7 +75,7 @@ public class FormCliente extends JDialog {
 			prueba.setCorreo("dema@gmail.com");
 			prueba.setCompras(1);
 			
-			FormCliente dialog = new FormCliente(Herramientas.tipoOperacion.insertar, prueba);
+			FormCliente dialog = new FormCliente(null,Herramientas.tipoOperacion.insertar, prueba);
 			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 			dialog.setVisible(true);
 		} catch (Exception e) {
@@ -79,7 +83,8 @@ public class FormCliente extends JDialog {
 		}
 	}
 	
-	public FormCliente(int tipoOperacion, Cliente cliente) {
+	public FormCliente( JP_Clientes jp_Clientes, int tipoOperacion, Cliente cliente) {
+		setTitle("Clientes");
 		setResizable(false);
 		setMaximumSize(new Dimension(450, 540));
 		setMinimumSize(new Dimension(450, 440));
@@ -112,6 +117,12 @@ public class FormCliente extends JDialog {
 		}
 		{
 			TFNombre = new JTextField();
+			TFNombre.addKeyListener(new KeyAdapter() {
+				@Override
+				public void keyTyped(KeyEvent e) {
+					Herramientas.tamanioCadena(e, TFNombre, Herramientas.TamCampos.nombres);
+				}
+			});
 			TFNombre.setColumns(10);
 			TFNombre.setBounds(146, 109, 260, 24);
 			contentPanel.add(TFNombre);
@@ -146,6 +157,12 @@ public class FormCliente extends JDialog {
 		}
 		{
 			TFTelefono = new JTextField();
+			TFTelefono.addKeyListener(new KeyAdapter() {
+				@Override
+				public void keyTyped(KeyEvent e) {
+					Herramientas.validarTelefono(e, TFTelefono);
+				}
+			});
 			TFTelefono.setColumns(10);
 			TFTelefono.setBounds(146, 243, 260, 24);
 			contentPanel.add(TFTelefono);
@@ -159,6 +176,12 @@ public class FormCliente extends JDialog {
 		}
 		{
 			TFCorreo = new JTextField();
+			TFCorreo.addKeyListener(new KeyAdapter() {
+				@Override
+				public void keyTyped(KeyEvent e) {
+					Herramientas.tamanioCadena(e, TFCorreo, Herramientas.TamCampos.nombres);
+				}
+			});
 			TFCorreo.setColumns(10);
 			TFCorreo.setBounds(146, 278, 260, 24);
 			contentPanel.add(TFCorreo);
@@ -171,7 +194,7 @@ public class FormCliente extends JDialog {
 			contentPanel.add(lblNumCompras);
 		}
 		{
-			JLabel L_Formulario = new JLabel("Formulario Clientes");
+			JLabel L_Formulario = new JLabel("Gestión de Cliente");
 			L_Formulario.setHorizontalAlignment(SwingConstants.CENTER);
 			L_Formulario.setFont(new Font("Segoe UI", Font.PLAIN, 20));
 			L_Formulario.setBounds(0, 11, 434, 43);
@@ -184,15 +207,40 @@ public class FormCliente extends JDialog {
 		contentPanel.add(DCFechaNacimiento);
 		
 		SCompras = new JSpinner();
+		SpinnerNumberModel model = new SpinnerNumberModel(
+	            0,        // Valor inicial
+	            0,        // Valor mínimo
+	            1000,   // Valor máximo
+	            1         // Incremento
+	        );
+		SCompras.setModel(model);
+		SCompras.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyTyped(KeyEvent e) {
+				Herramientas.tamanioCadena(e, TFNombre, Herramientas.TamCampos.inventario);
+			}
+		});
 		SCompras.setBounds(146, 313, 260, 24);
 		contentPanel.add(SCompras);
 		
 		TFApaterno = new JTextField();
+		TFApaterno.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyTyped(KeyEvent e) {
+				Herramientas.tamanioCadena(e, TFApaterno, Herramientas.TamCampos.nombres);
+			}
+		});
 		TFApaterno.setColumns(10);
 		TFApaterno.setBounds(146, 144, 260, 24);
 		contentPanel.add(TFApaterno);
 		
 		TFAmaterno = new JTextField();
+		TFAmaterno.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyTyped(KeyEvent e) {
+				Herramientas.tamanioCadena(e, TFAmaterno, Herramientas.TamCampos.nombres);
+			}
+		});
 		TFAmaterno.setColumns(10);
 		TFAmaterno.setBounds(146, 177, 260, 24);
 		contentPanel.add(TFAmaterno);
@@ -202,6 +250,7 @@ public class FormCliente extends JDialog {
 			getContentPane().add(buttonPane, BorderLayout.SOUTH);
 			{
 				BGrabar = new JButton("Grabar");
+				BGrabar.setMnemonic(KeyEvent.VK_ENTER);
 				BGrabar.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						guardarRegistro();
@@ -219,7 +268,6 @@ public class FormCliente extends JDialog {
 				buttonPane.add(BEliminar);
 				BGrabar.setActionCommand("OK");
 				buttonPane.add(BGrabar);
-				getRootPane().setDefaultButton(BGrabar);
 			}
 			{
 				BCancelar = new JButton("Cancel");
@@ -235,6 +283,7 @@ public class FormCliente extends JDialog {
 		
 		this.tipoOperacion = tipoOperacion;
 		this.cliente = cliente;
+		this.jp_Clientes = jp_Clientes;
 		inicializarPantalla();
 		configuracionPantalla();
 	}
@@ -266,15 +315,23 @@ public class FormCliente extends JDialog {
 		}else if(tipoOperacion == Herramientas.tipoOperacion.actualizar) {
 			BGrabar.setText("Actualizar");
 		}else if(tipoOperacion == Herramientas.tipoOperacion.eliminar) {
-			BGrabar.setVisible(false);
-			ComponentesDesing.textFieldDeshabilitar(TFNombre);
-			ComponentesDesing.textFieldDeshabilitar(TFApaterno);
-			ComponentesDesing.textFieldDeshabilitar(TFAmaterno);
-			ComponentesDesing.textFieldDeshabilitar(TFTelefono);
-			ComponentesDesing.textFieldDeshabilitar(TFCorreo);
-			ComponentesDesing.JSnipperDesHabilitar(SCompras);
-			ComponentesDesing.JDatachoser(DCFechaNacimiento);
+			ConfiguracionCompartida();
+		}else if( tipoOperacion == Herramientas.tipoOperacion.seleccionar) {
+			ConfiguracionCompartida();
+			BEliminar.setVisible(false);
 		}
+		
+	}
+	
+	public void ConfiguracionCompartida() {
+		BGrabar.setVisible(false);
+		ComponentesDesing.textFieldDeshabilitar(TFNombre);
+		ComponentesDesing.textFieldDeshabilitar(TFApaterno);
+		ComponentesDesing.textFieldDeshabilitar(TFAmaterno);
+		ComponentesDesing.textFieldDeshabilitar(TFTelefono);
+		ComponentesDesing.textFieldDeshabilitar(TFCorreo);
+		ComponentesDesing.JSnipperDesHabilitar(SCompras);
+		ComponentesDesing.JDatachoser(DCFechaNacimiento);
 	}
 	
 	public void eliminarRegistro() {
@@ -288,11 +345,12 @@ public class FormCliente extends JDialog {
 		
 		Cursor cursor = Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR);
         setCursor(cursor);		
-        respuesta = controllerCliente.proceso(Herramientas.tipoOperacion.eliminar, clienteView);
+        respuesta = controllerCliente.proceso(Herramientas.tipoOperacion.eliminar, TFId.getText().trim());
 		cursor = Cursor.getDefaultCursor();
 		setCursor(cursor);
 		
 		JOptionPane.showMessageDialog(this, respuesta.getMensaje());
+		procesoFinalizado();
 	}
 	
 	public void guardarRegistro(){
@@ -316,5 +374,17 @@ public class FormCliente extends JDialog {
 		setCursor(cursor);
 		
 		JOptionPane.showMessageDialog(this, respuesta.getMensaje());
+		
+		if (respuesta.getValor()) 
+			procesoFinalizado();				
+		
 	}
+	
+	public void procesoFinalizado() {
+		
+		jp_Clientes.buscar();
+		this.dispose();
+		
+	} 
+	
 }
