@@ -23,12 +23,16 @@ public class ControllerProducto {
 			respuesta = productoService.actualizar((ProductoView) objeto);
 			break;
 		case Herramientas.tipoOperacion.eliminar:
-			ProductoView productoView =  (ProductoView) objeto;
-			respuesta = productoService.eliminar(productoView.getCodigo());
+			String codigo =  (String) objeto;
+			respuesta = productoService.eliminar(codigo);
 			break;
 		case Herramientas.tipoOperacion.seleccionar:
 			ProductoBusquedaView busquedaView = (ProductoBusquedaView) objeto;
 			respuesta = productoService.seleccionar(busquedaView);
+			break;
+		case 5:
+			String producto = (String) objeto;
+			respuesta = productoService.obtenerProductoCoincidencia(producto);
 			break;
 		}
 		return respuesta;

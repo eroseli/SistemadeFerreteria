@@ -13,10 +13,13 @@ import Models.Respuesta;
 public class ProductoService {
 
 	private Respuesta respuesta;
+	Producto p = null;
 	
 	public Respuesta insertar(ProductoView productoView) {
+		ProductosDAO productoDao = new ProductosDAO();
 		
 		respuesta = new Respuesta("",false,productoView);
+		Respuesta valida = new Respuesta("",true,null);
 		
 		respuesta = validarProducto(Herramientas.tipoOperacion.insertar,productoView);
 		if(!respuesta.getValor())
@@ -27,7 +30,17 @@ public class ProductoService {
 			return respuesta;
 		}
 		
-		respuesta = realizarInsercion((Producto)respuesta.getRespuesta());
+		Producto pro = (Producto) respuesta.getRespuesta();		
+		System.out.println("Codig"+pro.getCodigo());
+		valida = productoDao.validarProductoEliminado( pro.getCodigo() );		
+				
+		if ( (Boolean) valida.getRespuesta()) {
+			respuesta = realizarActualizacion(pro);
+		}
+		else {
+			respuesta = realizarInsercion(pro);
+		}
+		
 		return respuesta;
 	}
 	
@@ -86,6 +99,17 @@ public class ProductoService {
 			respuesta =  productosDAO.obtenerProductoBusqueda(productoBusquedaView);
 		} catch (Exception e) {
 			return new Respuesta("Problemas al intentar obtener los Productos "+e.getMessage(),false,null);
+		}
+		return respuesta;
+	}
+	
+	public Respuesta obtenerProductoCoincidencia(String producto) {
+		respuesta = new Respuesta("",true,null);
+		ProductosDAO productosDAO = new ProductosDAO(); 
+		try {
+			respuesta = productosDAO.obtenerProductoCoincidencia(producto);
+		} catch (Exception e) {
+			return new Respuesta("Problemas al intentar obtener los Productos." +e.getMessage(),false,null);
 		}
 		return respuesta;
 	}

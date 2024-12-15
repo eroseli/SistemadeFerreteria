@@ -1,5 +1,6 @@
 package Controllers;
 
+import java.beans.EventSetDescriptor;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -10,6 +11,7 @@ import com.mysql.cj.x.protobuf.MysqlxDatatypes.Array;
 import DAO.ProductosDAO;
 import DAO.VentasDAO;
 import DAO.ModelsDAO.REGISTROVENTADET;
+import DAO.ModelsDAO.VentaTotalesDAO;
 import HerramientasConexion.Herramientas;
 import Models.ProductoVenta;
 import Models.Respuesta;
@@ -67,11 +69,13 @@ public class ControllerVenta {
 		
 	}
 	
-	public Respuesta obtenerTotalesDescripcionVentas(Date fechaInicio, Date fechaFinal) {
+	public Respuesta obtenerTotalesDescripcionVentas(Date fechaInicio, Date fechaFinal) { // obtener descripcion de ventas totales
 		
 		respuesta = new Respuesta("",true,null);
 		Respuesta respuestaDao = new Respuesta("",true,null);
 		VentasDAO ventasDAO = new VentasDAO();
+		VentaTotalesDAO ventatotalDao = new VentaTotalesDAO();
+		VentaTotalesDAO ventatotalDaoRespuesta = new VentaTotalesDAO();
 		
 		// obtener valores 
 		respuestaDao = ventasDAO.obtenerValoresTotalesVentas(fechaInicio, fechaFinal);
@@ -80,12 +84,34 @@ public class ControllerVenta {
 			return respuesta;
 		}
 		
-		respuesta = respuestaDao;
+		ventatotalDaoRespuesta = (VentaTotalesDAO) respuestaDao.getRespuesta();
+		
+		// obtener producto estrella
+		respuestaDao = ventasDAO.obtenerTotalesHistorialProductoEstrella(fechaInicio, fechaFinal);
 		
 		
+		if(respuestaDao.getRespuesta() == null) {
+			respuesta.setRespuesta(ventatotalDaoRespuesta);
+			return respuesta;
+		}
 		
+		ventatotalDao = (VentaTotalesDAO) respuestaDao.getRespuesta();	
+		ventatotalDaoRespuesta.setProductoEstrella(ventatotalDao.getProductoEstrella()); // asigna unicamente el producto mas vendido
 		
-		return null;
+		// obtener descuentos aplicados
+		respuestaDao = ventasDAO.obtenerTotalesHistorialDescuentosAplicados(fechaInicio, fechaFinal);
+		if( respuestaDao.getRespuesta() == null) {
+			respuesta.setRespuesta(ventatotalDaoRespuesta);
+			return respuesta;
+		}
+		
+		ventatotalDao = (VentaTotalesDAO) respuestaDao.getRespuesta();
+		ventatotalDaoRespuesta.setDescuentoAplicado(ventatotalDao.getDescuentoAplicado());
+		respuesta.setRespuesta(ventatotalDaoRespuesta);
+		
+		System.out.println(ventatotalDaoRespuesta.toString());
+		
+		return  respuesta;
 	}
 	
 	public Respuesta eliminarCarrito(int idCarrito) {
@@ -143,6 +169,7 @@ public class ControllerVenta {
 			
 			//ventaDao.generarVenta();
 			registroventadet.setParam_Id_Venta((int) respuesta.getRespuesta());
+			//System.out.println("Antes de guardar en bd "+registroventadet.toString());
 			respuestaR = ventaDao.REGISTROVENTADET(registroventadet);
 			
 			if (respuestaR.getValor() ){

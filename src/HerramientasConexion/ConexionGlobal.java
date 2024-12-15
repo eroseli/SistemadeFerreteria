@@ -13,7 +13,8 @@ public class ConexionGlobal {
 	
 	private static String url = "jdbc:mysql://localhost:3306/Ferreteria";
 	private static String user = "root";
-	private static String pass = "rootroque";
+	//private static String pass = "rootroque";
+	private static String pass = "rootautoplace";
 	public static Connection connection;
 	
 	private ConexionGlobal() {

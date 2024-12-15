@@ -3,6 +3,7 @@ package Views;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 
+import javax.activation.DataSource;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
@@ -19,6 +20,13 @@ import HerramientasConexion.Herramientas.cadenas;
 import Models.ProductoVenta;
 import Models.Respuesta;
 import Models.Venta;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import net.sf.jasperreports.view.JasperViewer;
 
 import javax.swing.JTextField;
 import javax.swing.JLabel;
@@ -26,6 +34,9 @@ import javax.swing.JOptionPane;
 
 import java.awt.Font;
 import java.util.ArrayList;
+import java.util.Formatter;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.SwingConstants;
 import java.awt.Color;
@@ -35,9 +46,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import javax.swing.event.CaretListener;
+
+import com.lowagie.text.pdf.codec.Base64.InputStream;
+
 import javax.swing.event.CaretEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.FileInputStream;
 
 public class JD_PagarCompra extends JDialog {
 
@@ -326,6 +341,39 @@ public class JD_PagarCompra extends JDialog {
 		return totalProductos;
 	}
 	
+	public void imprimirTicket() throws JRException {
+		
+        JasperReport jasperReport = JasperCompileManager.compileReport("report2.jrxml");
+		
+        
+        //FileInputStream img = new FileInputStream("");
+        HashMap hm = new HashMap();
+        
+        
+        hm.put("total","100");
+        hm.put("pago","200");
+        hm.put("cambio", "");
+        hm.put("nombre_usuario", "Eros Eli Roque Santiago");
+        hm.put("nombre_cliente", "Daneil dias");
+        hm.put("imagen",null);
+        hm.put("local", "AutoPlace");
+        hm.put("nombre_local","Auto Place");
+        hm.put("subtotal", "100");
+        
+        hm.put("descuento","0");
+        hm.put("iva", "0.00");
+        hm.put("leyenda", "Gracias por su compra");
+        
+        
+        JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, hm, new JRBeanCollectionDataSource(null));
+
+        JasperViewer view = new JasperViewer(jasperPrint,false);
+        view.setVisible(true);
+        
+        // Paso 5: Ver el reporte
+        JasperViewer.viewReport(jasperPrint, false);
+        
+	}
 	
 	
 	public void realizarCompra() {

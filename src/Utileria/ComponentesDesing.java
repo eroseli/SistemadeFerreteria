@@ -5,9 +5,11 @@ import java.awt.Font;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JPasswordField;
 import javax.swing.JRadioButton;
 import javax.swing.JSpinner;
+import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.UIManager;
 import javax.swing.border.Border;
@@ -15,6 +17,7 @@ import javax.swing.border.Border;
 import com.toedter.calendar.JDateChooser;
 
 import HerramientasConexion.Herramientas;
+import Models.Components.JTableEdited;
 
 public class ComponentesDesing {
 	
@@ -29,6 +32,7 @@ public class ComponentesDesing {
 		jTextField.setBorder(border);
 	
 	}
+	
 
 	public static void textFieldHabilitar() {
 		
@@ -55,6 +59,10 @@ public class ComponentesDesing {
 		
 	}
 	
+	public static void JComboBoxDeshabilitar(JComboBox combo) {
+		combo.setEnabled(false);
+	}
+	
 	public static void JRadioButtonDeshabilitar(JRadioButton jRadioButton) {
 		jRadioButton.setVisible(false);
 	}
@@ -65,6 +73,7 @@ public class ComponentesDesing {
 	
 	public static void JPasswordFieldDeshabilitar(JPasswordField jPasswordField) {
 		jPasswordField.setEditable(false);
+		jPasswordField.setForeground(Color.gray);
 	}
 	
 	public static void JButtonDesing(JButton button, int tipoBoton) {
@@ -90,6 +99,81 @@ public class ComponentesDesing {
 			
 			break;
 		}
+		
+	}
+	
+	public static void PreferredWithTableProductoVenta( JTable table  ) {
+		
+		table.getColumnModel().getColumn(0).setMinWidth(0);   // Establece el ancho mínimo a 0
+        table.getColumnModel().getColumn(0).setMaxWidth(0);   // Establece el ancho máximo a 0
+        table.getColumnModel().getColumn(0).setWidth(0);   
+        table.getColumnModel().getColumn(1).setPreferredWidth(120);
+		
+		table.getColumnModel().getColumn(2).setPreferredWidth(220);		
+		table.getColumnModel().getColumn(3).setPreferredWidth(220);
+		
+	    table.getColumnModel().getColumn(4).setMinWidth(80);
+		table.getColumnModel().getColumn(4).setMaxWidth(80);   // Establece el ancho máximo a 0
+	    table.getColumnModel().getColumn(4).setWidth(80);   
+			       
+	}
+	
+	public static void PreferredWithTableTableUsuarios(JTable table) {
+		
+		table.getColumnModel().getColumn(0).setMinWidth(0);
+		table.getColumnModel().getColumn(0).setMaxWidth(0);
+		table.getColumnModel().getColumn(0).setWidth(0);
+		
+		table.getColumnModel().getColumn(1).setPreferredWidth(180);
+		table.getColumnModel().getColumn(2).setPreferredWidth(180);
+		table.getColumnModel().getColumn(3).setPreferredWidth(180);
+		table.getColumnModel().getColumn(4).setPreferredWidth(180);
+		table.getColumnModel().getColumn(5).setPreferredWidth(180);
+		table.getColumnModel().getColumn(6).setPreferredWidth(280);
+		table.getColumnModel().getColumn(7).setPreferredWidth(180);
+		table.getColumnModel().getColumn(8).setPreferredWidth(180);
+		table.getColumnModel().getColumn(9).setPreferredWidth(180);
+		
+	}
+	
+	public static void PreferredWithTableESMercancia(JTable table) {
+		
+		table.getColumnModel().getColumn(0).setMinWidth(0);
+		table.getColumnModel().getColumn(0).setMaxWidth(0);
+		table.getColumnModel().getColumn(0).setWidth(0);
+		
+		table.getColumnModel().getColumn(1).setMinWidth(0);
+		table.getColumnModel().getColumn(1).setMaxWidth(0);
+		table.getColumnModel().getColumn(1).setWidth(0);
+
+		table.getColumnModel().getColumn(2).setMinWidth(0);
+		table.getColumnModel().getColumn(2).setMaxWidth(0);
+		table.getColumnModel().getColumn(2).setWidth(0);
+
+		
+	}
+	
+	public static void PreferredWithTableEntradaSalidaMercancia( JTable table) {
+
+		table.getColumnModel().getColumn(0).setMinWidth(0);
+		table.getColumnModel().getColumn(0).setMaxWidth(0);
+		table.getColumnModel().getColumn(0).setWidth(0);
+		
+	}
+	
+	public static void PreferredWithTableMovimientosEfectivo( JTable table) {
+
+		table.getColumnModel().getColumn(0).setMinWidth(0);
+		table.getColumnModel().getColumn(0).setMaxWidth(0);
+		table.getColumnModel().getColumn(0).setWidth(0);
+		
+	}
+	
+	public static void PreferredWithTableCategoria(JTable table) {
+	
+		table.getColumnModel().getColumn(0).setMinWidth(0);
+		table.getColumnModel().getColumn(0).setMaxWidth(0);
+		table.getColumnModel().getColumn(0).setWidth(0);
 		
 	}
 	

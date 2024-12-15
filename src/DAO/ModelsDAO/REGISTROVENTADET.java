@@ -102,6 +102,14 @@ public class REGISTROVENTADET {
 	public void setParam_mensaje(String param_mensaje) {
 		Param_mensaje = param_mensaje;
 	}
+
+	@Override
+	public String toString() {
+		return "REGISTROVENTADET [Param_Id_Producto=" + Param_Id_Producto + ", Param_NumProductos=" + Param_NumProductos
+				+ ", Param_Id_Venta=" + Param_Id_Venta + ", Param_Precio=" + Param_Precio + ", Param_DescuentoM="
+				+ Param_DescuentoM + ", Param_DescuentoEsp=" + Param_DescuentoEsp + ", Param_Id_Cliente="
+				+ Param_Id_Cliente + ", Param_respuesta=" + Param_respuesta + ", Param_mensaje=" + Param_mensaje + "]";
+	}
 	
 	
 	

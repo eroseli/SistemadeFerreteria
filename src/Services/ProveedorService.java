@@ -61,16 +61,15 @@ public class ProveedorService {
 		return respuesta;
 	}
 	
-	public Respuesta eliminar(ProveedorView proveedorView) {
+	public Respuesta eliminar(String  idProveedor) {
 		respuesta = new Respuesta("",true, null);
 		Respuesta respuestaT = new Respuesta("",false,null);
-		
 		proveedoresDAO = new ProveedoresDAO();
-		respuesta = proveedoresDAO.eliminarProveedor(proveedorView.getId_Proveedor());
+		respuesta = proveedoresDAO.eliminarProveedor(idProveedor);
 		
-		respuestaT = proveedoresDAO.obtenerProveedorIdproveedor(proveedorView.getId_Proveedor());
+		respuestaT = proveedoresDAO.obtenerProveedorIdproveedor(idProveedor);
 		if ( !(respuestaT.getRespuesta() == null) )
-			return new Respuesta("Problemas al intentar Eliminar al Cliente "+proveedorView.getId_Proveedor(),false,null);
+			return new Respuesta("Problemas al intentar Eliminar al Cliente "+idProveedor,false,null);
 		return respuesta;
 	}
 	
@@ -78,10 +77,15 @@ public class ProveedorService {
 		respuesta = new Respuesta("",true, null);
 		ProveedoresDAO dao =new ProveedoresDAO();
 		
-		if (nombre.isEmpty() || nombre.equals("")) {
+		if ( nombre == null || nombre.isEmpty() || nombre.equals("")) {
 			return dao.obtenerProveedores();
 		}
 		return dao.obtenerProveedorDescripcion(nombre);		
+	}
+	
+	public Respuesta seleccionarId(String idProveedor) {
+		ProveedoresDAO dao =new ProveedoresDAO();
+		return dao.obtenerProveedorIdproveedor(idProveedor);	
 	}
 	
 	public Respuesta TraducirProveedor(ProveedorView proveedorView, int tipoOperacion) {
@@ -203,7 +207,7 @@ public class ProveedorService {
 			return new Respuesta("Introduzca un Nombre de Empresa Válido",false,null);
 		
 		if(proveedorView.getDireccion().equals("") || proveedorView.getDireccion().isEmpty())
-			return new Respuesta("Introduzca un Nombre de Empresa Válido",false,null);
+			return new Respuesta("Introduzca una Dirección Válido",false,null);
 		
 		if( proveedorView.getFechaRegistro()== null|| proveedorView.getFechaRegistro().toString().isEmpty() )
 			return new Respuesta("Introduzca un Fecha Válida",false,null);		

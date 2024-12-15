@@ -25,8 +25,8 @@ public class ControllerCliente {
 			respuesta = clienteService.actualizar((ClienteView) objeto);
 			break;
 		case Herramientas.tipoOperacion.eliminar:
-			ClienteView clienteView =  ((ClienteView) objeto);
-			respuesta = clienteService.eliminar(clienteView.getId_Cliente());
+			String idCliente =  ((String) objeto);
+			respuesta = clienteService.eliminar(idCliente);
 			break;
 		case Herramientas.tipoOperacion.seleccionar:
 			respuesta = clienteService.seleccionar((String)objeto);

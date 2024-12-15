@@ -120,6 +120,16 @@ public class ProductoVenta {
 	public void setDescuentoE(int descuentoE) {
 		DescuentoE = descuentoE;
 	}
+
+	@Override
+	public String toString() {
+		return "ProductoVenta [Id_producto=" + Id_producto + ", Codigo=" + Codigo + ", Nombre=" + Nombre
+				+ ", Descripcion=" + Descripcion + ", Cantidad=" + Cantidad + ", Fecha_caducidad=" + Fecha_caducidad
+				+ ", P_publico=" + P_publico + ", P_Mayoreo=" + P_Mayoreo + ", P_Adquisicion=" + P_Adquisicion
+				+ ", Existencia=" + Existencia + ", Categoria=" + Categoria + ", Marca=" + Marca + ", CantidadComprar="
+				+ CantidadComprar + ", PrecioCompra=" + PrecioCompra + ", DescuentoM=" + DescuentoM + ", DescuentoE="
+				+ DescuentoE + "]";
+	}
 	
 	
 

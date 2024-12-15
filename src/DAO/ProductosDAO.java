@@ -40,7 +40,9 @@ public class ProductosDAO {
 public Respuesta obtenerProductoCodigo(String nombre) {
 		
 		Respuesta respuesta = new Respuesta("",true,null);
-		String query = "select * from productos where Codigo = '"+nombre+"'";
+		String query = "select P.*,C.nombre as CategoriaNombre , M.nombre as MarcaNombre "
+				+ "FROM productos P INNER JOIN categorias C ON P.Categoria = C.id_categoria INNER JOIN Marcas M ON P.Marca = M.Id_Marca  "
+				+ "where Codigo = '"+nombre+"' and P.Estatus = 'ACTIVO'";
 		producto = null;
 		
 		try {
@@ -65,8 +67,7 @@ public Respuesta obtenerProductoCodigo(String nombre) {
                 		resultados.getDate("FechaRegistro")
                 		);
 				
-			}
-			
+			}			
 			respuesta.setRespuesta(producto);
 			
 		} catch (SQLException e) {
@@ -82,6 +83,37 @@ public Respuesta obtenerProductoCodigo(String nombre) {
 		}		
 		return  respuesta;
 	}
+	
+public Respuesta validarProductoEliminado(String codigo) {
+	
+	Respuesta respuesta = new Respuesta("",true,false);
+	String query = "select P.*,C.nombre as CategoriaNombre , M.nombre as MarcaNombre "
+			+ "FROM productos P INNER JOIN categorias C ON P.Categoria = C.id_categoria INNER JOIN Marcas M ON P.Marca = M.Id_Marca  "
+			+ "where Codigo = '"+codigo+"' and P.Estatus = 'INACTIVO'";
+	producto = null;
+	
+	try {
+		ConexionGlobal.establecerConexio();
+        stm =  (PreparedStatement) ConexionGlobal.connection.prepareStatement(query);           
+		resultados = stm.executeQuery();
+		
+		while (resultados.next()) {
+			respuesta.setRespuesta(true);
+		}			
+		
+	} catch (SQLException e) {
+		// TODO: handle exception
+		return new Respuesta("Error: "+e.getMessage(),false,null);
+	}
+	finally {
+		try {
+			ConexionGlobal.cerrarConexion();
+		} catch (SQLException e) {
+			System.out.println("Error: "+e.getMessage());
+		}
+	}		
+	return  respuesta;
+}
 
 	public Respuesta obtenerProductoBusqueda(ProductoBusquedaView productoBusquedaView) {
 		Respuesta respuesta = new Respuesta("",true,null);
@@ -100,15 +132,21 @@ public Respuesta obtenerProductoCodigo(String nombre) {
 			stm.setString(4, productoBusquedaView.getFiltroBusqueda());
 			stm.setString(5, productoBusquedaView.getFecha());
 			
+			System.out.println(productoBusquedaView.getBusqueda());
+			System.out.println(productoBusquedaView.getFechaInicio());
+			System.out.println(productoBusquedaView.getFechaFinal());
+			System.out.println(productoBusquedaView.getFiltroBusqueda());
+			System.out.println(productoBusquedaView.getFiltroBusqueda());
+			System.out.println(productoBusquedaView.getFecha());
+			
 			boolean tieneResultados = stm.execute();
-            System.out.println(query);
             // Si tiene resultados, procesar el ResultSet
             if (tieneResultados) {
                 rs = stm.getResultSet();
                 
                 ResultSetMetaData metaData = rs.getMetaData();
                 int numColumns = metaData.getColumnCount();
-                System.out.println(rs.getStatement().toString());
+                System.out.println("Statement : "+rs.getStatement().toString());
                 while (rs.next()) {
                     producto = new Producto(
     						rs.getInt("Id_producto"),
@@ -121,8 +159,8 @@ public Respuesta obtenerProductoCodigo(String nombre) {
                     		rs.getFloat("P_Mayoreo"),
                     		rs.getFloat("P_Adquisicion"),
                     		rs.getInt("Existencia"),
-                    		rs.getString("Categoria"),
-                    		rs.getString("Marca"),
+                    		rs.getString("CategoriaNombre"),
+                    		rs.getString("MarcaNombre"),
                     		rs.getDate("FechaRegistro")
                     		);
                     
@@ -162,9 +200,16 @@ public Respuesta obtenerProductoCodigo(String nombre) {
 	public Respuesta obtenerProductoCoincidencia(String nombre) {
 		
 		Respuesta respuesta = new Respuesta("",true,null);
-		String query = "select * from productos where nombre like '%"+nombre+"%'";
+		String query = "select P.*,C.nombre as CategoriaNombre , M.nombre as MarcaNombre FROM productos P INNER JOIN categorias C ON P.Categoria = C.id_categoria INNER JOIN Marcas M ON P.Marca = M.Id_Marca "
+				+ "where (P.nombre like '%"+nombre+"%' OR  P.Descripcion like  '%"+nombre+"%' ) AND P.Estatus = 'ACTIVO' order by P.Id_producto desc;";
 		
 		try {
+
+			System.out.println();
+
+			System.out.println(query);
+
+			System.out.println();
 			
 			productos.clear();
 			ConexionGlobal.establecerConexio();
@@ -183,8 +228,8 @@ public Respuesta obtenerProductoCodigo(String nombre) {
                 		resultados.getFloat("P_Mayoreo"),
                 		resultados.getFloat("P_Adquisicion"),
                 		resultados.getInt("Existencia"),
-                		resultados.getString("Categoria"),
-                		resultados.getString("Marca"),
+                		resultados.getString("CategoriaNombre"),
+                		resultados.getString("MarcaNombre"),
                 		resultados.getDate("FechaRegistro")
                 		);
 				
@@ -194,7 +239,7 @@ public Respuesta obtenerProductoCodigo(String nombre) {
 			respuesta.setRespuesta(productos);
 			
 		} catch (Exception e) {
-			// TODO: handle exception
+			System.out.println(e.getMessage());
 		}
 		finally {
 			try {
@@ -278,7 +323,8 @@ public Respuesta obtenerProductoCodigo(String nombre) {
 		
 		respuesta = new Respuesta("",true,null);
 		productos = new ArrayList<Producto>();
-		String query = "select * from productos order by Id_producto desc;";
+		String query = "select P.*,C.nombre as CategoriaNombre , M.nombre as MarcaNombre FROM productos P INNER JOIN categorias C ON P.Categoria = C.id_categoria INNER JOIN Marcas M ON P.Marca = M.Id_Marca  "
+				+ "where P.Estatus = 'ACTIVO' order by Id_producto desc;";
 		
 		try {
 			
@@ -299,8 +345,8 @@ public Respuesta obtenerProductoCodigo(String nombre) {
                 		resultados.getFloat("P_Mayoreo"),
                 		resultados.getFloat("P_Adquisicion"),
                 		resultados.getInt("Existencia"),
-                		resultados.getString("Categoria"),
-                		resultados.getString("Marca"),
+                		resultados.getString("CategoriaNombre"),
+                		resultados.getString("MarcaNombre"),
                 		resultados.getDate("FechaRegistro")
                 		);
 				System.out.println(producto.getNombre());
@@ -632,7 +678,7 @@ public Respuesta obtenerProductoCodigo(String nombre) {
 		respuesta = new Respuesta("Producto "+producto.getCodigo()+" Actualizado Correctamente",true,null);
 		
 		String query = "update productos set Codigo = ?, Nombre = ?,Descripcion = ?, Cantidad= ?, Fecha_caducidad = ?, P_publico = ? ,"
-				+ "    P_Mayoreo = ?, P_Adquisicion = ?, Existencia = ?, Categoria = ?, Marca = ? where Codigo = ? ;";
+				+ "    P_Mayoreo = ?, P_Adquisicion = ?, Existencia = ?, Categoria = ?, Marca = ?, Estatus = 'ACTIVO' where Codigo = ? ;";
 		
 		try {
 			
@@ -673,7 +719,7 @@ public Respuesta obtenerProductoCodigo(String nombre) {
 		
 		respuesta = new Respuesta("Producto "+codigo+" Eliminado Correctamente",true,null);
 		
-		String query = "delete from productos where Codigo = '"+codigo+"';";
+		String query = "update productos set Estatus = 'INACTIVO' where Codigo = '"+codigo+"';";
 		
 		try {
 			

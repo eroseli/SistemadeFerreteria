@@ -93,7 +93,13 @@ public class VentaTotalesDAO {
 	public void setTicketPromedio(float ticketPromedio) {
 		this.ticketPromedio = ticketPromedio;
 	}
-	
-	
+
+	@Override
+	public String toString() {
+		return "VentaTotalesDAO [fechaInicio=" + fechaInicio + ", fechaFinal=" + fechaFinal + ", totalVentas="
+				+ totalVentas + ", totalProductos=" + totalProductos + ", montoTotalVenta=" + montoTotalVenta
+				+ ", descuentoAplicado=" + descuentoAplicado + ", productoEstrella=" + productoEstrella
+				+ ", ticketPromedio=" + ticketPromedio + "]";
+	}
 
 }

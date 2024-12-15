@@ -58,7 +58,7 @@ public class ProveedoresDAO {
 		
 		respuesta = new Respuesta("",true,null);
 		proveedor = new Proveedor();
-		query = "select * from proveedores;";
+		query = "select * from proveedores where Estatus ='ACTIVO';";
 		proveedores = new ArrayList<Proveedor>();
 		try {
 			
@@ -105,7 +105,10 @@ public class ProveedoresDAO {
 	public Respuesta obtenerProveedorDescripcion(String descripcionNombre) {
 		
 		respuesta = new Respuesta("",true,null);
-		query  = "select * from proveedores where nombre like '%"+descripcionNombre+"%' and Estatus = 'ACTIVO' ";
+//		query  = "select * from proveedores where nombre like '%"+descripcionNombre+"%' and Estatus = 'ACTIVO' ";
+		
+		query = "select * from proveedores where (CONCAT(nombre,' ',apaterno,' ',amaterno)like '%"+descripcionNombre+"%' "
+				+ "OR telefono like '%"+descripcionNombre+"%'   ) and Estatus = 'ACTIVO' ;";
 		proveedores = new ArrayList<Proveedor>();
 		
 		try {
@@ -137,8 +140,8 @@ public class ProveedoresDAO {
 			
 			respuesta.setRespuesta(proveedores);
 			
-		}  catch (Exception e) {
-			respuesta = new Respuesta("Error al intentar obtener los proveedores", false, null);
+		}  catch (SQLException e) {
+			respuesta = new Respuesta("Error al intentar obtener los proveedores"+e.getMessage(), false, null);
 		}
 		finally {
 			try {

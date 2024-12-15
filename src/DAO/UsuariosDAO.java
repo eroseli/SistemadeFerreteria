@@ -28,7 +28,7 @@ public class UsuariosDAO {
 	
 	public Respuesta obtenerUsuario(int id) {
 		respuesta = new Respuesta("Usuario Encontrado Correctamente",true,null);
-		query = "select * from Usuarios where Id_Usuario = "+id;
+		query = "select * from Usuarios where Id_Usuario = "+id+" and Estatus = 'ACTIVO';";
 		
 		try {
 			
@@ -73,7 +73,7 @@ public class UsuariosDAO {
 	
 	public Respuesta obtenerUsuarioNombre(String  nombreUsuario) {
 		respuesta = new Respuesta("Usuario Encontrado Correctamente",true,null);
-		query = "select * from Usuarios where usuario = '"+nombreUsuario+"';";
+		query = "select * from Usuarios where usuario = '"+nombreUsuario+"' and Estatus = 'ACTIVO';";
 		
 		try {
 			
@@ -118,8 +118,13 @@ public class UsuariosDAO {
 	public Respuesta obtenerUsuarioDescripcion(String nombre) {
 		
 		respuesta = new Respuesta("Usuarios Cargados Correctamente",true,null);
-		query = "select * from usuarios where nombre like '%"+nombre+"%' or telefono like '%"+nombre+"%';";
+//		query = "select * from usuarios where nombre like '%"+nombre+"%' or telefono like '%"+nombre+"%'"
+//				+ " and Estatus = 'ACTIVO';";
 
+		query = "select * from usuarios where (CONCAT(nombre,' ',apaterno,' ',amaterno) like '%"+nombre+"%' "
+				+ "or telefono like '%"+nombre+"%') and Estatus = 'ACTIVO'";
+
+		
 		try {
 			
             ConexionGlobal.establecerConexio();
@@ -165,7 +170,7 @@ public class UsuariosDAO {
 	public Respuesta obtenerUsuarios() {
 		
 		respuesta = new Respuesta("Usuarios Cargados Correctamente",true,null);
-		query = "select * from usuarios";
+		query = "select * from usuarios where Estatus = 'ACTIVO'";
 		
 		try {
 			
@@ -276,8 +281,8 @@ public class UsuariosDAO {
             stm.execute();
 			
 			
-		} catch (Exception e) {
-			respuesta = new Respuesta("Error al Registrar al Usuario. "+e.getStackTrace(), false, null);
+		} catch (SQLException e) {
+			respuesta = new Respuesta("Error al Registrar al Usuario. "+e.getStackTrace(), false, e.getErrorCode());
 			e.printStackTrace();
 			System.out.println(e.getMessage());
 		}
@@ -297,7 +302,7 @@ public class UsuariosDAO {
 	public Respuesta eliminarUsuario(int idUsuario) {
 		
 		respuesta = new Respuesta("Usuario Eliminado Correctamente.",true,null);
-		query = "delete from Usuarios where Id_Usuario = "+idUsuario;
+		query = "update Usuarios set Estatus = 'INACTIVO'  where Id_Usuario = "+idUsuario;
 		
 		try {
 			

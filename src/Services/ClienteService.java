@@ -191,11 +191,11 @@ public class ClienteService {
 		if(clienteView.getFechaNac()== null|| clienteView.getFechaNac().toString().isEmpty() )
 			return new Respuesta("Introduzca una Fecha de Nacimiento Válida",false,null);
 		
+		if (!Herramientas.validarFecha(clienteView.getFechaNac().toString())) 
+			return new Respuesta("Introduzca una Fecha de Nacimiento con Formato Válido",false,null);
+		
 		if(clienteView.getTelefono().equals("") || clienteView.getTelefono().isEmpty())
 			return new Respuesta("Introduzca un Teléfono Celular Válido",false,null);
-		
-		if(clienteView.getCorreo().equals("") || clienteView.getCorreo().isEmpty())
-			return new Respuesta("Introduzca un Correo Electrónico Válido",false,null);
 		
 		if(clienteView.getCompras().equals("") || clienteView.getCompras().isEmpty())
 			return new Respuesta("Introduzca la cantidad de Compras en número",false,null);

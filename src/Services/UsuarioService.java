@@ -1,8 +1,11 @@
 package Services;
 
+import com.mysql.cj.x.protobuf.Mysqlx.Error;
+
 import DAO.ProductosDAO;
 import DAO.UsuariosDAO;
 import DAO.ModelsDAO.Usuario;
+import HerramientasConexion.Errors;
 import HerramientasConexion.Herramientas;
 import Models.ProductoView;
 import Models.Respuesta;
@@ -50,6 +53,9 @@ public class UsuarioService {
 		
 		respuesta = realizarActualizacion((Usuario) respuesta.getRespuesta());
 		
+		if (!respuesta.getValor())
+			respuesta.setMensaje(Errors.errors((Integer) respuesta.getRespuesta() ) );
+		
 		return respuesta;
 	}	
 	
@@ -60,16 +66,15 @@ public class UsuarioService {
 		return respuesta;	
 	}
 	
-	public Respuesta eliminar(String IdUsuario) {
+	public Respuesta eliminar(int IdUsuario) {
 		
 		respuesta = new Respuesta("",true,null);
 		Respuesta respuestaT = new Respuesta("",true,null);
 		UsuariosDAO usuariosDAO = new UsuariosDAO();
 		try {
-			int Id = Integer.parseInt(IdUsuario);
-			respuesta = usuariosDAO.eliminarUsuario(Id);
+			respuesta = usuariosDAO.eliminarUsuario(IdUsuario);
 			
-			respuestaT = usuariosDAO.obtenerUsuario(Id);
+			respuestaT = usuariosDAO.obtenerUsuario(IdUsuario);
 			
 			if(!(respuestaT.getRespuesta() == null) )
 				return new Respuesta("Problemas al intentar Eliminar al Usuario ",false,null);
@@ -86,10 +91,17 @@ public class UsuarioService {
 		respuesta = new Respuesta("",true,null);
 		UsuariosDAO dao = new UsuariosDAO();
 		
-		if (nombre.isEmpty() || nombre.equals("")) {
+		if ( nombre ==null || nombre.isEmpty() || nombre.equals("")) {
 			return dao.obtenerUsuarios();
 		}
 		return dao.obtenerUsuarioDescripcion(nombre);
+		
+	}
+	
+	public Respuesta obtenerUsuarioId(int idUsuario) {
+		respuesta = new Respuesta("",true,null);
+		UsuariosDAO dao = new UsuariosDAO();
+		return dao.obtenerUsuario(idUsuario);
 		
 	}
 	
@@ -135,18 +147,9 @@ public class UsuarioService {
 			
 			if(!respuestaT.getValor())
 				return respuestaT;
-			//tipo de Operacion
-			switch (tipoOperacion) {
-			case Herramientas.tipoOperacion.insertar:
-				if(respuestaT.getRespuesta() != null)
-					return new Respuesta("Ya Existe un Usuario con el Nombre de Usuario "+usuarioView.getUsuario(),false,null);
-				break;
-
-			case Herramientas.tipoOperacion.actualizar:
-				if(respuestaT.getRespuesta() == null)
-					return new Respuesta("No Existe un Usuario con el Nombre "+usuarioView.getUsuario(),false,null);
-				break;
-			}
+	
+			if (respuestaT.getRespuesta() != null && Herramientas.tipoOperacion.insertar == tipoOperacion) 
+				return new Respuesta("Ya Existe un Usuario con el Nombre "+usuarioView.getUsuario(),false,null);			
 			
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
@@ -154,17 +157,17 @@ public class UsuarioService {
 		}
 		
 				
-		if(usuarioView.getUsuario().equals("") && usuarioView.getUsuario().isEmpty())
+		if(usuarioView.getUsuario().equals("") || usuarioView.getUsuario().isEmpty())
 			return new Respuesta("Introduzca un Nombre de Usuario Válido",false,null);
 		
-		if(!usuarioView.getPassword().equals("") && !usuarioView.getPassword().isEmpty()) {
+		if(!usuarioView.getPassword().equals("") || !usuarioView.getPassword().isEmpty()) {
 			if(usuarioView.getPassword().length()<8)
 				return new Respuesta("La Contraseña debe Contener al menos 8 caracteres",false,null );
 		}else {
 			return new Respuesta("Introduzca una Contraseña Correcta",false,null );
 		}
 		
-		if(!usuarioView.getValidarPassword().equals("") && !usuarioView.getValidarPassword().isEmpty()) {
+		if(!usuarioView.getValidarPassword().equals("") || !usuarioView.getValidarPassword().isEmpty()) {
 			if(usuarioView.getValidarPassword().length()<8)
 				return new Respuesta("La Contraseña debe Contener al menos 8 caracteres",false,null );
 		}else {
@@ -174,25 +177,25 @@ public class UsuarioService {
 		if(!usuarioView.getPassword().equals(usuarioView.getValidarPassword()))
 			return new Respuesta("Las Contraseñas No Coinciden",false,null);
 		
-		if(usuarioView.getNombre().equals("") && usuarioView.getNombre().isEmpty())
+		if(usuarioView.getNombre().equals("") || usuarioView.getNombre().isEmpty())
 			return new Respuesta("Introduzca un Nombre Correcto",false,null );
 		
-		if(usuarioView.getApaterno().equals("") && usuarioView.getApaterno().isEmpty())
+		if(usuarioView.getApaterno().equals("") || usuarioView.getApaterno().isEmpty())
 			return new Respuesta("Introduzca un Apellido Paterno Correcto",false,null);
 		
-		if(usuarioView.getAmaterno().equals("") && usuarioView.getAmaterno().isEmpty())
+		if(usuarioView.getAmaterno().equals("") || usuarioView.getAmaterno().isEmpty())
 			return new Respuesta("Introduzca un Apellido Materno Correcto",false,null);
 		
-		if(usuarioView.getCorreo().equals("") && usuarioView.getCorreo().isEmpty())
+		if(usuarioView.getCorreo().equals("") || usuarioView.getCorreo().isEmpty())
 			return new Respuesta("Introduzca un Correo Correcto",false,null);
 		
-		if(usuarioView.getDireccion().equals("") && usuarioView.getDireccion().isEmpty())
+		if(usuarioView.getDireccion().equals("") || usuarioView.getDireccion().isEmpty())
 			return new Respuesta("Introduzca un Correo Correcto",false,null);
 		
-		if(usuarioView.getPuesto().equals("") && usuarioView.getPuesto().isEmpty())
+		if(usuarioView.getPuesto().equals("") || usuarioView.getPuesto().isEmpty())
 			return new Respuesta("Introduzca un Puesto Correcto",false,null);
 		
-		if (usuarioView.getTelefono().equals("") && usuarioView.getTelefono().isEmpty()) {
+		if (usuarioView.getTelefono().equals("") || usuarioView.getTelefono().isEmpty()) {
 			return new Respuesta("Introduzca un Teléfono Correcto",false,null);
 		}
 		

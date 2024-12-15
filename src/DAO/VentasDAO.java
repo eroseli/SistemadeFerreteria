@@ -92,6 +92,21 @@ public class VentasDAO {
 			ConexionGlobal.establecerConexio();
 			stm = (CallableStatement) ConexionGlobal.connection.prepareCall("{call REGISTROVENTADET(?,?,?,?,?,?,?,?,?)}");
 			
+			System.out.println();
+			System.out.println();
+			System.out.println();
+			System.out.println();
+			System.out.println(registroventadet.getParam_Id_Producto());
+			System.out.println(registroventadet.getParam_NumProductos());
+			System.out.println(registroventadet.getParam_Id_Venta());
+			System.out.println(registroventadet.getParam_Precio());
+			System.out.println(registroventadet.getParam_DescuentoM());
+			System.out.println(registroventadet.getParam_DescuentoEsp());
+			System.out.println(registroventadet.getParam_Id_Cliente());
+			System.out.println();
+			System.out.println();
+			System.out.println();
+			
 			stm.setInt(1, registroventadet.getParam_Id_Producto());
 			stm.setInt(2, registroventadet.getParam_NumProductos());
 			stm.setInt(3, registroventadet.getParam_Id_Venta());
@@ -103,16 +118,26 @@ public class VentasDAO {
 			stm.registerOutParameter(8, java.sql.Types.INTEGER);
 			stm.registerOutParameter(9, java.sql.Types.VARCHAR);
 			
-			stm.execute();
 			
-			System.out.println(stm.getInt(8));
-			System.out.println(stm.getString(9));
+			boolean tieneresultados = stm.execute();
 			
-			int objeto = stm.getInt(8);
-			String mensaje = stm.getString(9);
-			
-			respuesta.setRespuesta(objeto);
-			respuesta.setMensaje( mensaje);
+			if (tieneresultados) {
+				
+				System.out.println(stm.getInt(8));
+				System.out.println(stm.getString(9));
+				
+				resultados = stm.getResultSet();
+				
+	            System.out.println("Statement : "+resultados.getStatement().toString());
+
+				
+				int objeto = stm.getInt(8);
+				String mensaje = stm.getString(9);
+				
+				respuesta.setRespuesta(objeto);
+				respuesta.setMensaje( mensaje);
+				
+			}	
 			
 		} catch (SQLException e) {
 			respuesta = new Respuesta("Error al intentar correr procedimiento"+e.getMessage(), false, null);
@@ -306,6 +331,7 @@ public class VentasDAO {
 				+ "	from Ventas as V where V.FechaRegistro between '"+fechaInicio+"' and '"+fechaFinal+"';";
 		try {
 			ConexionGlobal.establecerConexio();
+			System.out.println(query);
 			PreparedStatement stm = (PreparedStatement) ConexionGlobal.connection.prepareStatement(query);
 			resultados  = stm.executeQuery();
 			
@@ -343,13 +369,15 @@ public class VentasDAO {
 		
 		VentaTotalesDAO ventaTotalesDAO = new VentaTotalesDAO();
 		Respuesta respuesta = new Respuesta("Ok",true,null);
-		query= "select H.Id_Producto, count(H.Id_Producto) cantidad, concat(P.Codigo, ' - ', P.Nombre) productoEstrella"
+		query= "select H.Id_Producto, count(H.Id_Producto) cantidad, concat(P.Codigo, ' - ', P.Nombre) productoEstrella "
 				+ "from Ventas V inner join historial H on V.ID_Venta = H.Id_Venta "
 				+ "inner join Productos P on H.Id_Producto = P.Id_Producto "
 				+ "where V.fechaRegistro between '"+fechaInicio+"' and '"+fechaFinal+"' group by Id_Producto limit 1;";
 		
 		try {
 			ConexionGlobal.establecerConexio();
+			
+			System.out.println(query);
 			PreparedStatement stm = (PreparedStatement) ConexionGlobal.connection.prepareStatement(query);
 			resultados  = stm.executeQuery();
 			
@@ -388,12 +416,13 @@ public Respuesta obtenerTotalesHistorialDescuentosAplicados(Date fechaInicio, Da
 		
 		VentaTotalesDAO ventaTotalesDAO = new VentaTotalesDAO();
 		Respuesta respuesta = new Respuesta("Ok",true,null);
-		query= "select count(*) DescuentosAplicados from historial H where  H.DescuentoM = 'SI' or DescuentoEsp = 1 "
+		query= "select count(*) DescuentosAplicados from historial H where  (H.DescuentoM = 'SI' or DescuentoEsp = 1) "
 				+ "and H.FechaRegistro between '"+fechaInicio+"' and '"+fechaFinal+"';"
 				+ "";
 		
 		try {
 			ConexionGlobal.establecerConexio();
+			System.out.println(query);
 			PreparedStatement stm = (PreparedStatement) ConexionGlobal.connection.prepareStatement(query);
 			resultados  = stm.executeQuery();
 			
@@ -404,8 +433,8 @@ public Respuesta obtenerTotalesHistorialDescuentosAplicados(Date fechaInicio, Da
 						0,
 						0,
 						0f,
-						0f,//descuentos aplicados
-						 resultados.getInt("cantidad") +" "+ resultados.getString("productoEstrella"),//producto estrella
+						resultados.getFloat("DescuentosAplicados"),//descuentos aplicados
+						"",
 						0f
 						);
 			}			

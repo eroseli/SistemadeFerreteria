@@ -155,7 +155,7 @@ public class ClientesDAO {
 		
 		
 		respuesta = new Respuesta("",true,null);
-		query  = "select * from clientes where nombre like '%"+descripcionNombre+"%' AND Estatus = 'ACTIVO'";
+		query  = "select * from clientes where (CONCAT(Nombre,\" \",Apaterno,\" \",\" \",Amaterno) like '%"+descripcionNombre+"%' OR Telefono like '%"+descripcionNombre+ "%' ) AND Estatus = 'ACTIVO'";
 		clientes = new ArrayList<Cliente>();
 		
 		try {

@@ -13,7 +13,6 @@ public class ControllerProveedor {
 	public Respuesta proceso(int tipoOperacion, Object objeto) {
 		
 		proveedorService = new ProveedorService();
-		
 		switch (tipoOperacion) {
 		case Herramientas.tipoOperacion.insertar:
 			respuesta = proveedorService.insertar((ProveedorView) objeto);
@@ -22,7 +21,8 @@ public class ControllerProveedor {
 			respuesta = proveedorService.actualizar((ProveedorView) objeto);
 			break;
 		case Herramientas.tipoOperacion.eliminar:
-			respuesta = proveedorService.eliminar(((ProveedorView) objeto));
+			String idProveedor = (String) objeto;
+			respuesta = proveedorService.eliminar((idProveedor));
 			break;
 		case Herramientas.tipoOperacion.seleccionar:
 			respuesta = proveedorService.seleccionar((String)objeto);
